@@ -1119,24 +1119,59 @@ function renderMap(c) {
   bindTools(c, g);
 }
 
+// controls grouped by position: a control visited twice (same code/place) is one circle labelled "4/11"
+function ctlPlaces(g) {
+  const out = [];
+  g.crs.controls.forEach((k, i) => { if (!k.xy) return;
+    const q = out.find(o => Math.hypot(o.xy[0] - k.xy[0], o.xy[1] - k.xy[1]) < 3);
+    q ? q.seq.push(i + 1) : out.push({ xy: k.xy, seq: [i + 1] }); });
+  return out;
+}
+// put each number where it collides least with the legs, the other circles and the numbers already placed
+function placeLabels(places, segs, P) {
+  const distSeg = (p, s) => { const [x1, y1, x2, y2] = s, dx = x2 - x1, dy = y2 - y1, L = dx * dx + dy * dy || 1;
+    const u = Math.max(0, Math.min(1, ((p[0] - x1) * dx + (p[1] - y1) * dy) / L)); return Math.hypot(p[0] - x1 - u * dx, p[1] - y1 - u * dy); };
+  const ANG = [-45, -135, 45, 135, 0, 180, -90, 90].map(a => a * Math.PI / 180), placed = [];
+  const others = [...places.map(q => q.xy), ...P.filter(Boolean)];
+  return places.map(q => {
+    const r = 62 + (q.seq.join("/").length - 1) * 8;    // wider labels sit a bit further out
+    let best = null;
+    ANG.forEach((a, k) => {
+      const at = [q.xy[0] + r * Math.cos(a), q.xy[1] + r * Math.sin(a)];
+      let s = k * 0.05;                                   // prefer the classic up-right position
+      segs.forEach(sg => { const d = distSeg(at, sg); if (d < 34) s += (34 - d) / 4; });
+      others.forEach(o => { if (o !== q.xy) { const d = Math.hypot(at[0] - o[0], at[1] - o[1]); if (d < 60) s += (60 - d) / 3; } });
+      placed.forEach(o => { const d = Math.hypot(at[0] - o[0], at[1] - o[1]); if (d < 70) s += (70 - d) / 2; });
+      if (!best || s < best.s) best = { s, at };
+    });
+    placed.push(best.at);
+    return { q, at: best.at };
+  });
+}
+
 function drawOverlay(c, g, rr, ha, hb) {
   const ov = $("mapov"); if (!g) { ov.innerHTML = ""; return; }
   const P = g.pts, n = c.labels.length;
   let base = "", data = "", top = "", hits = "", legend = "";
   // the printed course: start triangle, numbered circles, finish, connecting lines
   const seg = i => P[i] && P[i + 1] ? trim(P[i], P[i + 1], i === 0 ? 45 : R_CTL, i + 1 === P.length - 1 ? 40 : R_CTL) : null;
-  for (let i = 0; i < n; i++) { const s = seg(i); if (s && MV.mode !== "replay") base += `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${PURPLE}" stroke-width="3.5" opacity="${MV.mode === "course" || MV.mode === "replay" ? 1 : .35}"/>`; }
-  if (MV.mode === "replay") for (let i = 0; i < n; i++) { const s = seg(i); if (s) base += `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${PURPLE}" stroke-width="3" opacity=".55"/>`; }
+  // the purple course always stays readable: in the data views it is a thin line drawn over the coloured bands
+  const plain = MV.mode === "course";
+  for (let i = 0; i < n; i++) { const s = seg(i); if (!s) continue;
+    base += `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${PURPLE}" ${plain ? 'stroke-width="3.5"' : 'stroke-width="2" vector-effect="non-scaling-stroke"'}
+      opacity="${MV.mode === "replay" ? .6 : 1}" stroke-linecap="round"/>`; }
   const [sx, sy] = P[0] || [0, 0];
   if (P[0] && P[1]) { const a = Math.atan2(P[1][1] - sy, P[1][0] - sx); const tri = [0, 2.094, 4.189].map(d => `${sx + 45 * Math.cos(a + d)},${sy + 45 * Math.sin(a + d)}`).join(" ");
     top += `<polygon points="${tri}" fill="none" stroke="${PURPLE}" stroke-width="4"/>`; }
-  g.crs.controls.forEach((k, i) => { if (!k.xy) return; const [x, y] = k.xy;
-    top += `<circle cx="${x}" cy="${y}" r="${R_CTL}" fill="none" stroke="${PURPLE}" stroke-width="3.5"/>
-      <text x="${x + 34}" y="${y - 30}" class="ctlnum">${i + 1}</text>`; });
+  const places = ctlPlaces(g);
+  const segs = Array.from({ length: n }, (_, i) => seg(i)).filter(Boolean);
+  placeLabels(places, segs, P).forEach(({ q, at }) => {
+    top += `<circle cx="${q.xy[0]}" cy="${q.xy[1]}" r="${R_CTL}" fill="none" stroke="${PURPLE}" stroke-width="3.5"/>
+      <text x="${at[0].toFixed(0)}" y="${at[1].toFixed(0)}" class="ctlnum" text-anchor="middle" dominant-baseline="central">${q.seq.join("/")}</text>`; });
   const F = P[P.length - 1]; if (F) top += `<circle cx="${F[0]}" cy="${F[1]}" r="25" fill="none" stroke="${PURPLE}" stroke-width="3.5"/><circle cx="${F[0]}" cy="${F[1]}" r="38" fill="none" stroke="${PURPLE}" stroke-width="3.5"/>`;
 
   const legLine = (i, col, w, tip, extra = "") => { const s = seg(i); if (!s) return;
-    data += `<line class="lg${MV.focus === i ? " foc" : ""}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${col}" stroke-width="${w}" vector-effect="non-scaling-stroke" stroke-linecap="round" ${extra}/>`;
+    data += `<line class="lg${MV.focus === i ? " foc" : ""}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${col}" stroke-width="${w + 4}" stroke-opacity=".85" vector-effect="non-scaling-stroke" stroke-linecap="round" ${extra}/>`;
     hits += `<line class="lghit" data-legi="${i}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke-width="18" vector-effect="non-scaling-stroke" data-tip="${esc(tip)}"/>`; };
   const fin = c.rows.filter(done);
   const legStat = i => { const lab = c.labels[i];
@@ -1151,12 +1186,14 @@ function drawOverlay(c, g, rr, ha, hb) {
     stats.forEach((st, i) => legLine(i, binRel(st.lost / mx), 3 + 11 * st.lost / mx, legTip(i, st)));
     legend = `<b>זמן שאבד בשדה בלג</b><div class="ramp">${MAP_RAMP.map(v => `<i style="background:${v}"></i>`).join("")}</div><span>מעט</span><span style="float:left">הרבה (${fmin(mx)})</span>`;
   } else if (MV.mode === "runner" && rr) {
+    const ranks = {};
     c.labels.forEach((lab, i) => { const l = by(rr)[lab]; if (!l) return;
       const m = l[6] ?? 0, col = m <= 10 ? MAP_GOOD : mapMist(m);
       legLine(i, col, 6, `${rr.n} · לג ${lab} · ${g.len[i] || "?"} מ׳\nזמן: ${ft(l[1])} · מקום ${l[3] ?? "–"} בלג\nקצב: ${pace(l[1], g.len[i])} לק״מ (הטוב ${pace(c.best[i], g.len[i])})\nטעות: ${ft(l[6])}${m > 0 ? ` · צפוי ${ft(l[1] - m)}` : ""}`);
       const p = P[i + 1]; if (!p) return;
       if (m >= 15) top += `<circle cx="${p[0]}" cy="${p[1]}" r="${(R_CTL + Math.sqrt(m) * 9).toFixed(0)}" fill="var(--mistake)" fill-opacity=".28" stroke="var(--mistake)" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
-      if (l[3] != null) top += `<text x="${p[0]}" y="${p[1] + 12}" class="lgrank${l[3] <= 3 ? " good" : ""}" text-anchor="middle">${l[3]}</text>`; });
+      if (l[3] != null) (ranks[p.join()] = ranks[p.join()] || { p, r: [] }).r.push(l[3]); });
+    Object.values(ranks).forEach(({ p, r }) => top += `<text x="${p[0]}" y="${p[1] + 12}" class="lgrank${Math.min(...r) <= 3 ? " good" : ""}" text-anchor="middle">${r.join("/")}</text>`);
     legend = `<b>${esc(rr.n)}</b><div class="lgnd"><i style="background:${MAP_GOOD}"></i>לג נקי <i style="background:${MAP_RAMP[2]}"></i>טעות <i style="background:${MAP_RAMP[5]}"></i>טעות גדולה</div><span>מספר = מקום בלג · עיגול = זמן שאבד</span>`;
   } else if (MV.mode === "h2h" && ha && hb) {
     const d = c.labels.map(lab => by(ha)[lab]?.[1] != null && by(hb)[lab]?.[1] != null ? by(hb)[lab][1] - by(ha)[lab][1] : null);
@@ -1168,7 +1205,7 @@ function drawOverlay(c, g, rr, ha, hb) {
     legend = `<b>הילוך חוזר</b><span>${MV.clock ? "שעון אמת: כל נווט יוצא בשעת הזינוק שלו" : "זינוק משותף: כולם יוצאים יחד"}</span>`;
   }
   if (MV.focus != null) { const s = seg(MV.focus); if (s) data = `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="#ffd400" stroke-width="22" stroke-opacity=".55" vector-effect="non-scaling-stroke" stroke-linecap="round"/>` + data; }
-  ov.innerHTML = `<g>${base}</g><g>${data}</g><g>${top}</g><g id="mvrun"></g><g>${hits}</g>`;
+  ov.innerHTML = `<g>${data}</g><g>${base}</g><g>${top}</g><g id="mvrun"></g><g>${hits}</g>`;
   $("maplegend").innerHTML = legend; $("maplegend").style.display = legend ? "" : "none";
   legPanel(c, g, rr);
   if (MV.mode === "replay") drawRunners(c, g);
