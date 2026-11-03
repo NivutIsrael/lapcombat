@@ -2,7 +2,9 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a78d6">
+<meta name="mobile-web-app-capable" content="yes">
 <title>אליפות ישראל- יער אודם- יום 1 · 2026/10/23</title>
 <style>
 :root {
@@ -44,6 +46,7 @@
   --m0t: #f0efec; --m1t: #fff; --m2t: #fff; --m3t: #fff; --m4t: #0b0b0b; --m5t: #0b0b0b; --neutral: #232321;
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { margin: 0; background: var(--page); color: var(--ink);
        font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
 body::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--s2), var(--s7) 50%, var(--s1)); }
@@ -224,14 +227,17 @@ td a.cat { color: var(--accent); text-decoration: none; }
 .mapview { position: relative; flex: 1; min-width: 0; height: 74vh; min-height: 420px; overflow: hidden; background: #fff;
            border: 1px solid var(--ring); border-radius: 8px; cursor: grab; touch-action: none; direction: ltr; }
 .mapview:active { cursor: grabbing; }
-#mapinner { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
-#mapinner img, #mapinner svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; user-select: none; -webkit-user-drag: none; }
+#mapbase { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#mapbase img { display: block; width: 100%; height: 100%; }
+#mapdetail, #mapov { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#mapdetail { pointer-events: none; }
+#mapbase img, #mapdetail, #mapov { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-touch-callout: none; }
 #mapov .lghit { stroke: transparent; cursor: pointer; }
 #mapov .lghit:hover { stroke: rgba(255, 212, 0, .45); }
-#mapov .ctlnum { font: 700 52px system-ui, sans-serif; fill: #d4008c; paint-order: stroke; stroke: #fff; stroke-width: 9; }
-#mapov .lgrank { font: 700 34px system-ui, sans-serif; fill: #111; paint-order: stroke; stroke: #fff; stroke-width: 8; }
+#mapov .ctlnum { font: 700 calc(52px * var(--u, 1)) system-ui, sans-serif; fill: #d4008c; paint-order: stroke; stroke: #fff; stroke-width: calc(9px * var(--u, 1)); }
+#mapov .lgrank { font: 700 calc(34px * var(--u, 1)) system-ui, sans-serif; fill: #111; paint-order: stroke; stroke: #fff; stroke-width: calc(8px * var(--u, 1)); }
 #mapov .lgrank.good { fill: #006300; }
-#mapov .rname { font: 700 40px system-ui, sans-serif; paint-order: stroke; stroke: #fff; stroke-width: 10; }
+#mapov .rname { font: 700 calc(40px * var(--u, 1)) system-ui, sans-serif; paint-order: stroke; stroke: #fff; stroke-width: calc(10px * var(--u, 1)); }
 .mapbtns { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px; }
 .mapbtns button { width: 34px; height: 34px; border: 1px solid rgba(0,0,0,.15); border-radius: 6px; background: #fff; color: #111; font: 600 18px system-ui; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
 .maplegend { position: absolute; bottom: 10px; left: 10px; background: rgba(255,255,255,.94); color: #111; border-radius: 8px; padding: 8px 10px;
@@ -256,12 +262,59 @@ th[data-legmap] { cursor: pointer; text-decoration: underline dotted; }
 @media (max-width: 760px) {
   .mapwrap { flex-direction: column; } .legpanel { width: 100%; max-height: 260px; }
   .mapview { height: 62vh; min-height: 340px; }
-  .maplegend { min-width: 0; max-width: calc(100% - 20px); font-size: 11px; }
+  .maplegend { min-width: 0; max-width: 64%; font-size: 10.5px; padding: 5px 8px; bottom: 8px; left: 8px; }
+  .maplegend.min > :not(b) { display: none; }
+  .maplegend.min b { margin: 0; }
+  .maplegend b::after { content: " ▾"; color: #888; font-weight: 400; }
+  .maplegend.min b::after { content: " ▸"; }
   .courses { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
   .courses::-webkit-scrollbar { display: none; }
-  .courses button { min-width: 0; padding: 8px 12px; }
+  .courses button { min-width: 0; padding: 8px 12px; flex: none; }
+  .tabs button { flex: none; }
+  /* long explanations: two lines, tap to read the rest */
+  .desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; position: relative; }
+  .desc.open { display: block; }
+  .desc:not(.open)::after { content: "עוד ▾"; position: absolute; left: 0; bottom: 0; background: var(--surface); color: var(--accent); padding-right: 6px; font-weight: 600; }
+  .lxnote { display: none; }
+  .head.top h1 { font-size: 19px; }
   h1 { font-size: 20px; } .tile .v { font-size: 20px; } .card { padding: 12px; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px), (pointer: coarse) {
+  /* iOS zooms the whole page when a field with text under 16px gets focus - and leaves it zoomed */
+  select, input, textarea { font-size: 16px !important; }
+  .tabs button { padding: 11px 13px; }
+  .courses button { padding: 10px 14px; }
+  .chips button, .marks .mk { padding: 7px 13px; }
+  .star { font-size: 20px; padding: 4px 6px; }
+  .ibtn { padding: 8px 12px; }
+  .mapbtns button { width: 44px; height: 44px; font-size: 22px; }
+  .runners .rl label { padding: 7px 0; }
+  .legpanel tr[data-legi] td { padding-top: 8px; padding-bottom: 8px; }
+  .lb { padding: 8px 0; }
+}
+@media (max-width: 760px) {
+  .wrap { padding: 12px max(12px, env(safe-area-inset-right)) 40px max(12px, env(safe-area-inset-left)); }
+  .mapview { height: 62vh; height: 64dvh; }
+  .legpanel { max-height: 45vh; }
+  .maptools { gap: 8px; }
+  .maptools label { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .maptools select { max-width: 100%; }
+  .marks select { max-width: 100%; flex: 1 1 200px; }
+  table { font-size: 13px; }
+  th { font-size: 11px; padding: 5px 6px; }
+  td { padding: 4px 6px; }
+  .splits td, .heat td { font-size: 11px; padding: 2px 4px; }
+  .heat td.c { min-width: 28px; }
+  .bar { min-width: 110px; gap: 4px; }
+  .desc { font-size: 13px; }
+  .legend { gap: 8px 12px; font-size: 11px; }
+  .tile .k, .tile .s { font-size: 11px; }
+  .sub { margin-bottom: 10px; }
+  .scroll { -webkit-overflow-scrolling: touch; }
+  .scroll.tall { max-height: 70vh; }
+  .stack b { font-size: 11px; }
+  #tip { max-width: calc(100vw - 16px); white-space: pre-wrap; }
 }
 @media print {
   body::before, .tabs, .bar-top, .topbtns, .mapbtns, .maptools, .star, #tip, #toast { display: none !important; }
@@ -362,7 +415,7 @@ function lxRow(c) {
   if (!cats.length) return "";
   const n = k => lxCount(k) != null ? ` · ${lxCount(k)} מסלולים` : "";
   const marked = ROUTES.size ? ` · <span class="gps">GPS</span> = העלה מסלול`
-    : ` · כדי לסמן מי העלה מסלול: העתיקו את השמות מ-Livelox לקובץ livelox_routes.txt בתיקיית התחרות`;
+    : `<span class="lxnote"> · כדי לסמן מי העלה מסלול: העתיקו את השמות מ-Livelox לקובץ livelox_routes.txt בתיקיית התחרות</span>`;
   return `<div class="lxrow">מסלולי GPS ב-Livelox: ${cats.map(k => lxA(k, `▶ ${esc(k)}${n(k)}`, "lx sm")).join("")}${marked}</div>`;
 }
 
@@ -370,8 +423,10 @@ function lxRow(c) {
 const nameCell = r => `<a href="#" data-runner="${esc(key(r))}">${esc(r.n)}</a>${gps(r)}`;
 const star = r => `<button class="star ${S.marked.has(key(r)) ? "on" : ""}" data-mark="${esc(key(r))}" data-tip="סימון להשוואה בגרפים" style="--mc:${markColor(r) || "var(--muted)"}">${S.marked.has(key(r)) ? "★" : "☆"}</button>`;
 const card = (title, desc, body, extra = "") => `<section class="card"><h2>${title}</h2>${desc ? `<p class="desc">${desc}</p>` : ""}${extra}${body}</section>`;
+const narrow = () => innerWidth < 640;
 function bar(v, max, color, label, tip, px = 140) {
   if (v == null) return "";
+  if (narrow()) px *= 0.55;                     // phones: shorter bars, the numbers stay readable
   const w = max > 0 ? Math.max(0, v) / max * px : 0;
   return `<div class="bar" data-tip="${esc(tip)}"><i style="width:${w.toFixed(1)}px;background:${color}"></i><b>${label}</b></div>`;
 }
@@ -489,7 +544,7 @@ function renderOverview(c) {
 
   // slope chart (official place on the right, clean place on the left)
   const el = $("slope"); if (!fin.length) return;
-  const n = fin.length, rowH = 18, h = n * rowH + 40, w = Math.min(560, W(el)), xl = 150, xr = w - 190;
+  const n = fin.length, rowH = 18, h = n * rowH + 40, w = Math.min(560, W(el)), xr = w - (w < 480 ? 130 : 190), xl = Math.max(40, Math.min(150, xr - 120));
   const Y = p => 26 + (p - 1) * rowH;
   let g = `<text class="ax" x="${xl}" y="12" text-anchor="middle">ללא טעויות</text><text class="ax" x="${xr}" y="12" text-anchor="middle">רשמי</text>`;
   fin.forEach(r => {
@@ -555,7 +610,7 @@ function renderGraph(c) {
      <p class="note">מעבר עם העכבר מדגיש נווט, לחיצה פותחת את הכרטיס שלו. ${S.marked.size ? "נווטים מסומנים בצבע, השאר באפור." : "הצבע לפי קטגוריה; סמנו נווטים כדי להבליט אותם."}</p>`, lxRow(c));
 
   const plot = $("plot");
-  const Wd = W(plot), H = 560, m = { l: 56, r: 150, t: 26, b: 34 };
+  const Wd = W(plot), H = narrow() ? 440 : 560, m = { l: 48, r: narrow() ? 92 : 150, t: 26, b: 34 };
   const iw = Wd - m.l - m.r, ih = H - m.t - m.b, xMax = c.ref[c.ref.length - 1] || 1;
   const pts = shown.map(r => {
     const segs = [[[0, 0]]];
@@ -617,7 +672,7 @@ function renderBump(c) {
     "דירוג הנווטים לפי הזמן המצטבר בכל נקודה (מקום 1 למעלה). עליות וירידות חדות מצביעות על הלגים שהשפיעו על הדירוג.", `<div class="plot" id="bump"></div>
     <p class="note">${S.marked.size ? "נווטים מסומנים בצבע, השאר באפור." : "הצבע לפי קטגוריה; סמנו נווטים כדי להבליט אותם."} מעבר עם העכבר מדגיש נווט.</p>`, lxRow(c));
   const el = $("bump"), n = Math.max(...c.all.flatMap(r => r.legs.map(l => l[4] || 0)), 1);
-  const Wd = W(el), m = { l: 34, r: 170, t: 24, b: 10 }, rowH = Math.max(12, Math.min(20, 520 / n)), H = m.t + m.b + (n - 1) * rowH + 10;
+  const Wd = W(el), m = { l: 30, r: narrow() ? 104 : 170, t: 24, b: 10 }, rowH = Math.max(12, Math.min(20, 520 / n)), H = m.t + m.b + (n - 1) * rowH + 10;
   const iw = Wd - m.l - m.r, X = i => m.l + i / Math.max(1, c.labels.length - 1) * iw, Y = p => m.t + (p - 1) * rowH;
   let g = "";
   for (let p = 1; p <= n; p += n > 30 ? 5 : n > 12 ? 2 : 1) g += `<text class="ax" x="${m.l - 8}" y="${Y(p) + 4}" text-anchor="end">${p}</text><line class="gl" x1="${m.l}" x2="${m.l + iw}" y1="${Y(p)}" y2="${Y(p)}"/>`;
@@ -717,7 +772,7 @@ function renderH2H(c) {
 
   // per-leg difference (diverging) and cumulative advantage; up = A ahead
   const draw = (el, vals, kind) => {
-    const Wd = Math.max(380, el.clientWidth), H = 260, m = { l: 48, r: 10, t: 14, b: 24 }, iw = Wd - m.l - m.r, ih = H - m.t - m.b;
+    const Wd = Math.max(300, el.clientWidth), H = narrow() ? 220 : 260, m = { l: 48, r: 10, t: 14, b: 24 }, iw = Wd - m.l - m.r, ih = H - m.t - m.b;
     const mx = Math.max(10, ...vals.map(v => Math.abs(v ?? 0))), Y = v => m.t + ih / 2 - v / mx * ih / 2, bw = iw / vals.length;
     let g = "";
     [-mx, -mx / 2, 0, mx / 2, mx].forEach(v => g += `<line class="${v ? "gl" : "base"}" x1="${m.l}" x2="${m.l + iw}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${ft(Math.abs(v))}</text>`);
@@ -999,10 +1054,12 @@ function renderInsights(c) {
 
 // ---- 10. map room: the OCAD map, the course from the IOF file and the split data on top of it
 const MAP = D.map;
-const MV = { z: null, z0: null, tx: 0, ty: 0, course: null, mode: "field", focus: null, play: false, t: 0, speed: 60,
-             clock: false, all: false, raf: 0, idle: 0 };
-let MAPURL = null;
-const mapUrl = () => MAPURL || (MAPURL = URL.createObjectURL(new Blob([$("mapsvg").textContent], { type: "image/svg+xml" })));
+const MV = { z: null, Z0: 1, tx: 0, ty: 0, course: null, mode: "field", focus: null, play: false, t: 0, speed: 60,
+             clock: false, all: false, raf: 0, idle: 0, L: null, D: null, dseq: 0, uDrawn: 0 };
+let MAPURL = null, MAPTEXT = null;
+const mapText = () => MAPTEXT || (MAPTEXT = $("mapsvg").textContent);
+const mapUrl = () => MAPURL || (MAPURL = URL.createObjectURL(new Blob([mapText()], { type: "image/svg+xml" })));
+const TOUCH = matchMedia("(pointer: coarse)").matches;
 const PURPLE = "#d4008c", R_CTL = 30;
 function geo(c) {
   const crs = MAP?.courses?.[S.course];
@@ -1012,20 +1069,62 @@ function geo(c) {
   return { crs, pts, len };
 }
 const pace = (t, m) => t && m ? ft(t / (m / 1000)) : "";
-// view transform: screen = (map - box.xy) * z + t; the image is laid out at z0 and scaled by z / z0 while moving
+// View: screen = (map - box.xy) * z + t. Three layers:
+//  - base: the whole map as one image of at most ~4k device pixels, CSS-scaled while panning/zooming (soft but instant)
+//  - detail: when idle, an image of just the visible area (+ margin) rendered at the real zoom - sharp on any phone;
+//    a huge whole-map image would hit the browsers' image size limits (iPhone) and get smeared
+//  - overlay: the course and data SVG, also re-laid out for the visible area so lines and text stay crisp
 function applyView() {
-  const inner = $("mapinner"); if (!inner) return;
-  const [, , bw, bh] = MAP.box;
-  inner.style.width = bw * MV.z0 + "px"; inner.style.height = bh * MV.z0 + "px";
-  inner.style.transform = `translate(${MV.tx}px,${MV.ty}px) scale(${MV.z / MV.z0})`;
+  const base = $("mapbase"); if (!base) return;
+  base.style.transform = `translate(${MV.tx}px,${MV.ty}px) scale(${MV.z / MV.Z0})`;
+  follow($("mapov"), MV.L); follow($("mapdetail"), MV.D);
   clearTimeout(MV.idle);
-  MV.idle = setTimeout(() => { if (MV.z0 !== MV.z) { MV.z0 = MV.z; applyView(); } }, 220);  // re-rasterise sharp when idle
+  MV.idle = setTimeout(commitView, TOUCH ? 260 : 180);
 }
+// keep a layer laid out at an earlier view in place under the current one until it is redrawn
+function follow(el, L) {
+  if (!el || !L) return;
+  const [bx, by] = MAP.box, s = MV.z / L.z;
+  const nx = (L.x0 - bx) * MV.z + MV.tx, ny = (L.y0 - by) * MV.z + MV.ty;
+  el.style.transform = `translate(${nx - L.left}px,${ny - L.top}px) scale(${s})`;
+}
+function place(el, L) {
+  Object.assign(el.style, { left: L.left + "px", top: L.top + "px", width: L.w * L.z + "px", height: L.h * L.z + "px", transform: "" });
+}
+function commitView() {
+  const view = $("mapview"); if (!view || !MAP) return;
+  const vw = view.clientWidth, vh = view.clientHeight, [bx, by, bw, bh] = MAP.box;
+  const mx = 0.5 * vw / MV.z, my = 0.5 * vh / MV.z;               // half a screen of margin on each side
+  const vx0 = bx - MV.tx / MV.z, vy0 = by - MV.ty / MV.z, vx1 = vx0 + vw / MV.z, vy1 = vy0 + vh / MV.z;
+  const covered = L => L && Math.abs(Math.log(MV.z / L.z)) < 0.08 && vx0 >= L.x0 && vy0 >= L.y0 && vx1 <= L.x0 + L.w && vy1 <= L.y0 + L.h;
+  const x0 = Math.max(bx, vx0 - mx), y0 = Math.max(by, vy0 - my);
+  const x1 = Math.min(bx + bw, vx1 + mx), y1 = Math.min(by + bh, vy1 + my);
+  if (x1 <= x0 || y1 <= y0) return;
+  const L = { z: MV.z, x0, y0, w: x1 - x0, h: y1 - y0, left: (x0 - bx) * MV.z + MV.tx, top: (y0 - by) * MV.z + MV.ty };
+  const ov = $("mapov");
+  if (!covered(MV.L)) { place(ov, L); ov.setAttribute("viewBox", `${x0} ${y0} ${L.w} ${L.h}`); MV.L = L; }
+  if (Math.abs(Math.log(sizeU() / (MV.uDrawn || 1))) > 0.12 && MV.ovArgs) drawOverlay(...MV.ovArgs, false);  // symbol sizes follow the zoom
+  const det = $("mapdetail");
+  if (MV.z <= MV.Z0 * 1.1) { det.style.display = "none"; MV.D = null; return; }   // the base image is sharp enough
+  if (covered(MV.D)) return;
+  const seq = ++MV.dseq;
+  const url = URL.createObjectURL(new Blob([mapText().replace(/viewBox="[^"]*"/, `viewBox="${x0} ${y0} ${L.w} ${L.h}"`)], { type: "image/svg+xml" }));
+  const img = new Image();
+  img.onload = () => {
+    const d = $("mapdetail");
+    if (seq !== MV.dseq || !d) { URL.revokeObjectURL(url); return; }
+    const old = d.src; d.src = url; place(d, L); d.style.display = ""; MV.D = L; follow(d, L);
+    if (old.startsWith("blob:")) URL.revokeObjectURL(old);
+  };
+  img.onerror = () => URL.revokeObjectURL(url);
+  img.src = url;
+}
+// map symbols (circles, numbers, runner dots) never shrink below a readable size on screen
+const sizeU = () => Math.max(1, (TOUCH ? 10 : 8.5) / (R_CTL * (MV.z || 1)));
 function fitTo(x0, y0, x1, y1, pad = 1.15) {
   const vw = $("mapview").clientWidth, vh = $("mapview").clientHeight, [bx, by] = MAP.box;
   MV.z = Math.min(vw / ((x1 - x0) * pad || 1), vh / ((y1 - y0) * pad || 1), 4);
   MV.tx = vw / 2 - ((x0 + x1) / 2 - bx) * MV.z; MV.ty = vh / 2 - ((y0 + y1) / 2 - by) * MV.z;
-  if (!MV.z0) MV.z0 = MV.z;
   applyView();
 }
 function fitCourse(g) {
@@ -1095,15 +1194,21 @@ function renderMap(c) {
     $("view").innerHTML = `<section class="card mapcard"><div class="head"><h2 id="maptitle"></h2><div id="mapstats" class="mapstats"></div></div>
       <p class="desc" id="mapdesc"></p><div id="maplx"></div><div id="maptools"></div>
       <div class="mapwrap"><div class="mapview" id="mapview"><div class="maploading" id="maploading">טוען מפה…</div>
-          <div id="mapinner"><img id="mapimg" alt="" draggable="false"><svg id="mapov" preserveAspectRatio="none"></svg></div>
+          <div id="mapbase"><img id="mapimg" alt="" draggable="false"></div>
+          <img id="mapdetail" alt="" draggable="false" style="display:none">
+          <svg id="mapov" preserveAspectRatio="none"></svg>
           <div class="mapbtns"><button data-z="1.4" aria-label="הגדלה">+</button><button data-z="0.714" aria-label="הקטנה">−</button><button data-z="fit" data-tip="כל המסלול" aria-label="כל המסלול">⤢</button></div>
           <div class="maplegend" id="maplegend"></div></div>
         <aside class="legpanel" id="legpanel"></aside></div>
-      <p class="note">גלגלת = זום · גרירה = הזזה · לחיצה על לג (במפה או ברשימה) = זום ללג · ← → = הלג הבא/הקודם${MV.mode === "replay" ? " · רווח = הפעלה/עצירה" : ""}</p></section>`;
+      <p class="note">${TOUCH ? "צביטה = זום · גרירה = הזזה · הקשה על לג (במפה או ברשימה) = זום ללג"
+        : "גלגלת = זום · גרירה = הזזה · לחיצה על לג (במפה או ברשימה) = זום ללג · ← → = הלג הבא/הקודם" + (MV.mode === "replay" ? " · רווח = הפעלה/עצירה" : "")}</p></section>`;
+    // base image: about 1.5 screens of the whole map, never more than ~4k device pixels (phone image limits)
+    const view = $("mapview"), [, , bw, bh] = MAP.box, dpr = devicePixelRatio || 1;
+    MV.Z0 = Math.min(1.5 * Math.max(view.clientWidth / bw, view.clientHeight / bh), 4096 / (bw * dpr), 4096 / (bh * dpr));
+    Object.assign($("mapbase").style, { width: bw * MV.Z0 + "px", height: bh * MV.Z0 + "px" });
     $("mapimg").onload = () => $("maploading")?.remove();
     $("mapimg").src = mapUrl();
-    $("mapov").setAttribute("viewBox", MAP.box.join(" "));
-    MV.built = S.course;
+    MV.built = S.course; MV.L = MV.D = null;
     bindView();
     if (MV.z == null) fitCourse(g); else applyView();
   }
@@ -1116,6 +1221,7 @@ function renderMap(c) {
   if (MV.zoomLeg && g && MV.focus != null) { MV.zoomLeg = false; const a = g.pts[MV.focus], b = g.pts[MV.focus + 1];
     if (a && b) fitTo(Math.min(a[0], b[0]) - 120, Math.min(a[1], b[1]) - 120, Math.max(a[0], b[0]) + 120, Math.max(a[1], b[1]) + 120, 1.1); }
   drawOverlay(c, g, rr, ha, hb);
+  clearTimeout(MV.idle); commitView();                 // lay out the overlay and the sharp layer now, not after a pause
   bindTools(c, g);
 }
 
@@ -1128,20 +1234,20 @@ function ctlPlaces(g) {
   return out;
 }
 // put each number where it collides least with the legs, the other circles and the numbers already placed
-function placeLabels(places, segs, P) {
+function placeLabels(places, segs, P, u = 1) {
   const distSeg = (p, s) => { const [x1, y1, x2, y2] = s, dx = x2 - x1, dy = y2 - y1, L = dx * dx + dy * dy || 1;
     const u = Math.max(0, Math.min(1, ((p[0] - x1) * dx + (p[1] - y1) * dy) / L)); return Math.hypot(p[0] - x1 - u * dx, p[1] - y1 - u * dy); };
   const ANG = [-45, -135, 45, 135, 0, 180, -90, 90].map(a => a * Math.PI / 180), placed = [];
   const others = [...places.map(q => q.xy), ...P.filter(Boolean)];
   return places.map(q => {
-    const r = 62 + (q.seq.join("/").length - 1) * 8;    // wider labels sit a bit further out
+    const r = (62 + (q.seq.join("/").length - 1) * 8) * u;    // wider labels sit a bit further out
     let best = null;
     ANG.forEach((a, k) => {
       const at = [q.xy[0] + r * Math.cos(a), q.xy[1] + r * Math.sin(a)];
       let s = k * 0.05;                                   // prefer the classic up-right position
-      segs.forEach(sg => { const d = distSeg(at, sg); if (d < 34) s += (34 - d) / 4; });
-      others.forEach(o => { if (o !== q.xy) { const d = Math.hypot(at[0] - o[0], at[1] - o[1]); if (d < 60) s += (60 - d) / 3; } });
-      placed.forEach(o => { const d = Math.hypot(at[0] - o[0], at[1] - o[1]); if (d < 70) s += (70 - d) / 2; });
+      segs.forEach(sg => { const d = distSeg(at, sg) / u; if (d < 34) s += (34 - d) / 4; });
+      others.forEach(o => { if (o !== q.xy) { const d = Math.hypot(at[0] - o[0], at[1] - o[1]) / u; if (d < 60) s += (60 - d) / 3; } });
+      placed.forEach(o => { const d = Math.hypot(at[0] - o[0], at[1] - o[1]) / u; if (d < 70) s += (70 - d) / 2; });
       if (!best || s < best.s) best = { s, at };
     });
     placed.push(best.at);
@@ -1149,30 +1255,33 @@ function placeLabels(places, segs, P) {
   });
 }
 
-function drawOverlay(c, g, rr, ha, hb) {
+function drawOverlay(c, g, rr, ha, hb, panel = true) {
   const ov = $("mapov"); if (!g) { ov.innerHTML = ""; return; }
+  MV.ovArgs = [c, g, rr, ha, hb];
+  const u = sizeU(), RC = R_CTL * u, HIT = TOUCH ? 30 : 18;
+  MV.uDrawn = u; ov.style.setProperty("--u", u);
   const P = g.pts, n = c.labels.length;
   let base = "", data = "", top = "", hits = "", legend = "";
   // the printed course: start triangle, numbered circles, finish, connecting lines
-  const seg = i => P[i] && P[i + 1] ? trim(P[i], P[i + 1], i === 0 ? 45 : R_CTL, i + 1 === P.length - 1 ? 40 : R_CTL) : null;
+  const seg = i => P[i] && P[i + 1] ? trim(P[i], P[i + 1], i === 0 ? 45 * u : RC, i + 1 === P.length - 1 ? 40 * u : RC) : null;
   // the purple course always stays readable: in the data views it is a thin line drawn over the coloured bands
   const plain = MV.mode === "course";
   for (let i = 0; i < n; i++) { const s = seg(i); if (!s) continue;
-    base += `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${PURPLE}" ${plain ? 'stroke-width="3.5"' : 'stroke-width="2" vector-effect="non-scaling-stroke"'}
+    base += `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${PURPLE}" ${plain ? `stroke-width="${3.5 * u}"` : 'stroke-width="2" vector-effect="non-scaling-stroke"'}
       opacity="${MV.mode === "replay" ? .6 : 1}" stroke-linecap="round"/>`; }
   const [sx, sy] = P[0] || [0, 0];
-  if (P[0] && P[1]) { const a = Math.atan2(P[1][1] - sy, P[1][0] - sx); const tri = [0, 2.094, 4.189].map(d => `${sx + 45 * Math.cos(a + d)},${sy + 45 * Math.sin(a + d)}`).join(" ");
-    top += `<polygon points="${tri}" fill="none" stroke="${PURPLE}" stroke-width="4"/>`; }
+  if (P[0] && P[1]) { const a = Math.atan2(P[1][1] - sy, P[1][0] - sx); const tri = [0, 2.094, 4.189].map(d => `${sx + 45 * u * Math.cos(a + d)},${sy + 45 * u * Math.sin(a + d)}`).join(" ");
+    top += `<polygon points="${tri}" fill="none" stroke="${PURPLE}" stroke-width="${4 * u}"/>`; }
   const places = ctlPlaces(g);
   const segs = Array.from({ length: n }, (_, i) => seg(i)).filter(Boolean);
-  placeLabels(places, segs, P).forEach(({ q, at }) => {
-    top += `<circle cx="${q.xy[0]}" cy="${q.xy[1]}" r="${R_CTL}" fill="none" stroke="${PURPLE}" stroke-width="3.5"/>
+  placeLabels(places, segs, P, u).forEach(({ q, at }) => {
+    top += `<circle cx="${q.xy[0]}" cy="${q.xy[1]}" r="${RC}" fill="none" stroke="${PURPLE}" stroke-width="${3.5 * u}"/>
       <text x="${at[0].toFixed(0)}" y="${at[1].toFixed(0)}" class="ctlnum" text-anchor="middle" dominant-baseline="central">${q.seq.join("/")}</text>`; });
-  const F = P[P.length - 1]; if (F) top += `<circle cx="${F[0]}" cy="${F[1]}" r="25" fill="none" stroke="${PURPLE}" stroke-width="3.5"/><circle cx="${F[0]}" cy="${F[1]}" r="38" fill="none" stroke="${PURPLE}" stroke-width="3.5"/>`;
+  const F = P[P.length - 1]; if (F) top += `<circle cx="${F[0]}" cy="${F[1]}" r="${25 * u}" fill="none" stroke="${PURPLE}" stroke-width="${3.5 * u}"/><circle cx="${F[0]}" cy="${F[1]}" r="${38 * u}" fill="none" stroke="${PURPLE}" stroke-width="${3.5 * u}"/>`;
 
   const legLine = (i, col, w, tip, extra = "") => { const s = seg(i); if (!s) return;
     data += `<line class="lg${MV.focus === i ? " foc" : ""}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="${col}" stroke-width="${w + 4}" stroke-opacity=".85" vector-effect="non-scaling-stroke" stroke-linecap="round" ${extra}/>`;
-    hits += `<line class="lghit" data-legi="${i}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke-width="18" vector-effect="non-scaling-stroke" data-tip="${esc(tip)}"/>`; };
+    hits += `<line class="lghit" data-legi="${i}" x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke-width="${HIT}" vector-effect="non-scaling-stroke" data-tip="${esc(tip)}"/>`; };
   const fin = c.rows.filter(done);
   const legStat = i => { const lab = c.labels[i];
     const lost = c.rows.reduce((s, r) => s + lostOf(by(r)[lab] || []), 0), nm = fin.filter(r => (by(r)[lab]?.[6] ?? 0) >= BIG).length;
@@ -1191,9 +1300,9 @@ function drawOverlay(c, g, rr, ha, hb) {
       const m = l[6] ?? 0, col = m <= 10 ? MAP_GOOD : mapMist(m);
       legLine(i, col, 6, `${rr.n} · לג ${lab} · ${g.len[i] || "?"} מ׳\nזמן: ${ft(l[1])} · מקום ${l[3] ?? "–"} בלג\nקצב: ${pace(l[1], g.len[i])} לק״מ (הטוב ${pace(c.best[i], g.len[i])})\nטעות: ${ft(l[6])}${m > 0 ? ` · צפוי ${ft(l[1] - m)}` : ""}`);
       const p = P[i + 1]; if (!p) return;
-      if (m >= 15) top += `<circle cx="${p[0]}" cy="${p[1]}" r="${(R_CTL + Math.sqrt(m) * 9).toFixed(0)}" fill="var(--mistake)" fill-opacity=".28" stroke="var(--mistake)" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+      if (m >= 15) top += `<circle cx="${p[0]}" cy="${p[1]}" r="${(RC + Math.sqrt(m) * 9 * u).toFixed(0)}" fill="var(--mistake)" fill-opacity=".28" stroke="var(--mistake)" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
       if (l[3] != null) (ranks[p.join()] = ranks[p.join()] || { p, r: [] }).r.push(l[3]); });
-    Object.values(ranks).forEach(({ p, r }) => top += `<text x="${p[0]}" y="${p[1] + 12}" class="lgrank${Math.min(...r) <= 3 ? " good" : ""}" text-anchor="middle">${r.join("/")}</text>`);
+    Object.values(ranks).forEach(({ p, r }) => top += `<text x="${p[0]}" y="${p[1] + 12 * u}" class="lgrank${Math.min(...r) <= 3 ? " good" : ""}" text-anchor="middle">${r.join("/")}</text>`);
     legend = `<b>${esc(rr.n)}</b><div class="lgnd"><i style="background:${MAP_GOOD}"></i>לג נקי <i style="background:${MAP_RAMP[2]}"></i>טעות <i style="background:${MAP_RAMP[5]}"></i>טעות גדולה</div><span>מספר = מקום בלג · עיגול = זמן שאבד</span>`;
   } else if (MV.mode === "h2h" && ha && hb) {
     const d = c.labels.map(lab => by(ha)[lab]?.[1] != null && by(hb)[lab]?.[1] != null ? by(hb)[lab][1] - by(ha)[lab][1] : null);
@@ -1206,8 +1315,10 @@ function drawOverlay(c, g, rr, ha, hb) {
   }
   if (MV.focus != null) { const s = seg(MV.focus); if (s) data = `<line x1="${s[0]}" y1="${s[1]}" x2="${s[2]}" y2="${s[3]}" stroke="#ffd400" stroke-width="22" stroke-opacity=".55" vector-effect="non-scaling-stroke" stroke-linecap="round"/>` + data; }
   ov.innerHTML = `<g>${data}</g><g>${base}</g><g>${top}</g><g id="mvrun"></g><g>${hits}</g>`;
+  if (legend && !legend.startsWith("<b>")) legend = `<b>מקרא</b>` + legend;
   $("maplegend").innerHTML = legend; $("maplegend").style.display = legend ? "" : "none";
-  legPanel(c, g, rr);
+  $("maplegend").classList.toggle("min", !!MV.legendMin);
+  if (panel) legPanel(c, g, rr);
   if (MV.mode === "replay") drawRunners(c, g);
 }
 
@@ -1235,7 +1346,7 @@ function replayRange(c, g) {
 }
 function drawRunners(c, g) {
   const grp = $("mvrun"); if (!grp || !g) return;
-  const ST = D.starts || {}, [t0, t1] = replayRange(c, g), T = t0 + MV.t;
+  const ST = D.starts || {}, [t0, t1] = replayRange(c, g), T = t0 + MV.t, u = sizeU();
   const hi = replaySet(c), hiKeys = new Set(hi.map(h => key(h.r)));
   let s = "";
   const live = [];
@@ -1247,8 +1358,8 @@ function drawRunners(c, g) {
       const passed = [g.pts[0], ...c.labels.map((lab, i) => by(r)[lab]?.[2] != null && by(r)[lab][2] <= tl ? g.pts[i + 1] : null)].filter(Boolean);
       s += `<polyline points="${[...passed, p].map(q => q.join(",")).join(" ")}" fill="none" stroke="${col}" stroke-width="3" stroke-opacity=".55" vector-effect="non-scaling-stroke"/>`;
     }
-    s += `<circle cx="${p[0].toFixed(0)}" cy="${p[1].toFixed(0)}" r="${big ? 20 : 11}" fill="${col}" stroke="#fff" stroke-width="${big ? 2.5 : 1.5}" vector-effect="non-scaling-stroke" ${tl < 0 ? 'opacity=".25"' : ""}/>`;
-    if (big) { s += `<text x="${(p[0] + 26).toFixed(0)}" y="${(p[1] + 10).toFixed(0)}" class="rname" style="fill:${col}">${esc(r.n)}</text>`;
+    s += `<circle cx="${p[0].toFixed(0)}" cy="${p[1].toFixed(0)}" r="${(big ? 20 : 11) * u}" fill="${col}" stroke="#fff" stroke-width="${big ? 2.5 : 1.5}" vector-effect="non-scaling-stroke" ${tl < 0 ? 'opacity=".25"' : ""}/>`;
+    if (big) { s += `<text x="${(p[0] + 26 * u).toFixed(0)}" y="${(p[1] + 10 * u).toFixed(0)}" class="rname" style="fill:${col}">${esc(r.n)}</text>`;
       live.push({ r, col, k, dn, tl }); }
   };
   if (MV.all) c.rows.forEach(r => { if (!hiKeys.has(key(r))) draw(r, "var(--gray)", false); });
@@ -1337,6 +1448,10 @@ function render() {
 }
 
 document.addEventListener("click", e => {
+  const dsc = e.target.closest(".desc");
+  if (dsc && narrow()) { dsc.classList.toggle("open"); return; }
+  const lgd = e.target.closest(".maplegend");
+  if (lgd && narrow()) { lgd.classList.toggle("min"); MV.legendMin = lgd.classList.contains("min"); return; }
   const t = e.target.closest("[data-view],[data-course],[data-cat],[data-sort],[data-psort],[data-runner],[data-mark],[data-clearmarks],[data-legmap]");
   if (!t) return;
   const d = t.dataset;
@@ -1360,6 +1475,7 @@ document.addEventListener("change", e => {
 });
 let resizeT = 0;
 addEventListener("resize", () => { clearTimeout(resizeT);
+  if (S.view === "map" && $("mapview")) { clearTimeout(MV.idle); MV.L = MV.D = null; MV.idle = setTimeout(commitView, 200); }
   resizeT = setTimeout(() => { if (["graph", "bump", "mist", "insights", "h2h", "overview"].includes(S.view)) render(); }, 150); });
 
 // the view lives in the address (#v=map&c=LONG&r=1759...), so a link opens exactly this view
