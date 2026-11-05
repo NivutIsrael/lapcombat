@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2lv9tfMTcL6cNwIBGZOefBAD+cNaQcWykVtRLkXlBOg=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-35nLefVYHyWXMuKvzAU0qLNfX/ruiB85aWUdKBvByNU=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f4efe3" media="(prefers-color-scheme: light)">
@@ -104,6 +104,8 @@ h1 em { font-style: normal; color: var(--purple); white-space: nowrap; }
 .ctl svg { width: 64px; height: 64px; display: block; }
 .ctl circle { fill: none; stroke: var(--purple); stroke-width: 3; }
 .ctl text { fill: var(--purple); font: 700 calc(24px * var(--ts, 1)) var(--serif); text-anchor: middle; dominant-baseline: central; }
+.ctl text.s2 { font-size: calc(22px * var(--ts, 1)); } .ctl text.s3 { font-size: calc(17px * var(--ts, 1)); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .when { font: 500 calc(13.5px * var(--ts, 1)) var(--sans); color: var(--brown); }
 .comp h3 { font: 700 clamp(24px, 2.8vw, 32px)/1.15 var(--serif); margin: 4px 0 0; }
 .comp h3 small { display: block; font: 500 calc(17px * var(--ts, 1))/1.4 var(--sans); color: var(--ink-2); margin-top: 6px; }
@@ -390,24 +392,30 @@ function compList() {
 // the day before, of and after a competition: its tracking page is offered
 const near = d => { const m = ymd(d); if (!m) return false; const t = Date.UTC(+m[1], m[2] - 1, +m[3]), n = new Date(), now = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
   return Math.abs(now - t) <= 86400000; };
+// each competition's number, in the order they were held (the first is 1) - like the controls of a course
+function numbering(list) {
+  const asc = list.slice().sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999") || String(a.title).localeCompare(String(b.title), "he"));
+  return new Map(asc.map((c, i) => [c.slug, i + 1]));
+}
 function renderComps() {
-$("comps").innerHTML = compList().map((c, i) => { const [name, day] = splitTitle(c.title), m = ymd(c.date);
+const C = compList(), NO = numbering(C);
+$("comps").innerHTML = C.map((c, i) => { const [name, day] = splitTitle(c.title), m = ymd(c.date), no = NO.get(c.slug) || i + 1;
   const live = mkOk(c.mulka) ? `<a class="ext live" href="${esc(c.mulka)}" target="_blank" rel="noopener noreferrer"><span><i></i>תוצאות חיות ב-Mulka</span><b>↗</b></a>` : "";
   const start = (num(c.start) ? `<a class="${c.report === false ? "primary" : ""}" href="${c.slug}/start/"><span>⏱ זמני זינוק · ${num(c.start)}</span><b>←</b></a>` : "")
     + (num(c.start) && near(c.date) ? `<a class="track" href="${c.slug}/track/"><span>📍 מעקב נווטים בשטח</span><b>←</b></a>` : "");
   if (c.live_only || c.report === false) return `<article class="comp soon">
-    <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33">${m ? +m[3] : i + 1}</text></svg></div>
+    <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33" class="${no >= 100 ? "s3" : no >= 10 ? "s2" : ""}">${no}</text></svg></div>
     <div>
-      <div class="when">${esc(longDate(c.date))}</div>
+      <div class="when"><span class="sr">תחרות ${no} · </span>${esc(longDate(c.date))}</div>
       <h3>${esc(name)}${day ? `<small>${esc(day)}</small>` : ""}</h3>
       <p class="soonnote">${start ? "זמני הזינוק כבר כאן" : ""}${start && live ? ", ו" : ""}${live ? `${start ? "ה" : "ה"}תוצאות החיות של המארגנים: מי זינק, מי עוד בשטח ומי סיים` : ""}. הניתוח המלא יעלה כאן אחרי התחרות.</p>
     </div>
     <nav class="go" aria-label="${esc(name)}">${start}${live}</nav>
   </article>`;
   return `<article class="comp">
-    <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33">${m ? +m[3] : i + 1}</text></svg></div>
+    <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33" class="${no >= 100 ? "s3" : no >= 10 ? "s2" : ""}">${no}</text></svg></div>
     <div>
-      <div class="when">${esc(longDate(c.date))}</div>
+      <div class="when"><span class="sr">תחרות ${no} · </span>${esc(longDate(c.date))}</div>
       <h3>${esc(name)}${day ? `<small>${esc(day)}</small>` : ""}</h3>
       <dl class="facts"><div><dt>מסלולים</dt><dd>${c.courses.length}</dd></div><div><dt>נווטים</dt><dd>${num(c.runners)}</dd></div><div><dt>סיימו</dt><dd>${num(c.finished)}</dd></div></dl>
       ${c.updated ? `<div class="upd"><i></i>עודכן ${esc(fupd(c.updated))}</div>` : ""}
