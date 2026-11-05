@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GK95sB/IW5D0audgLvvP5U6dRtfS0OUgz8ORGqUcz3Y=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MN9Ym8fBAQbSJ36T57kGir5BBp2spiI1qc1EFMj5QcI=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -225,7 +225,7 @@ tr.tt-hide { display: none; }
   </main>
 </div>
 <script>
-const D = {"repo":"NivutIsrael/lapcombat","data_repo":"NivutIsrael/lapcombat-data","live":{"v":1,"comps":{}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 2026/10/23","date":"2026-10-23"}]};
+const D = {"repo":"NivutIsrael/lapcombat","data_repo":"NivutIsrael/lapcombat-data","live":{"v":1,"comps":{"odem-2-24-10-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId=202610247pasGNIW-sjvenGdSg9Kcg","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24","updated":"2026-11-05T20:10:42Z","by":"NivutIsrael"}}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 2026/10/23","date":"2026-10-23"}]};
 if (window.top !== window.self) { document.body.textContent = ""; throw new Error("framed"); }   // never inside another site's frame
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -252,6 +252,15 @@ async function gh(path, opt = {}) {
   if (!r.ok) { const e = new Error(j?.message || String(r.status)); e.status = r.status; throw e; }
   return j;
 }
+// can this key write there? GitHub's "push" says what the account may do, not the key (a fine-grained key may be read-only,
+// or not cover the repository): a blob that nothing points to is harmless, and only a key with write access can make it
+async function canWrite(repo) {
+  try { await gh(`/repos/${repo}/git/blobs`, { method: "POST", body: JSON.stringify({ content: "", encoding: "utf-8" }) }); return true; }
+  catch (e) { if (e.status === 401) throw e; return false; }
+}
+const KEYFIX = repos => `במפתח ב-GitHub (<a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener noreferrer">ההגדרות שלו</a> ← Edit):
+  ב-Repository access לבחור את ${repos.map(r => `<code>${esc(r)}</code>`).join(" ו-")}, וב-Permissions לתת <b>Contents: Read and write</b>${repos.length > 1 ? " ו-<b>Actions: Read-only</b>" : ""}.
+  אחרי Update – יציאה וכניסה מחדש עם אותו מפתח.`;
 async function readLive() {      // the file as it is on the site now, and its version (for a safe save)
   try { const f = await gh(`/repos/${REPO}/contents/live.json?ref=main`); return { sha: f.sha, live: clean(JSON.parse(b64dec(f.content))) }; }
   catch (e) { if (e.status === 404) return { sha: null, live: {} }; throw e; }
@@ -268,12 +277,15 @@ async function change(key, entry, what) {
   }
 }
 const say = (el, text, ok) => { el.textContent = text; el.className = "msg " + (ok ? "ok" : "err"); };
-const why = e => e.status === 401 ? "המפתח לא תקין או שפג תוקפו" : e.status === 403 || e.status === 404 ? "למפתח אין הרשאת כתיבה לאתר" : "שגיאה: " + e.message;
+const why = e => e.status === 401 ? "המפתח לא תקין או שפג תוקפו" : e.status === 403 || e.status === 404 ? `למפתח אין הרשאת כתיבה (GitHub: ${e.message})` : "שגיאה: " + e.message;
 async function login() {
   const m = $("lmsg"); say(m, "בודק מול GitHub…", true);
   try {
     const me = await gh("/user"), repo = await gh(`/repos/${REPO}`);
     if (!repo.permissions || !repo.permissions.push) { say(m, `לחשבון ${me.login} אין הרשאת כתיבה לאתר – בעל האתר צריך לאשר אותו כשותף.`); return; }
+    if (!(await canWrite(REPO))) {     // the account is approved, the key is not enough: say what to change in it
+      m.className = "msg err"; m.innerHTML = `החשבון ${esc(me.login)} מאושר, אבל למפתח הזה אין הרשאת כתיבה לאתר. ${KEYFIX(D.data_repo ? [REPO, D.data_repo] : [REPO])}`;
+      TOKEN = ""; return; }
     ME = me.login;
     try { sessionStorage.setItem("lc-admin", TOKEN); } catch (e) {}
     LIVE = (await readLive()).live;
@@ -333,6 +345,10 @@ const MB = 1024 * 1024;
 async function dataInit() {
   if (!DATA) return;
   try { const r = await gh(`/repos/${DATA}`); if (!r.permissions || !r.permissions.push) return; } catch (e) { return; }   // no access: no upload
+  if (!(await canWrite(DATA))) {     // the owner, with a key that does not reach the private files
+    $("upcard").hidden = false; $("ugo").disabled = true;
+    $("umsg").className = "msg err"; $("umsg").innerHTML = `כדי להעלות קבצים המפתח צריך גם את המאגר הפרטי. ${KEYFIX([DATA])}`;
+    return; }
   let items = [];
   try { items = await gh(`/repos/${DATA}/contents/?ref=main`); } catch (e) {}
   const dirs = (Array.isArray(items) ? items : []).filter(x => x.type === "dir" && !x.name.startsWith(".")).map(x => x.name).sort().reverse();
