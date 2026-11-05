@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-8Dbv5hp91CFfxoZj4+6jarHI7L/JLqjqDfxH8pa8dVE=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מעקב נווטים בשטח</title>
+<style>
+:root { color-scheme: light; --paper: #f4efe3; --paper-2: #ebe4d2; --ink: #1d1b17; --ink-2: #4c473d; --muted: #6f6858; --rule: #d9cfb8; --rule-2: #bdb196;
+  --purple: #b5007a; --green: #2f6b29; --red: #b3261e; --amber: #8a5a00; --surface: #fffdf7; --page: var(--paper); --grid: var(--rule); --ring: rgba(29,27,23,.18);
+  --accent: var(--purple); --chip: var(--paper-2); --late: #fde3e1; --outbg: #fff4d6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --paper: #13120f; --paper-2: #1c1a15; --ink: #ede6d4; --ink-2: #c3baa6;
+  --muted: #a39a86; --rule: #312d25; --rule-2: #4b4538; --purple: #ff5cbf; --green: #84c070; --red: #ff8a80; --amber: #f3c15f; --surface: #1c1a15;
+  --ring: rgba(237,230,212,.2); --on-accent: #13120f; --late: #4a1d1a; --outbg: #3d3214; } }
+:root[data-contrast="high"] { --paper: #fff; --ink: #000; --ink-2: #111; --muted: #333; --rule: #6e6e6e; --rule-2: #333; --surface: #fff; --purple: #8a005c; --ring: #333; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.55 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
+header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1.5px solid var(--ink); padding-bottom: 10px; }
+header a { color: var(--ink-2); } .hb { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+button { font: inherit; font-weight: 600; border-radius: 8px; padding: 7px 12px; cursor: pointer; border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink); }
+button.pri { background: var(--ink); color: var(--paper); border-color: var(--ink); } button:disabled { opacity: .5; }
+#a11yb { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; } #a11yb svg { width: 17px; height: 17px; }
+.kicker { margin: 18px 0 2px; color: var(--red); font-weight: 700; letter-spacing: .06em; font-size: calc(13px * var(--ts, 1)); }
+h1 { margin: 0; font-size: calc(26px * var(--ts, 1)); line-height: 1.25; } .sub { color: var(--ink-2); margin: 6px 0 12px; }
+.sum { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.sum span { background: var(--surface); border: 1px solid var(--rule-2); border-radius: 10px; padding: 8px 12px; } .sum b { font-size: calc(20px * var(--ts, 1)); display: block; line-height: 1.1; }
+.sum .late { border-color: var(--red); color: var(--red); } .sum .out { border-color: var(--amber); }
+#q { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 8px; background: var(--surface); color: var(--ink); margin: 0 0 12px; }
+section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin: 0 0 6px; } h2 small { color: var(--muted); font-weight: 400; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.rows li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; background: var(--surface); border: 1px solid var(--rule);
+           border-radius: 10px; padding: 9px 12px; margin: 0 0 6px; }
+.rows li.late { background: var(--late); border-color: var(--red); } .rows li.out { background: var(--outbg); }
+.rows .n { font-weight: 700; } .rows .m { color: var(--ink-2); font-size: calc(13px * var(--ts, 1)); grid-column: 1; } .rows .x { grid-row: 1 / span 2; grid-column: 2; text-align: left; }
+.rows .x b { display: block; font-variant-numeric: tabular-nums; } .rows .x small { color: var(--muted); }
+.rows li.late .x b { color: var(--red); } .badge { display: inline-block; font-size: calc(11.5px * var(--ts, 1)); font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-inline-start: 6px; }
+.badge.man { background: var(--chip); color: var(--ink-2); } .badge.late { background: var(--red); color: #fff; }
+.acts { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; } .acts button { padding: 6px 12px; font-size: calc(13.5px * var(--ts, 1)); }
+.acts .back { border-color: var(--green); color: var(--green); } .acts .dns { color: var(--ink-2); }
+details { margin: 14px 0 0; } summary { cursor: pointer; font-weight: 700; font-size: calc(16px * var(--ts, 1)); }
+.note { color: var(--muted); font-size: calc(13px * var(--ts, 1)); margin-top: 16px; } .warn { background: var(--surface); border-inline-start: 4px solid var(--red); padding: 10px 14px; border-radius: 6px; margin: 0 0 12px; }
+#admin { background: var(--surface); border: 1px solid var(--rule-2); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; }
+#admin label { display: block; font-weight: 600; font-size: calc(13.5px * var(--ts, 1)); margin: 6px 0 4px; } #admin input { font: inherit; width: 100%; padding: 9px 10px; border: 1px solid var(--rule-2); border-radius: 8px; background: var(--paper); color: var(--ink); }
+.msg { margin: 8px 0 0; font-weight: 600; } .msg.ok { color: var(--green); } .msg.err { color: var(--red); }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+
+/* accessibility toolbar: text size (every font size is calc(px * --ts), see scalable()), contrast and reading aids */
+:root[data-text="l"] { --ts: 1.15; } :root[data-text="xl"] { --ts: 1.3; }
+.a11y { position: fixed; z-index: 45; width: 360px; max-width: calc(100vw - 16px); max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain;
+        background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        padding: 12px 14px 14px; direction: rtl; text-align: right; font-size: calc(14px * var(--ts, 1)); }
+.a11yh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: calc(16px * var(--ts, 1)); }
+.a11yx { font: inherit; background: none; border: 0; color: var(--ink-2); cursor: pointer; padding: 4px 8px; }
+.a11yl { font-size: calc(12.5px * var(--ts, 1)); color: var(--muted); margin-bottom: 6px; }
+.a11ys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.a11ys button { font-family: inherit; font-weight: 600; padding: 9px 4px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.2; }
+.a11ys button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.a11yg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.a11yf { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; font: inherit; padding: 9px 10px; border: 1px solid var(--ring);
+         border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.a11yf b { font-size: calc(13.5px * var(--ts, 1)); } .a11yf small { font-size: calc(11.5px * var(--ts, 1)); color: var(--muted); line-height: 1.35; }
+.a11yf[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+.a11yf[aria-pressed="true"] b::before { content: "✓ "; color: var(--accent); }
+@media (pointer: coarse) { .a11yf.fine { display: none; } }
+.a11yreset { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 8px; padding: 7px 12px; cursor: pointer; margin-bottom: 6px; }
+.a11ystmt { font-size: calc(13px * var(--ts, 1)); line-height: 1.6; color: var(--ink-2); border-top: 1px solid var(--grid); padding-top: 4px; }
+.a11ystmt summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 6px 0; }
+.a11ystmt p { margin: 6px 0; } .a11ystmt ul { margin: 4px 0; padding-inline-start: 18px; } .a11ystmt .upd { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+@media (max-width: 640px) {
+  .a11y { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh; border-radius: 16px 16px 0 0;
+          padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); } }
+/* the reading aids (classes on <html>) */
+:root.a-gray :is(.wrap > header, header.mast, #tabs, #pgtop, .ctxbar, main, footer, .bnav, .bar-top:not(.open)) { filter: grayscale(1); }
+:root.a-links a { background: #fff200 !important; color: #000 !important; text-decoration: underline !important; text-underline-offset: 3px; outline: 1px solid #000; border-radius: 2px; }
+:root.a-font, :root.a-font * { font-family: Arial, Helvetica, sans-serif !important; }
+:root.a-space :is(p, li, td, th, label, dd, dt, small, .desc, .note, .status, .lead) { line-height: 1.9 !important; letter-spacing: .05em !important; word-spacing: .15em !important; }
+:root.a-focus :focus { outline: 3px solid #ffbf00 !important; outline-offset: 2px !important; box-shadow: 0 0 0 6px #000 !important; }
+:root.a-motion *, :root.a-motion *::before, :root.a-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+:root.a-cursor, :root.a-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M6 3v34l9-8.5 6.5 14 6.5-3-6.5-13.5H34z' fill='%23000' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 6 3, auto !important; }
+/* the privacy notice: no cookies, only the preferences in this browser */
+.notice { position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 780px; margin: 0 auto;
+          background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.22);
+          padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; direction: rtl; text-align: right; font-size: calc(13.5px * var(--ts, 1)); }
+.notice p { margin: 0; flex: 1 1 300px; line-height: 1.5; }
+.notice .nb { display: flex; gap: 8px; flex-wrap: wrap; }
+.notice button { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--accent); }
+.notice .ok { background: var(--accent); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
+/* "skip to the content": the first stop of the keyboard */
+.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--accent); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
+        font-weight: 700; text-decoration: none; }
+.skip:focus { top: 10px; }
+/* tables: sort by a header click, ▾ opens sort + filter (as in Excel), a bar above the table resets it */
+th.tt { cursor: pointer; user-select: none; -webkit-user-select: none; }
+th.tt:hover { color: var(--ink); }
+th.tt-asc, th.tt-desc { color: var(--accent); }
+.ttb { font: calc(10px * var(--ts, 1))/1 system-ui, sans-serif; margin-inline-start: 4px; padding: 3px 4px; border: 1px solid var(--ring); border-radius: 4px;
+       background: var(--surface); color: var(--muted); cursor: pointer; vertical-align: middle; }
+.ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
+.ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
+tr.tt-hide { display: none; }
+.ttbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; padding: 6px 10px; border-radius: 8px;
+         font-size: calc(12px * var(--ts, 1)); color: var(--ink-2); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.ttbar[hidden] { display: none; }
+.ttbar button { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-inline-start: auto; }
+.ttbar button:hover { background: var(--accent); color: var(--on-accent, #fff); }
+.ttpop { position: fixed; z-index: 40; width: 270px; max-width: calc(100vw - 16px); background: var(--surface); color: var(--ink);
+         border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 10px; font-size: calc(13px * var(--ts, 1));
+         display: flex; flex-direction: column; gap: 6px; direction: rtl; text-align: right; }
+.ttpop .tthead small { display: block; color: var(--muted); font-size: calc(11px * var(--ts, 1)); font-weight: 400; }
+.ttpop .ttsort { font: inherit; text-align: right; background: none; border: 0; border-radius: 6px; padding: 7px 8px; color: var(--ink); cursor: pointer; }
+.ttpop .ttsort:hover, .ttpop .ttsort.on { background: var(--chip); }
+.ttpop .ttsort.on { font-weight: 600; color: var(--accent); }
+.ttpop .ttsep { border-top: 1px solid var(--grid); }
+.ttpop .ttq { font: inherit; padding: 7px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--page); color: var(--ink); width: 100%; }
+.ttpop .ttall, .ttpop .ttfoot { display: flex; gap: 6px; }
+.ttpop .ttall button, .ttpop .ttfoot button { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px;
+                                             background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.ttpop .ttfoot .ttok { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ttpop .ttfoot button:disabled { opacity: .45; cursor: default; }
+.ttpop .ttlist { max-height: 250px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 6px; padding: 2px 8px; overscroll-behavior: contain; }
+.ttpop .ttlist label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+.ttpop .ttlist label[hidden] { display: none; }
+.ttpop .ttlist span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ttpop .ttlist small { color: var(--muted); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.ttpop input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; flex: none; margin: 0; }
+@media (pointer: coarse) { .ttb { font-size: calc(12px * var(--ts, 1)); padding: 6px 7px; } .ttpop .ttlist label { padding: 9px 0; } .ttpop .ttsort { padding: 10px 8px; }
+  .ttpop .ttall button, .ttpop .ttfoot button { padding: 10px 8px; } .ttbar button { padding: 8px 12px; } }
+@media (max-width: 640px) {   /* phones: a sheet at the bottom of the screen */
+  .ttpop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh;
+           border-radius: 14px 14px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); }
+  .ttpop .ttlist { max-height: 42vh; } }
+.cd-only, .cdtools { display: none; }
+.ttpop .ttcols { display: flex; flex-direction: column; max-height: 62vh; overflow-y: auto; overscroll-behavior: contain; }
+.ttpop .ttcol { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: inherit; font-size: calc(15px * var(--ts, 1)); text-align: right;
+                background: none; border: 0; border-top: 1px solid var(--grid); padding: 12px 4px; color: var(--ink); cursor: pointer; }
+.ttpop .ttcol small { flex: none; color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+.ttpop .ttcol small b { color: var(--accent); font-weight: 600; }
+/* phones: a table marked "cards" shows each row as a card - rank, name and the main value on top, the other
+   columns as labelled details below; one "sort and filter" button above it lists every column */
+@media (max-width: 640px) {
+  table.cards, table.cards tbody, table.cards tfoot { display: block; }
+  table.cards thead { display: none; }
+  .cdtools { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--grid); }
+  .cdtools button { font: inherit; font-size: calc(14px * var(--ts, 1)); font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                    border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .cdtools small { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+  table.cards .cd-only { display: inline; }
+  table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
+  table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
+  table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }
+  table.cards td.cd-main { order: 3; font-size: calc(16px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-star { order: 4; }
+  table.cards td.cd-full { flex-basis: 100%; }
+  table.cards td.cd-hide, table.cards td:empty { display: none; }
+  table.cards .bar { min-width: 0; display: inline; } table.cards .bar i { display: none; } table.cards .bar b { font-weight: inherit; }
+  table.cards tr.tt-hide { display: none; }
+  table.cards tfoot tr { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 10px 2px; }
+  table.cards tfoot td { display: block; border: 0; padding: 0; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#" data-skip="#main">דלג לתוכן</a>
+<div class="wrap">
+  <header><a href="../../">← כל התחרויות</a>
+    <div class="hb"><a href="../start/">זמני זינוק</a><button type="button" id="adm">כניסת מנהלים</button>
+      <button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <span>נגישות</span></button></div></header>
+  <main id="main">
+    <p class="kicker">מעקב נווטים בשטח</p><h1 id="ttl"></h1><p class="sub" id="sub"></p>
+    <div id="admin" hidden>
+      <div id="alog"><label for="tok">מפתח הגישה ב-GitHub (מנהלים מאושרים)</label><input id="tok" type="password" dir="ltr" autocomplete="off">
+        <div style="margin-top:8px"><button type="button" class="pri" id="go">כניסה</button></div></div>
+      <div id="atools" hidden><b id="who"></b> · סימון ״חזר״ ליד כל נווט, או העלאת הייצוא העדכני ממולקה (.lxm או IOF XML):
+        <label for="mf">קובץ מ-Mulka</label><input id="mf" type="file" accept=".lxm,.xml"></div>
+      <p class="msg" id="amsg" role="status"></p>
+    </div>
+    <p class="warn">מידע עזר בלבד. הרשימה הקובעת היא של המארגנים. נווט שלא חזר? פנו מיד למזכירות התחרות.</p>
+    <div class="sum" id="sum" aria-live="polite"></div>
+    <input id="q" type="search" placeholder="חיפוש נווט, קטגוריה או מועדון…" aria-label="חיפוש" autocomplete="off">
+    <div id="list"></div>
+    <p class="note" id="src"></p>
+  </main>
+</div>
+<script>
+const D = {"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24","repo":"NivutIsrael/lapcombat","rows":[[30600,"גרדי עינת","D14A","עמק חפר","Short"],[30600,"עבודי נועה","D21B","גליל","Medium_B"],[30600,"שי תומר","H12","מנשה","Shorty"],[30600,"זורע טל","H21A","תל אביב","Long"],[30600,"שפירא נעם","H21B","חבל מודיעין","Medium_Plus"],[30600,"כהן שלומי","H55","גליל","Medium_A"],[30600,"וידר יואב","H70","טכניון כרמל","Short_Plus_Men"],[30600,"פרידמן אלכס","H85","תל אביב","Gold"],[30600,"דובדבני אדר","בינוני","יזרעאל","Medium_Youth"],[30600,"קינן איל","קצר פלוס","גליל","Short_Plus_Women"],[30660,"רן רות","D60","גליל","Short_Plus_Women"],[30660,"פרוינד אור","H45","טכניון כרמל","Medium_B"],[30660,"בר-גד יזהר","H50A","תל אביב","Medium_A"],[30660,"גרינברג מיקי","H50B","גליל","Short_Plus_Men"],[30720,"יזרעאלי יהודה","H21C","יזרעאל","Medium_B"],[30720,"מלץ אבי","H40","השרון","Medium_Plus"],[30720,"איל חנן","H60A","גליל","Medium_A"],[30720,"צפורי אבנר","H60B","מנשה","Short_Plus_Men"],[30720,"Vardi Nitsan","קצר פלוס","","Short_Plus_Women"],[30780,"גרינברג דפי","D21C","גליל","Short_Plus_Women"],[30780,"שי נדב","H12","מנשה","Shorty"],[30780,"קוגן מתן","H16A","גליל","Medium_Youth"],[30780,"זורע אלון","H21A","אסא טכניון חיפה","Long"],[30780,"טייטר ארתור","H50A","תל אביב","Medium_A"],[30780,"אביטל עפר","H70","גליל","Short_Plus_Men"],[30840,"צפורי דרור","H60A","מנשה","Medium_A"],[30900,"מלאכי יאיר-ים","H50A","גליל","Medium_A"],[30900,"hamburger anat","בינוני","","Medium_Youth"],[30960,"יעקבי אלישע","H60A","השרון","Medium_A"],[31020,"משולם אופיר","D18B","תל אביב","Medium_Youth"],[31140,"Rigbi Liron","בינוני","","Medium_Youth"],[31260,"מנור איתי","H21A","חבל מודיעין","Long"],[31320,"סופר אסף","בינוני","","Medium_Youth"],[31380,"גפן אביגיל","D14A","טכניון כרמל","Short"],[31380,"זזינסקי אנריקו","H65","מנשה","Short_Plus_Men"],[31440,"יעקבי יערה","D12","חבל מודיעין","Shorty"],[31440,"גרדי דן","H16A","עמק חפר","Medium_Youth"],[31440,"פדוסין אנטון","H35A","תל אביב","Long"],[31440,"גפן גוש","H35B","טכניון כרמל","Medium_B"],[31440,"ליפוביץ אלכס","H40","עמק חפר","Medium_Plus"],[31440,"פדוסין ולדימיר","H70","תל אביב","Short_Plus_Men"],[31500,"בר יהודה יונתן","H65","מנשה","Short_Plus_Men"],[31500,"אבוגני שמואל","H75","גליל","Gold"],[31500,"בר קוסטיה","קצר","","Short"],[31500,"יעקבי ענבר","קצרצר","חבל מודיעין","kids"],[31560,"פדוסין מריקה","D16A","תל אביב","Medium_Youth"],[31560,"יעקבי יוני","H45","חבל מודיעין","Medium_B"],[31560,"מינסקי אבי","H55","השרון","Medium_A"],[31560,"פרישפלס ג'ים","H70","גליל","Short_Plus_Men"],[31620,"גילה אייל","H21A","יזרעאל","Long"],[31800,"נחושתן ירון","H60A","חבל מודיעין","Medium_A"],[31860,"ארד שחר-3446","H50A","ראשון לציון","Medium_A"],[31920,"בר-גד יואב","H18A","תל אביב","Medium_Plus"],[31920,"טל אביב","H55","תל אביב","Medium_A"],[31980,"גלוזשטיין לודמילה","D35","ראשון לציון","Medium_B"],[31980,"זילברשטיין דרור","H60A","יזרעאל","Medium_A"],[32040,"טויג ענבל","D16A","חבל מודיעין","Medium_Youth"],[32040,"טל-מסינג טיאן","D21B","תל אביב","Medium_B"],[32040,"רוטשטיין חגית","D55","תל אביב","Short_Plus_Women"],[32040,"קוזלוב אלכסנדר","H40","גליל","Medium_Plus"],[32040,"ויסמן שאול","H55","חבל מודיעין","Medium_A"],[32100,"ויסמן עדי","D50","חבל מודיעין","Short_Plus_Women"],[32100,"ברונשטיין אופיר","H12","מנשה","Shorty"],[32100,"ורולקר הראל","H21C","אסא טכניון חיפה","Medium_B"],[32100,"סמירנוב אלכסנדר","H50A","גליל","Medium_A"],[32100,"רן שמאי","H65","גליל","Short_Plus_Men"],[32100,"אוחיון עידו","קצר","","Short"],[32160,"סגל יערה","D16A","תל אביב","Medium_Youth"],[32160,"ברקוביץ מיכל","D21B","מנשה","Medium_B"],[32160,"יסעור ענבר","D55","יזרעאל","Short_Plus_Women"],[32160,"לנס רותם","H21B","יזרעאל","Medium_Plus"],[32160,"שרון דניאל","H35A","ראשון לציון","Long"],[32160,"עמר איציק","H60A","יזרעאל","Medium_A"],[32220,"נגב רותם","D12","חבל מודיעין","Shorty"],[32220,"קוזלוב אלכסנדרה","D35","תל אביב","Medium_B"],[32220,"פרגר בן נון אלה","D45","יזרעאל","Short_Plus_Women"],[32220,"פלדמן שגיב","H14A","יזרעאל","Short"],[32220,"איגנטוב אנדרי","H50A","חבל מודיעין","Medium_A"],[32220,"שמואלי אשר","H70","יזרעאל","Short_Plus_Men"],[32220,"רוטשילד אביגיל","קצרצר","מנשה","kids"],[32280,"סבוראי עופר","D18A","מנשה","Medium_B"],[32280,"ברונשטיין אלון","H16A","מנשה","Medium_Youth"],[32280,"גלוזשטיין ולרי","H50A","ראשון לציון","Medium_A"],[32280,"לוי יוסי","H65","חבל מודיעין","Short_Plus_Men"],[32280,"בן דור-יסעור אורי","ילדים זינוק","חבל מודיעין","kids"],[32340,"רגב יעל","D65","חבל מודיעין","Short_Plus_Women"],[32340,"סגל עופר","H12","תל אביב","Shorty"],[32340,"גריידי מלאכי","H21C","אסא טכניון חיפה","Medium_B"],[32340,"כהנא איתן","H40","השרון","Medium_Plus"],[32340,"צ'רני הלל","H70","השרון","Short_Plus_Men"],[32340,"מינסקי מנחם","H80","השרון","Gold"],[32340,"מיליצר אורלי","ילדות זינוק","יזרעאל","kids"],[32400,"פינצ'וק אירינה","D35","יזרעאל","Medium_B"],[32400,"מאיר ענת","D50","מנשה","Short_Plus_Women"],[32400,"גורליק נאדזדה","D75","גליל","Gold"],[32400,"כהנא אלון","H21A","השרון","Long"],[32400,"יודפת עופר","H60A","חבל מודיעין","Medium_A"],[32400,"אוסטר שמואל","H65","גליל","Short_Plus_Men"],[32400,"פרלמן מידן זהר","קצר","חבל מודיעין","Short"],[32400,"רגבי תום","קצרצר","השרון","kids"],[32460,"פרלמן מידן עדן","D12","חבל מודיעין","Shorty"],[32460,"שטיינברג עדי","D16A","חבל מודיעין","Medium_Youth"],[32460,"יעקבי עופרי","D21A","חבל מודיעין","Medium_Plus"],[32460,"איגנטוב אנה","D55","חבל מודיעין","Short_Plus_Women"],[32460,"ברון איתי","H21C","מנשה","Medium_B"],[32460,"הראל דרור","H50B","חבל מודיעין","Short_Plus_Men"],[32460,"סער יצחק","H55","חבל מודיעין","Medium_A"],[32460,"דביר יונתן","H80","ראשון לציון","Gold"],[32460,"אילגץ' אלינה","ילדות זינוק","תל אביב","kids"],[32520,"סגל נגה","D16B","תל אביב","Short"],[32520,"שצרבנין טטיאנה","D50","גליל","Short_Plus_Women"],[32520,"רגב שמואל","H60A","חבל מודיעין","Medium_A"],[32520,"בלגלי רן","H65","השרון","Short_Plus_Men"],[32520,"ריפל ערן","קצרצר","","kids"],[32580,"זילברשטיין נעמה","D60","יזרעאל","Short_Plus_Women"],[32580,"נגב אשל","H12","חבל מודיעין","Shorty"],[32580,"גזברי איתמר","H16A","מנשה","Medium_Youth"],[32580,"יעקבי ארם","H35A","השרון","Long"],[32580,"לוי שגיא","H40","טכניון כרמל","Medium_Plus"],[32580,"אס אורי","H45","טכניון כרמל","Medium_B"],[32580,"טויג רון","H50B","חבל מודיעין","Short_Plus_Men"],[32580,"גרנט עופר","H55","מנשה","Medium_A"],[32580,"בן דור - יסעור מאיה","ילדות זינוק","חבל מודיעין","kids"],[32640,"זריהן בר","D35","גליל","Medium_B"],[32640,"לוי עדי","D50","חבל מודיעין","Short_Plus_Women"],[32640,"לוי שגיא","H14A","חבל מודיעין","Short"],[32640,"בוכבינדר מודי","H60A","השרון","Medium_A"],[32640,"פרנקו אהרון","H65","חבל מודיעין","Short_Plus_Men"],[32700,"עופר איילה","D16A","מנשה","Medium_Youth"],[32700,"שחר-נוימן ענת","D55","מנשה","Short_Plus_Women"],[32700,"לנס עידן","H21B","יזרעאל","Medium_Plus"],[32700,"שחף אסף","H35B","מנשה","Medium_B"],[32700,"שגב תומר","H50B","יזרעאל","Short_Plus_Men"],[32700,"ארז נחשון","H55","ראשון לציון","Medium_A"],[32760,"שמואלי נורית","D65","יזרעאל","Short_Plus_Women"],[32760,"ענבר עמית","H21C","גליל","Medium_B"],[32760,"וולשטיין דן","H60A","מנשה","Medium_A"],[32820,"איגנטוב אידה","D21B","חבל מודיעין","Medium_B"],[32820,"מסינג ענת סיפורים","D55","תל אביב","Short_Plus_Women"],[32820,"קורוטייב מיכאיל","H40","תל אביב","Medium_Plus"],[32820,"גנדלמן אייל","H50A","השרון","Medium_A"],[32880,"ורבין אסיה","D45","תל אביב","Short_Plus_Women"],[32880,"שכטר גיל","H55","חבל מודיעין","Medium_A"],[32940,"קלקשטיין נדב","H21B","השרון","Medium_Plus"],[32940,"ליאור איל","H55","חבל מודיעין","Medium_A"],[33000,"לרדו שירה","D21C","אסא ירושלים","Short_Plus_Women"],[33000,"ענבר ליאור","בינוני","גליל","Medium_Youth"],[33060,"פרי גל","D40","גליל","Short_Plus_Women"],[33060,"ויינר יגאל","H21B","יזרעאל","Medium_Plus"],[33060,"גול אפק","H60A","תל אביב","Medium_A"],[33120,"שקדי נור","D16A","תל אביב","Medium_Youth"],[33120,"ברקוביץ מרב","D60","טכניון כרמל","Short_Plus_Women"],[33120,"בולוטני מיכאל","H50A","גליל","Medium_A"],[33120,"קלקשטיין ניר","H50B","השרון","Short_Plus_Men"],[33180,"רביד איריס","D50","תל אביב","Short_Plus_Women"],[33180,"משלי ליסה","D70","חבל מודיעין","Gold"],[33180,"סגל זף","H40","תל אביב","Medium_Plus"],[33180,"ביאר אביחי","H60A","יזרעאל","Medium_A"],[33240,"אליאס מעין","D21B","תל אביב","Medium_B"],[33240,"נתיב רות","D60","חבל מודיעין","Short_Plus_Women"],[33240,"פרוינד תם","H12","טכניון כרמל","Shorty"],[33240,"קינן אורי","H16A","גליל","Medium_Youth"],[33240,"נוסבוים איתם","H21A","אסא ירושלים","Long"],[33240,"הולנדר גדעון","H60A","תל אביב","Medium_A"],[33240,"בן שטרית מאיר","H70","יזרעאל","Short_Plus_Men"],[33240,"גרין וורן","H75","השרון","Gold"],[33300,"ריינהרץ לירון","D21C","גליל","Short_Plus_Women"],[33300,"רביד דליה","D70","תל אביב","Gold"],[33300,"שמואלי חן","H21B","יזרעאל","Medium_Plus"],[33300,"גרדי עומר","H45","עמק חפר","Medium_B"],[33300,"גילה זיו","H60A","יזרעאל","Medium_A"],[33300,"אהרוני דניאל","H65","חבל מודיעין","Short_Plus_Men"],[33300,"סעד דניאל","קצרצר","חבל מודיעין","kids"],[33360,"מנור חגית","D60","חבל מודיעין","Short_Plus_Women"],[33360,"אליאס גיל","H50A","תל אביב","Medium_A"],[33360,"קינר דורון","H70","תל אביב","Short_Plus_Men"],[33360,"שפי שאול","H80","השרון","Gold"],[33360,"קרן שקד","בינוני","יזרעאל","Medium_Youth"],[33420,"בר לריסה","D55","השרון","Short_Plus_Women"],[33420,"רז-רוטשילד דניאל","H21B","אסא ירושלים","Medium_Plus"],[33420,"סט שי","H60A","יזרעאל","Medium_A"],[33420,"ברקוביץ עמירן","H65","טכניון כרמל","Short_Plus_Men"],[33480,"זכות שירה","D40","מנשה","Short_Plus_Women"],[33480,"זכות ויטו","H16A","מנשה","Medium_Youth"],[33480,"אבידן אליק","H50A","מנשה","Medium_A"],[33480,"משלי יובל","H70","חבל מודיעין","Short_Plus_Men"],[33540,"נוסבוים שרון","D55","השרון","Short_Plus_Women"],[33540,"יבסייב אריה","H60A","יזרעאל","Medium_A"],[33600,"גריף דניאל","H40","השרון","Medium_Plus"],[33600,"נוסבוים יצחק","H60A","השרון","Medium_A"],[33660,"ריף הגר","D21C","אסא ירושלים","Short_Plus_Women"],[33720,"סגל יעל","D45","תל אביב","Short_Plus_Women"],[33720,"שמואלי מופז","H21B","יזרעאל","Medium_Plus"],[33780,"קופרברג אילנה","D60","גליל","Short_Plus_Women"],[33840,"מילר לינה","D50","תל אביב","Short_Plus_Women"],[33840,"שדמה ברק","H14A","עמק חפר","Short"],[33840,"זכות דרור","H16A","מנשה","Medium_Youth"],[33840,"זליגמן הלל","H18A","טכניון כרמל","Medium_Plus"],[33840,"הלחמי ליאור","H45","חבל מודיעין","Medium_B"],[33840,"סקריפקו אלכסיי","H50A","גליל","Medium_A"],[33900,"לוי יוליה","D40","חבל מודיעין","Short_Plus_Women"],[33900,"קרול דן","H12","תל אביב","Shorty"],[33900,"ריינליב דינסטי","H21C","מנשה","Medium_B"],[33900,"עפרון איתן","H55","מנשה","Medium_A"],[33900,"כספי שי","H60B","השרון","Short_Plus_Men"],[33960,"שדמה ירדן","D16A","עמק חפר","Medium_Youth"],[33960,"קלקשטיין בר","D21A","השרון","Medium_Plus"],[33960,"טרופימצ׳יק מרינה","D45","תל אביב","Short_Plus_Women"],[33960,"כהן נמרוד","H45","תל אביב","Medium_B"],[33960,"פרצ'ונוק דמיטרי","H60A","תל אביב","Medium_A"],[33960,"מנור משה","H70","חבל מודיעין","Short_Plus_Men"],[33960,"שקדי טל","קצר","תל אביב","Short"],[34020,"Olbinska Shezhana","D12","מנשה","Shorty"],[34020,"יסעור גל","D40","יזרעאל","Short_Plus_Women"],[34020,"גוסב איליה","H35A","תל אביב","Long"],[34020,"ריינהרץ יניב","H55","גליל","Medium_A"],[34020,"רבד איתי","H60B","תל אביב","Short_Plus_Men"],[34080,"כספי יעל","D18A","השרון","Medium_B"],[34080,"שביב מיכל","D50","חבל מודיעין","Short_Plus_Women"],[34080,"לוי אריאל","H14A","חבל מודיעין","Short"],[34080,"דנציג אלמוג","H40","יזרעאל","Medium_Plus"],[34080,"ויינר תומר","H50A","יזרעאל","Medium_A"],[34080,"יוגב כרמל","H50B","מנשה","Short_Plus_Men"],[34140,"זביילובה יוליה","D55","טכניון כרמל","Short_Plus_Women"],[34140,"דה-קוסטה רוני","D80","יזרעאל","Gold"],[34140,"פינצ׳וק אלון","H16A","יזרעאל","Medium_Youth"],[34140,"גנוסר נדב","H21C","חבל מודיעין","Medium_B"],[34140,"סלומון שלומי","H55","גליל","Medium_A"],[34140,"גוטמן יהודה","H65","חבל מודיעין","Short_Plus_Men"],[34200,"שכטר רותם","D21C","חבל מודיעין","Short_Plus_Women"],[34200,"גוטמן אילנה","D70","חבל מודיעין","Gold"],[34200,"דנציג נבו","H12","יזרעאל","Shorty"],[34200,"קלקשטיין יובל","H21A","השרון","Long"],[34200,"גנוסר תומר","H21B","חבל מודיעין","Medium_Plus"],[34200,"שחר ליעד","H45","מנשה","Medium_B"],[34200,"חלבה אמיר","H50A","תל אביב","Medium_A"],[34200,"סניז׳קוב אביטל","ילדות זינוק","גליל","kids"],[34200,"שוב פליקס","קצר","טכניון כרמל","Short"],[34260,"ניב עמליה","D16A","תל אביב","Medium_Youth"],[34260,"בן-דור יואב","H35B","חבל מודיעין","Medium_B"],[34260,"כצמן אדי","H55","מנשה","Medium_A"],[34260,"ליפמן רמי","H70","השרון","Short_Plus_Men"],[34260,"ברג דוד","H80","טכניון כרמל","Gold"],[34260,"זאבי מיכלי","קצרצר","חבל מודיעין","kids"],[34320,"לוי מאיה","D12","חבל מודיעין","Shorty"],[34320,"רימרמן-שדמה נטע","D45","עמק חפר","Short_Plus_Women"],[34320,"לפושנר לובוב","D70","גליל","Gold"],[34320,"מרשנסקי יהב","H16B","גליל","Short"],[34320,"ליזוגוב ויאצ'סלב","H21B","עמק חפר","Medium_Plus"],[34320,"עפרון אלדד","H21C","מנשה","Medium_B"],[34320,"שמע נתי","H60A","חבל מודיעין","Medium_A"],[34320,"פלוטקין רון","H65","תל אביב","Short_Plus_Men"],[34320,"לוי אלינור","ילדות זינוק","חבל מודיעין","kids"],[34380,"מצפון איילת","D50","מנשה","Short_Plus_Women"],[34380,"קרמר איתן","H16A","גליל","Medium_Youth"],[34380,"ניב נדב","H45","תל אביב","Medium_B"],[34380,"אלעד חגי","H55","תל אביב","Medium_A"],[34380,"סלומון רונן","H60B","ראשון לציון","Short_Plus_Men"],[34380,"דודלזק צביקה","H80","מנשה","Gold"],[34440,"סט עומר","D21A","יזרעאל","Medium_Plus"],[34440,"לוינקרון זהבה","D65","גליל","Short_Plus_Women"],[34440,"קרול יואב","H12","תל אביב","Shorty"],[34440,"שטיין יואב","H35B","ראשון לציון","Medium_B"],[34440,"שקדי חן","H50B","תל אביב","Short_Plus_Men"],[34440,"זאבי נורית","קצר","חבל מודיעין","Short"],[34500,"פלג-רייבי איילת","D40","יזרעאל","Short_Plus_Women"],[34500,"שגיא עמית","H16A","תל אביב","Medium_Youth"],[34500,"לידור אורי","H45","מנשה","Medium_B"],[34500,"נוימן זיו","H60A","אסא טכניון חיפה","Medium_A"],[34500,"רז שלמה","H70","ראשון לציון","Short_Plus_Men"],[34560,"אלוש רות","D65","חבל מודיעין","Short_Plus_Women"],[34560,"ליפמן אשל","H21B","השרון","Medium_Plus"],[34560,"Olbinskiy Vitalik","H21C","מנשה","Medium_B"],[34560,"צוק אילן","H55","יזרעאל","Medium_A"],[34560,"נירן חן","H60B","ראשון לציון","Short_Plus_Men"],[34620,"ורבין עמית","H16A","תל אביב","Medium_Youth"],[34620,"שביב רן","H55","חבל מודיעין","Medium_A"],[34620,"אש נחמן","קצר פלוס","השרון","Short_Plus_Women"],[34680,"הלחמי קרן","D45","חבל מודיעין","Short_Plus_Women"],[34680,"קוזנצוב דמיטרי","H35A","תל אביב","Long"],[34680,"ארצי ירון","H40","יזרעאל","Medium_Plus"],[34680,"זלצמן אלכסנדר","H60A","ראשון לציון","Medium_A"],[34740,"ליפמן יעל","D60","השרון","Short_Plus_Women"],[34740,"גור אלעזר","H55","מנשה","Medium_A"],[34740,"זיו קרן","בינוני","","Medium_Youth"],[34860,"שורץ בן","H16A","מנשה","Medium_Youth"],[34860,"שכטר דביר","H21A","חבל מודיעין","Long"],[34860,"רובין רז","H21B","טכניון כרמל","Medium_Plus"],[34920,"מן אופיר","H14A","מנשה","Short"],[34920,"מלמד דרור","H60A","יזרעאל","Medium_A"],[34980,"ברנס עינב","H40","חבל מודיעין","Medium_Plus"],[34980,"סרגה אלי","H55","חבל מודיעין","Medium_A"],[34980,"חורב לוטן","בינוני","","Medium_Youth"],[35040,"מאירקוביץ סופיה","D65","טכניון כרמל","Short_Plus_Women"],[35040,"חורב רני","H12","תל אביב","Shorty"],[35040,"רביד נועם","H35A","תל אביב","Long"],[35040,"קרול ליאור","H35B","תל אביב","Medium_B"],[35040,"מינצר צפריר","H60A","יזרעאל","Medium_A"],[35040,"איילי גלעד","H70","גליל","Short_Plus_Men"],[35100,"מייר-גור תמר","D50","מנשה","Short_Plus_Women"],[35100,"ורבין עידן","H16A","תל אביב","Medium_Youth"],[35100,"סירוטוב יבגני","H21B","עמק חפר","Medium_Plus"],[35100,"סלומון עודד","H50B","גליל","Short_Plus_Men"],[35100,"גרינברג גיל","H55","תל אביב","Medium_A"],[35100,"מן דן","קצר","מנשה","Short"],[35160,"כהן תומר","H45","טכניון כרמל","Medium_B"],[35160,"שורר רונן","H50A","גליל","Medium_A"],[35220,"גרינברג אניה","D35","תל אביב","Medium_B"],[35220,"סולאג׳ תומא","H14A","גליל","Short"],[35220,"יוגב עדי","H16A","מנשה","Medium_Youth"],[35220,"לדרר שלו","H18A","מנשה","Medium_Plus"],[35220,"ברטרנד ארז","H21A","גליל","Long"],[35280,"לויצקי פבל","H55","תל אביב","Medium_A"],[35340,"ברקאי סתיו","H21B","","Medium_Plus"],[35400,"חצב אלה","D16A","תל אביב","Medium_Youth"],[35400,"יסעור ניר","H35A","יזרעאל","Long"],[35460,"לדרר חגי","H40","מנשה","Medium_Plus"],[35520,"שרון נבו חיים","H16A","טכניון כרמל","Medium_Youth"],[35580,"קלניצקי אלכס","H21B","תל אביב","Medium_Plus"],[35640,"בלבן ברוך","בינוני","גליל","Medium_Youth"],[35700,"ברקן אורי","H21B","יזרעאל","Medium_Plus"],[35760,"סולנה מעין","H14A","מנשה","Short"],[35760,"איגנטייב טימופיי","H16A","תל אביב","Medium_Youth"],[35820,"סולאג' כליל","H18A","גליל","Medium_Plus"],[35820,"נוסבוים עמרי","H21A","השרון","Long"],[35820,"אבוחצירא יהלי","H21C","אסא טכניון חיפה","Medium_B"],[35880,"זידנוב דניס","H45","השרון","Medium_B"],[35880,"סגל דוידי","H60A","מנשה","Medium_A"],[35880,"ברקאי עזרא","H65","מנשה","Short_Plus_Men"],[35880,"יבסייב אדר","בינוני","יזרעאל","Medium_Youth"],[35880,"יוגב דפנה","קצר","מנשה","Short"],[35880,"גרדי הדס","קצר פלוס","עמק חפר","Short_Plus_Women"],[35940,"הימן יונה","D65","השרון","Short_Plus_Women"],[35940,"חלבה אורן","H12","תל אביב","Shorty"],[35940,"מאירקוביץ יבגני","H21B","טכניון כרמל","Medium_Plus"],[35940,"רשף עילי-יהודה","H21C","אסא טכניון חיפה","Medium_B"],[35940,"עמיעז איתן","H60A","חבל מודיעין","Medium_A"],[35940,"הלחמי אבנר","H70","חבל מודיעין","Short_Plus_Men"],[36000,"רביד יעל","D21B","תל אביב","Medium_B"],[36000,"רביד נעמי","D45","תל אביב","Short_Plus_Women"],[36000,"סולנה אימרי","H14A","מנשה","Short"],[36000,"רביד איל","H18B","תל אביב","Medium_Youth"],[36000,"אילגץ׳ גאורגי","H35A","תל אביב","Long"],[36000,"זיו צפיר","H50A","מנשה","Medium_A"],[36000,"גבע בתשבע","ילדות זינוק","חבל מודיעין","kids"],[36060,"אלמוג מעיין","D21C","אסא טכניון חיפה","Short_Plus_Women"],[36060,"אברהם רגב","H21C","אסא טכניון חיפה","Medium_B"],[36060,"הימן רפי","H60A","השרון","Medium_A"],[36060,"ארד ארז","H65","יזרעאל","Short_Plus_Men"],[36120,"רום פז","D14A","מנשה","Short"],[36120,"חורושילוב לריסה","D45","תל אביב","Short_Plus_Women"],[36120,"אשד כרמל","H16A","טכניון כרמל","Medium_Youth"],[36120,"פרוינד אופק","H18A","טכניון כרמל","Medium_Plus"],[36120,"מה-טוב יואב","H35B","אסא ירושלים","Medium_B"],[36120,"חדד עמית","H60B","מנשה","Short_Plus_Men"],[36180,"נגב נועה","D21C","חבל מודיעין","Short_Plus_Women"],[36180,"יסעור ניצן","H21A","יזרעאל","Long"],[36180,"אברהם דקל","H21C","אסא טכניון חיפה","Medium_B"],[36180,"תלם איתיאל","H65","חבל מודיעין","Short_Plus_Men"],[36240,"לב-אל ניבה","D45","תל אביב","Short_Plus_Women"],[36240,"רביד יואב","H21B","תל אביב","Medium_Plus"],[36240,"עין דר מתן","בינוני","","Medium_Youth"],[36360,"חלבה הדר","D16A","תל אביב","Medium_Youth"],[36360,"דה-קוסטה אריאל","H18A","יזרעאל","Medium_Plus"],[36480,"פולויאן זכר","H16A","עמק חפר","Medium_Youth"],[36480,"גנוסר יובל","H21B","חבל מודיעין","Medium_Plus"],[36600,"חלבה תמר","D21A","תל אביב","Medium_Plus"],[36660,"סגל ערן","H21A","מנשה","Long"],[36720,"בהט עידו","H21B","יזרעאל","Medium_Plus"],[36840,"אהל גל","D12","גליל","Shorty"],[36840,"אבידן הילה","D14A","מנשה","Short"],[36840,"ברונשטיין ציפי","D45","מנשה","Short_Plus_Women"],[36840,"חדד-דגן דר","H18A","מנשה","Medium_Plus"],[36840,"יסעור רתם","H21A","יזרעאל","Long"],[36840,"גור אלי","H50B","חבל מודיעין","Short_Plus_Men"],[36900,"יזרעאלי טלאל","D21B","יזרעאל","Medium_B"],[36900,"נוימן דפנה","D21C","מנשה","Short_Plus_Women"],[36900,"מנדל רועי","H50B","חבל מודיעין","Short_Plus_Men"],[36900,"ויינר עמית","H60A","חבל מודיעין","Medium_A"],[36900,"קורנברג ישראל","H75","ראשון לציון","Gold"],[36960,"גברילוב פבל","H40","טכניון כרמל","Medium_Plus"],[37020,"מצפון פלג","H21A","מנשה","Long"],[37080,"שרון יותם","H21B","מנשה","Medium_Plus"],[37200,"מצפון גאיה","D21A","מנשה","Medium_Plus"],[37380,"שוב רונן","H18A","טכניון כרמל","Medium_Plus"],[37620,"יוגב רותם","H21A","מנשה","Long"],[37620,"שפירא אורן","H21B","חבל מודיעין","Medium_Plus"],[37740,"חריש רוני","D21A","גליל","Medium_Plus"],[37740,"ורבין עודד","H50A","תל אביב","Medium_A"],[37800,"אשל סהר","H21A","מנשה","Long"],[37800,"לוי דניאל","H35B","חבל מודיעין","Medium_B"],[37800,"יוגב רביב","H55","מנשה","Medium_A"],[37800,"ענבר אברהם","H65","גליל","Short_Plus_Men"],[37800,"הלחמי יואב","ילדים זינוק","חבל מודיעין","kids"],[37860,"פנייקוב בני","H21B","יזרעאל","Medium_Plus"],[37860,"לזרי עובדיה","H35B","עמק חפר","Medium_B"],[38640,"שחף גיא","H12","מנשה","Shorty"],[38700,"שחורי איתי","H60A","חבל מודיעין","Medium_A"],[38700,"ברונשטיין דורון","קצרצר","מנשה","kids"],[39480,"אילן גאיה","D21B","יזרעאל","Medium_B"],[39540,"יוסף עידן","H21C","","Medium_B"],[39540,"אבנר עוזי","H60A","גליל","Medium_A"],[39540,"אילן יעקב","H70","יזרעאל","Short_Plus_Men"],[39540,"אגבריה חוסאם","קצרצר","יזרעאל","kids"]]};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const norm = s => String(s || "").toLowerCase().replace(/['׳"״\-]/g, "").replace(/\s+/g, " ").trim();
+const squash = s => String(s || "").replace(/\s+/g, " ").trim();
+const SLUG = /^[a-z0-9][a-z0-9-]{0,79}$/.test(D.slug || "") ? D.slug : "", REPO = /^[\w.-]+\/[\w.-]+$/.test(D.repo || "") ? D.repo : "";
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+const secs = v => { const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(squash(v)); return m ? +m[1] * 3600 + +m[2] * 60 + +(m[3] || 0) : null; };
+const hms = t => `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+const hm = t => `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}`;
+const away = t => t < 6000 ? `${Math.floor(t / 60)} ד׳` : `${hm(t)} ש׳`;      // time on the course: minutes, or hours:minutes
+const START = (Array.isArray(D.rows) ? D.rows : []).filter(r => Array.isArray(r) && Number.isFinite(r[0]) && typeof r[1] === "string")
+  .map(r => ({ plan: r[0], n: r[1], k: String(r[2] || ""), club: String(r[3] || ""), c: String(r[4] || "").replace(/_/g, " ") }));
+// a runner is known by name; two of one name, by name and category
+const dupes = new Set(START.map(r => norm(r.n)).filter((n, i, a) => a.indexOf(n) !== i));
+const keyOf = (n, k) => dupes.has(norm(n)) && k ? `${norm(n)}#${norm(k)}` : norm(n);
+// ---- the day: before it nobody is out, after it the clock stops
+const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(D.date || "");
+const dayRel = () => { if (!ymd) return 0; const n = new Date(), a = [n.getFullYear(), n.getMonth() + 1, n.getDate()], b = [+ymd[1], +ymd[2], +ymd[3]];
+  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1; return 0; };
+const nowS = () => { const d = new Date(); return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds(); };
+// ---- the tracking data, as on the site (refreshed every 30 s)
+let T = { mulka: null, manual: {} };
+const STATES = new Set(["ok", "mp", "dnf", "dns", "out", "none"]), MANUAL = new Set(["back", "dns", "out"]);
+function clean(e) {
+  const out = { mulka: null, manual: {} };
+  if (e && typeof e === "object") {
+    const m = e.mulka;
+    if (m && typeof m === "object" && m.runners && typeof m.runners === "object") {
+      out.mulka = { at: ISO.test(m.at || "") ? m.at : "", by: String(m.by || "").slice(0, 40), file: String(m.file || "").slice(0, 120), runners: {} };
+      for (const [k, r] of Object.entries(m.runners)) if (r && typeof r === "object" && STATES.has(r.s) && typeof r.n === "string")
+        out.mulka.runners[k] = { n: r.n, k: String(r.k || ""), s: r.s, t: Number.isFinite(r.t) ? r.t : null, st: Number.isFinite(r.st) ? r.st : null };
+    }
+    if (e.manual && typeof e.manual === "object")
+      for (const [k, x] of Object.entries(e.manual)) if (x && typeof x === "object" && MANUAL.has(x.s)) out.manual[k] = { s: x.s, at: ISO.test(x.at || "") ? x.at : "", by: String(x.by || "").slice(0, 40) };
+  }
+  return out;
+}
+function load() {
+  if (!/^https?:$/.test(location.protocol) || !SLUG) return;
+  fetch(`../../track.json?t=${Math.floor(Date.now() / 15000)}`, { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(j => {
+    if (!j || !j.comps || typeof j.comps !== "object") return;
+    const fresh = clean(Object.hasOwn(j.comps, SLUG) ? j.comps[SLUG] : null);
+    for (const [k, v] of PENDING) if (v) fresh.manual[k] = v; else delete fresh.manual[k];   // my own taps not saved yet stay
+    if (PENDING_MULKA) fresh.mulka = PENDING_MULKA;
+    T = fresh; render();
+  }).catch(() => {});
+}
+// ---- who is where
+function people() {
+  const by = new Map();
+  START.forEach(r => by.set(keyOf(r.n, r.k), { ...r }));
+  for (const [k, m] of Object.entries(T.mulka?.runners || {})) {
+    const key = by.has(k) ? k : by.has(norm(m.n)) ? norm(m.n) : k;
+    by.set(key, { ...(by.get(key) || { n: m.n, k: m.k, club: "", c: "", plan: null }), m });
+  }
+  for (const [k, x] of Object.entries(T.manual || {})) if (by.has(k)) by.get(k).man = x;
+  return [...by.entries()].map(([key, p]) => ({ key, ...p }));
+}
+const BACK = new Set(["ok", "mp", "dnf"]);
+function stateOf(p, rel, now) {
+  if (p.man?.s === "back" || BACK.has(p.m?.s)) return "back";         // back: tapped at the finish, or downloaded in Mulka
+  if (p.man?.s === "dns" || p.m?.s === "dns") return "dns";
+  if (rel < 0) return "wait";                                           // before the competition day nobody is out
+  if (p.man?.s === "out" || p.m?.s === "out") return "out";
+  if (rel > 0) return "out";                                            // after the day: never reported back
+  const st = p.m?.st ?? p.plan;                                         // the day itself: started = start time passed
+  return st != null && st <= now ? "out" : "wait";
+}
+// out too long: longer than the slowest finisher of the class so far, and than twice the fastest; nobody back yet: 2 hours
+function limits(list) {
+  const t = {};
+  list.forEach(p => { if (p.m?.s === "ok" && p.m.t > 0) (t[norm(p.m.k)] ||= []).push(p.m.t); });
+  const lim = {};
+  for (const [k, v] of Object.entries(t)) lim[k] = Math.max(Math.max(...v), 2 * Math.min(...v));
+  return lim;
+}
+let ME = "", TOKEN = "";
+function row(p, st, now, lim) {
+  const start = p.m?.st ?? p.plan, out = start != null ? Math.max(0, now - start) : null;
+  const L = (p.m && lim[norm(p.m.k)]) || lim[norm(p.c)] || lim[norm(p.k)] || 7200, late = st === "out" && dayRel() === 0 && out != null && out > L;
+  const meta = [p.k, p.c, p.club].filter(Boolean).map(esc).join(" · ");
+  let x = "";
+  if (st === "out") x = dayRel() === 0 && out != null ? `<b>${away(out)}</b><small>בשטח · זינק ${hms(start)}</small>` : `<b>לא דווח</b><small>${start != null ? "זינוק " + hms(start) : ""}</small>`;
+  else if (st === "wait") x = `<b>${start != null ? hms(start) : "–"}</b><small>זינוק</small>`;
+  else if (st === "back") x = `<b>${p.m?.s === "ok" && p.m.t ? hms(p.m.t) : p.m?.s === "mp" ? "פסול" : p.m?.s === "dnf" ? "לא סיים" : "חזר"}</b><small>חזר</small>`;
+  else x = `<b>לא זינק</b>`;
+  const man = p.man ? `<span class="badge man" title="${esc(p.man.by)}">סומן ידנית</span>` : "";
+  const acts = ME ? `<div class="acts">${st === "back" && p.man?.s === "back" ? `<button type="button" data-undo="${esc(p.key)}">ביטול ״חזר״</button>`
+      : st === "out" ? `<button type="button" class="back" data-mark="back" data-k="${esc(p.key)}">✓ חזר</button>` : ""}`
+    + `${st === "wait" || st === "out" ? `<button type="button" class="dns" data-mark="dns" data-k="${esc(p.key)}">לא זינק</button>` : ""}`
+    + `${p.man?.s === "dns" ? `<button type="button" data-undo="${esc(p.key)}">ביטול ״לא זינק״</button>` : ""}</div>` : "";
+  return { late, html: `<li class="${late ? "late" : st === "out" ? "out" : ""}"><span class="n">${esc(p.n)}${late ? `<span class="badge late">באיחור</span>` : ""}${man}</span>
+    <span class="x">${x}</span><span class="m">${meta}</span>${acts}</li>` };
+}
+function render() {
+  const rel = dayRel(), now = rel === 0 ? nowS() : rel > 0 ? 86399 : 0, all = people(), lim = limits(all);
+  const w = norm($("q").value).split(" ").filter(Boolean);
+  const S = { out: [], late: [], wait: [], back: [], dns: [] };
+  all.forEach(p => { const st = stateOf(p, rel, now), r = row(p, st, now, lim);
+    if (w.length && !w.every(x => norm(`${p.n} ${p.k} ${p.c} ${p.club}`).includes(x))) { if (r.late) S.late.push(null); else S[st].push(null); return; }
+    (r.late ? S.late : S[st]).push({ p, r, st }); });
+  const n = k => S[k].length, shown = k => S[k].filter(Boolean);
+  $("sum").innerHTML = `<span class="late"><b>${n("late")}</b>באיחור</span><span class="out"><b>${n("out") + n("late")}</b>בשטח</span>`
+    + `<span><b>${n("back")}</b>חזרו</span><span><b>${n("wait")}</b>טרם זינקו</span><span><b>${n("dns")}</b>לא זינקו</span>`;
+  const sortOut = a => a.sort((x, y) => (x.p.m?.st ?? x.p.plan ?? 0) - (y.p.m?.st ?? y.p.plan ?? 0));
+  const list = (title, arr, open = true) => arr.length ? (open ? `<section><h2>${title} <small>${arr.length}</small></h2><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></section>`
+    : `<details><summary>${title} · ${arr.length}</summary><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></details>`) : "";
+  $("list").innerHTML = (rel < 0 ? `<p class="note">התחרות עוד לא התחילה. ביום התחרות יופיעו כאן מי בשטח ומי חזר.</p>` : "")
+    + list("באיחור", sortOut(shown("late"))) + list("בשטח", sortOut(shown("out")))
+    + list("טרם זינקו", shown("wait").sort((x, y) => (x.p.plan ?? 0) - (y.p.plan ?? 0)), rel === 0)
+    + list("חזרו", shown("back"), false) + list("לא זינקו", shown("dns"), false)
+    || `<p class="note">${w.length ? "לא נמצא נווט כזה" : "אין נתונים"}</p>`;
+  const m = T.mulka, lastMan = Object.values(T.manual || {}).map(x => x.at).sort().pop();
+  const at = s => { const d = new Date(s); return isNaN(d) ? "" : `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`; };
+  $("src").textContent = [m ? `לפי הייצוא ממולקה מ-${at(m.at)}` : "עוד לא הועלה ייצוא ממולקה – לפי זמני הזינוק בלבד",
+    lastMan ? `סימון ידני אחרון ${at(lastMan)}` : "", "מתעדכן אוטומטית כל חצי דקה"].filter(Boolean).join(" · ");
+}
+// ---- admins: taps at the finish and the Mulka export, saved to the site (track.json) in small batches
+const PENDING = new Map(); let PENDING_MULKA = null, FLUSH = 0, SAVING = false;
+const API = "https://api.github.com";
+async function gh(path, opt = {}) {
+  const r = await fetch(API + path, { ...opt, cache: "no-store", headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28",
+    Authorization: "Bearer " + TOKEN, ...(opt.body ? { "Content-Type": "application/json" } : {}) } });
+  const j = await r.json().catch(() => null);
+  if (!r.ok) { const e = new Error(j?.message || String(r.status)); e.status = r.status; throw e; }
+  return j;
+}
+const b64enc = s => { const b = new TextEncoder().encode(s); let t = ""; for (let i = 0; i < b.length; i += 0x8000) t += String.fromCharCode(...b.subarray(i, i + 0x8000)); return btoa(t); };
+const b64dec = s => new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g, "")), c => c.charCodeAt(0)));
+const say = (t, ok) => { $("amsg").textContent = t; $("amsg").className = "msg " + (ok ? "ok" : "err"); };
+const stamp = () => new Date().toISOString().slice(0, 19) + "Z";
+async function flush() {
+  if (SAVING || (!PENDING.size && !PENDING_MULKA)) return;
+  SAVING = true; say("שומר…", true);
+  const changes = new Map(PENDING), mulka = PENDING_MULKA;
+  try {
+    for (let i = 0; i < 4; i++) {
+      let sha = null, all = { v: 1, comps: {} };
+      try { const f = await gh(`/repos/${REPO}/contents/track.json?ref=main`); sha = f.sha; all = JSON.parse(b64dec(f.content)); }
+      catch (e) { if (e.status !== 404) throw e; }
+      if (!all || typeof all !== "object" || !all.comps || typeof all.comps !== "object") all = { v: 1, comps: {} };
+      const mine = clean(Object.hasOwn(all.comps, SLUG) ? all.comps[SLUG] : null);
+      for (const [k, v] of changes) if (v) mine.manual[k] = v; else delete mine.manual[k];
+      if (mulka) mine.mulka = mulka;
+      all.comps[SLUG] = mine;
+      const body = { message: `Track ${SLUG}: ${mulka ? "Mulka export" : ""}${mulka && changes.size ? " + " : ""}${changes.size ? `${changes.size} at the finish` : ""} - ${ME}`,
+                     content: b64enc(JSON.stringify(all) + "\n"), branch: "main" };
+      if (sha) body.sha = sha;
+      try { await gh(`/repos/${REPO}/contents/track.json`, { method: "PUT", body: JSON.stringify(body) }); break; }
+      catch (e) { if (!(e.status === 409 || e.status === 422) || i === 3) throw e; }   // another admin saved: read again, apply on top
+    }
+    for (const [k, v] of changes) if (PENDING.get(k) === v) PENDING.delete(k);
+    if (PENDING_MULKA === mulka) PENDING_MULKA = null;
+    const d = new Date(); say(`נשמר ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")} · באתר תוך כדקה`, true);
+  } catch (e) { say(e.status === 401 ? "המפתח לא תקין" : e.status === 403 || e.status === 404 ? `למפתח אין הרשאת כתיבה (GitHub: ${e.message})` : "שגיאה בשמירה: " + e.message); }
+  SAVING = false;
+  if (PENDING.size || PENDING_MULKA) { clearTimeout(FLUSH); FLUSH = setTimeout(flush, 3000); }
+}
+function mark(k, v) { if (v) T.manual[k] = v; else delete T.manual[k]; PENDING.set(k, v); render(); clearTimeout(FLUSH); FLUSH = setTimeout(flush, 3000); }
+$("list").addEventListener("click", e => {
+  const b = e.target.closest("[data-mark], [data-undo]"); if (!b || !ME) return;
+  if (b.dataset.undo) mark(b.dataset.undo, null); else mark(b.dataset.k, { s: b.dataset.mark, at: stamp(), by: ME });
+});
+// ---- the Mulka export, read here: LapCombat .lxm or IOF XML 3.0 results - names, classes, statuses, times only
+function parseMulka(text) {
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  if (doc.querySelector("parsererror")) throw new Error("הקובץ אינו XML תקין");
+  const out = {};
+  const put = (n, k, s, t, st) => { n = squash(n); if (n) out[keyOf(n, k)] = { n: n.slice(0, 80), k: squash(k).slice(0, 40), s, t, st }; };
+  if (doc.querySelector("ResultList")) {
+    const S = { OK: "ok", Finished: "ok", MissingPunch: "mp", Disqualified: "mp", OverTime: "mp", NotCompeting: "mp", SportingWithdrawal: "dnf",
+                DidNotFinish: "dnf", DidNotStart: "dns", DidNotEnter: "dns", Cancelled: "dns", Active: "out", Inactive: "none" };
+    doc.querySelectorAll("ClassResult").forEach(cr => { const cls = cr.querySelector("Class > Name")?.textContent || "";
+      cr.querySelectorAll("PersonResult").forEach(pr => {
+        const fam = pr.querySelector("Person > Name > Family")?.textContent || "", giv = pr.querySelector("Person > Name > Given")?.textContent || "";
+        const res = pr.querySelector("Result"), s = S[squash(res?.querySelector("Status")?.textContent)] || "none";
+        const tm = parseFloat(res?.querySelector("Time")?.textContent), sd = new Date(res?.querySelector("StartTime")?.textContent || "");
+        put(`${fam} ${giv}`, cls, s, s === "ok" && isFinite(tm) ? Math.round(tm) : null, isNaN(sd) ? null : sd.getHours() * 3600 + sd.getMinutes() * 60 + sd.getSeconds());
+      }); });
+  } else {
+    doc.querySelectorAll("class").forEach(cl => { const cls = cl.getAttribute("name") || "";
+      cl.querySelectorAll("runner").forEach(r => { const res = squash(r.getAttribute("result")).toUpperCase(), t = secs(res);
+        put(r.getAttribute("name"), cls, t != null ? "ok" : res === "MP" ? "mp" : res === "DNF" ? "dnf" : res === "DNS" ? "dns" : "none", t, secs(r.getAttribute("start"))); }); });
+  }
+  if (!Object.keys(out).length) throw new Error("לא נמצאו נווטים בקובץ");
+  return out;
+}
+async function mulkaFile(f) {
+  try {
+    const runners = parseMulka(await f.text());
+    PENDING_MULKA = { at: stamp(), by: ME, file: f.name.slice(0, 120), runners };
+    T.mulka = PENDING_MULKA; render(); await flush();
+  } catch (e) { say("לא הצלחנו לקרוא את הקובץ: " + e.message); }
+}
+$("mf").addEventListener("change", e => { const f = e.target.files[0]; if (f) mulkaFile(f); e.target.value = ""; });
+async function login() {
+  try {
+    const me = await gh("/user"), repo = await gh(`/repos/${REPO}`);
+    if (!repo.permissions?.push) { say(`לחשבון ${me.login} אין הרשאה לעדכן את האתר`); return; }
+    try { await gh(`/repos/${REPO}/git/blobs`, { method: "POST", body: JSON.stringify({ content: "", encoding: "utf-8" }) }); }
+    catch (e) { if (e.status === 401) throw e; say("למפתח אין הרשאת כתיבה לאתר (Contents: Read and write)"); return; }
+    ME = me.login; try { sessionStorage.setItem("lc-admin", TOKEN); } catch (e) {}
+    $("alog").hidden = true; $("atools").hidden = false; $("who").textContent = `מחובר כ-${ME}`; $("admin").hidden = false; say("", true); render();
+  } catch (e) { say(e.status === 401 ? "המפתח לא תקין או שפג תוקפו" : "לא הצלחנו להתחבר: " + e.message); TOKEN = ""; }
+}
+$("adm").onclick = () => { $("admin").hidden = !$("admin").hidden; if (!$("admin").hidden && !ME) $("tok").focus(); };
+$("go").onclick = () => { TOKEN = $("tok").value.trim(); $("tok").value = ""; if (TOKEN) login(); };
+$("q").addEventListener("input", render);
+const TITLE = String(D.title || "").replace(/\s*·\s*\d{4}\/\d{2}\/\d{2}$/, "");
+$("ttl").textContent = TITLE; document.title = `מעקב נווטים בשטח · ${TITLE}`;
+$("sub").textContent = ymd ? `${+ymd[3]}.${+ymd[2]}.${ymd[1]} · ${START.length} נווטים ברשימת הזינוק` : `${START.length} נווטים ברשימת הזינוק`;
+
+// ---- accessibility toolbar, for every page of the site (kept in this browser, like the colours): text size, high contrast
+// and reading aids; the accessibility statement; "skip to the content"; and the privacy notice (no cookies - only these choices)
+const A11Y = { sizes: [["", "רגיל"], ["l", "גדול"], ["xl", "גדול מאוד"]], el: null, btn: null, done: null,
+  flags: [["contrast", "ניגודיות גבוהה", "טקסט כהה על רקע אחיד, קווים וגבולות בולטים"], ["gray", "גווני אפור", "התצוגה בלי צבעים"],
+          ["links", "הדגשת קישורים", "קישורים ברקע צהוב עם קו תחתון"], ["font", "גופן קריא", "גופן Arial פשוט בכל הטקסט"],
+          ["space", "ריווח טקסט", "יותר רווח בין שורות, מילים ואותיות"], ["focus", "הדגשת מיקוד", "מסגרת בולטת סביב מה שנבחר במקלדת"],
+          ["motion", "עצירת תנועה", "בלי אנימציות ומעברים"], ["cursor", "סמן גדול", "סמן עכבר גדול (במחשב)"]] };
+const STORE = ["lc-theme", "lc-text", "lc-contrast", "lc-a11y", "lc-notice"];   // everything the site keeps in the browser
+const lsGet = k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
+const lsSet = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} };
+const a11yFlags = () => new Set(lsGet("lc-a11y").split(",").filter(Boolean).concat(lsGet("lc-contrast") === "high" ? ["contrast"] : []));
+function a11yApply() {
+  const h = document.documentElement, t = lsGet("lc-text"), f = a11yFlags();
+  if (t && A11Y.sizes.some(([k]) => k === t)) h.dataset.text = t; else delete h.dataset.text;
+  if (f.has("contrast")) h.dataset.contrast = "high"; else delete h.dataset.contrast;
+  A11Y.flags.forEach(([k]) => { if (k !== "contrast") h.classList.toggle("a-" + k, f.has(k)); });
+}
+function a11ySetFlag(k, on) {
+  if (k === "contrast") { lsSet("lc-contrast", on ? "high" : ""); return; }
+  const f = new Set(lsGet("lc-a11y").split(",").filter(Boolean));
+  if (on) f.add(k); else f.delete(k);
+  lsSet("lc-a11y", [...f].filter(x => A11Y.flags.some(([k2]) => k2 === x)).join(","));
+}
+a11yApply();
+const textScale = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ts")) || 1;
+const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחרויות ניווט. הנגשנו אותו לפי ההנחיות של WCAG 2.1 ברמה AA, שעליהן מבוסס תקן ישראלי 5568; לא נערכה בדיקת נגישות רשמית.</p>
+  <ul><li>אפשר לעבור על כל הדף במקלדת, והמיקוד גלוי. הקישור "דלג לתוכן" הוא העצירה הראשונה.</li>
+    <li>בסרגל הזה: הגדלת טקסט עד 130% בלי שהדף ייחתך או ייגלל לרוחב, ניגודיות גבוהה, גווני אפור, הדגשת קישורים, גופן קריא, ריווח טקסט, הדגשת מיקוד, עצירת תנועה וסמן גדול.</li>
+    <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
+    <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
+  <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
+function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
+function a11yPaint(el) {     // the buttons show the current choices
+  const t = lsGet("lc-text"), f = a11yFlags();
+  el.querySelectorAll("[data-ts]").forEach(b => b.setAttribute("aria-checked", b.dataset.ts === t));
+  el.querySelectorAll("[data-flag]").forEach(b => b.setAttribute("aria-pressed", f.has(b.dataset.flag)));
+}
+function a11yOpen() {
+  a11yClose();
+  const el = document.createElement("div");
+  el.className = "a11y"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "סרגל נגישות");
+  el.innerHTML = `<div class="a11yh"><b>סרגל נגישות</b><button type="button" class="a11yx" aria-label="סגירה">✕</button></div>
+    <div class="a11yl" id="a11ytl">גודל הטקסט</div>
+    <div class="a11ys" role="radiogroup" aria-labelledby="a11ytl">${A11Y.sizes.map(([k, n], i) =>
+      `<button type="button" role="radio" data-ts="${k}" style="font-size:${13 + i * 2}px">${n}</button>`).join("")}</div>
+    <div class="a11yg">${A11Y.flags.map(([k, n, d]) => `<button type="button" class="a11yf${k === "cursor" ? " fine" : ""}" data-flag="${k}"><b>${n}</b><small>${d}</small></button>`).join("")}</div>
+    <button type="button" class="a11yreset">↺ איפוס כל הגדרות הנגישות</button>
+    <details class="a11ystmt"><summary>הצהרת נגישות</summary>${A11Y_STATEMENT}</details>`;
+  a11yPaint(el);
+  document.body.appendChild(el);
+  A11Y.el = el; A11Y.btn.setAttribute("aria-expanded", "true");
+  if (innerWidth > 640) {                    // under the button; phones get a sheet at the bottom (CSS)
+    const r = A11Y.btn.getBoundingClientRect();
+    el.style.left = Math.max(8, Math.min(innerWidth - el.offsetWidth - 8, r.left)) + "px"; el.style.top = (r.bottom + 6) + "px";
+    el.style.maxHeight = (innerHeight - r.bottom - 18) + "px";
+  }
+  el.addEventListener("click", e => {
+    e.stopPropagation();
+    const b = e.target.closest("[data-ts], [data-flag], .a11yreset, .a11yx");
+    if (!b) return;
+    if (b.matches(".a11yx")) { a11yClose(); A11Y.btn.focus(); return; }
+    if (b.dataset.ts != null) lsSet("lc-text", b.dataset.ts);
+    else if (b.dataset.flag) a11ySetFlag(b.dataset.flag, b.getAttribute("aria-pressed") !== "true");
+    else { lsSet("lc-text", ""); lsSet("lc-contrast", ""); lsSet("lc-a11y", ""); }
+    a11yApply(); a11yPaint(el); A11Y.done?.();
+  });
+  el.querySelector('[aria-checked="true"]')?.focus({ preventScroll: true });
+}
+// the privacy notice, once: the site keeps no cookies, only the choices above (and the colours) in this browser
+function noticeInit() {
+  if (lsGet("lc-notice")) return;
+  const el = document.createElement("div");
+  el.className = "notice"; el.setAttribute("role", "region"); el.setAttribute("aria-label", "פרטיות ועוגיות");
+  el.innerHTML = `<p><b>פרטיות:</b> האתר לא משתמש בעוגיות (cookies), לא עוקב אחריך ולא מציג פרסומות. רק ההעדפות שבחרת – צבעים, גודל טקסט ונגישות – נשמרות בדפדפן שלך, כדי שיישארו גם בפעם הבאה.</p>
+    <div class="nb"><button type="button" class="ok">הבנתי</button><button type="button" class="del">מחיקת ההעדפות השמורות</button></div>`;
+  document.body.appendChild(el);
+  el.querySelector(".ok").addEventListener("click", e => { e.stopPropagation(); lsSet("lc-notice", "1"); el.remove(); });
+  el.querySelector(".del").addEventListener("click", e => { e.stopPropagation(); STORE.forEach(k => lsSet(k, "")); location.reload(); });
+}
+// btn: the page's accessibility button; done(): redraw what depends on the text (the report's charts)
+function a11yInit(btn, done) {
+  document.querySelectorAll("[data-skip]").forEach(a => a.addEventListener("click", e => {   // "skip to the content"
+    e.preventDefault(); e.stopPropagation(); const t = document.querySelector(a.dataset.skip);
+    if (t) { if (!t.hasAttribute("tabindex")) t.setAttribute("tabindex", "-1"); t.focus(); } }));
+  noticeInit();
+  if (!btn) return;
+  A11Y.btn = btn; A11Y.done = done;
+  btn.setAttribute("aria-haspopup", "dialog"); btn.setAttribute("aria-expanded", "false");
+  btn.addEventListener("click", e => { e.stopPropagation(); A11Y.el ? a11yClose() : a11yOpen(); });
+  document.addEventListener("click", e => { if (A11Y.el && !A11Y.el.contains(e.target) && !btn.contains(e.target)) a11yClose(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && A11Y.el) { a11yClose(); btn.focus(); } });
+}
+// ---- tables: Excel-style sort and filter on every column. The state survives re-renders (by table title);
+// a header click sorts ↑ / ↓ / back to the default; ▾ opens the menu; the bar above the table resets it all.
+const TT = { st: Object.create(null), pop: null, bound: false };
+const ttEsc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+// cell text -> a number (m:ss / h:mm:ss in seconds, "12.5%", "+3") or text; "" and "–" are empty
+function ttVal(s) {
+  const t = String(s ?? "").replace(/\u2212/g, "-").trim();
+  if (!t || t === "–" || t === "-") return null;
+  let m = /^([+-]?)(\d+):(\d{2})(?::(\d{2}))?(?!\d)/.exec(t);
+  if (m) { const v = m[4] != null ? m[2] * 3600 + m[3] * 60 + +m[4] : m[2] * 60 + +m[3]; return m[1] === "-" ? -v : v; }
+  m = /^[+-]?\d+(?:\.\d+)?(?![\d:/.])/.exec(t);
+  return m ? +m[0] : t;
+}
+const ttText = td => {                       // what a cell shows in the filter list
+  if (!td) return "";
+  if (td.dataset.f != null) return td.dataset.f;
+  const a = td.querySelector("a[data-runner]") || td.querySelector(".bar b");
+  return (a || td).textContent.replace(/\s+/g, " ").trim();
+};
+const ttKey = td => {                        // what a cell is sorted by (data-v when the text is not enough)
+  if (!td) return null;
+  const v = td.dataset.v;
+  return v == null ? ttVal(ttText(td)) : v === "" ? null : isFinite(v) ? +v : v;
+};
+// empty cells always last; in a column of numbers, text counts as empty
+function ttCmp(a, b, dir, num) {
+  if (num) { if (typeof a !== "number") a = null; if (typeof b !== "number") b = null; }
+  if (a == null || b == null) return a == null ? (b == null ? 0 : 1) : -1;
+  const d = typeof a === "number" && typeof b === "number" ? a - b : typeof a === "number" ? -1 : typeof b === "number" ? 1
+    : String(a).localeCompare(String(b), "he", { numeric: true });
+  return d * dir;
+}
+const ttRows = tb => [...tb.tBodies[0].rows];
+const ttHead = tb => [...tb.tHead.rows[tb.tHead.rows.length - 1].cells];
+const ttLabel = th => [...th.childNodes].filter(n => !n.classList?.contains("ttb")).map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+const ttTable = k => [...document.querySelectorAll("table[data-ttkey]")].find(t => t.dataset.ttkey === k);
+const ttBarOf = tb => { const at = tb.closest(".scroll") || tb; return at.previousElementSibling?.classList.contains("ttbar") ? at.previousElementSibling : null; };
+
+function tableTools(root, scope = "") {
+  if (!root) return;
+  ttBind();
+  root.querySelectorAll("table").forEach(tb => {
+    if (!tb.tHead || !tb.tBodies[0] || tb.dataset.tt === "off" || tb.dataset.ttkey) return;
+    const box = tb.closest(".card, section, aside, #me") || root;
+    const title = (box.querySelector("h2, h3")?.textContent || "").replace(/\s+/g, " ").trim();
+    tb.dataset.ttkey = `${scope}|${title}|${[...box.querySelectorAll("table")].indexOf(tb)}`;
+    ttRows(tb).forEach((r, i) => r.dataset.tti = i);
+    const head = ttHead(tb);
+    // the card view on phones: each cell learns its column's short name and its role (rank / name / main ...)
+    if (tb.classList.contains("cards")) {
+      const short = th => [...th.childNodes].filter(n => n.nodeName !== "SMALL").map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+      const lab = head.map(th => th.dataset.short ?? short(th)), role = head.map(th => th.dataset.card);
+      ttRows(tb).forEach(r => [...r.cells].forEach((td, j) => { if (td.dataset.l == null && lab[j]) td.dataset.l = lab[j];
+        if (role[j]) td.classList.add("cd-" + role[j]); }));
+    }
+    head.forEach((th, j) => {
+      if (th.dataset.tt === "no") return;
+      th.classList.add("tt");
+      th.insertAdjacentHTML("beforeend", `<button type="button" class="ttb" data-ttc="${j}" aria-label="מיון וסינון" aria-haspopup="dialog">▾</button>`);
+    });
+    const bar = document.createElement("div"); bar.className = "ttbar"; bar.hidden = true;
+    const at = tb.closest(".scroll") || tb; at.parentNode.insertBefore(bar, at);
+    if (tb.classList.contains("cards") && head.some(th => th.dataset.tt !== "no")) {   // phones: the header is hidden, this button lists its columns
+      const tools = document.createElement("div"); tools.className = "cdtools";
+      tools.innerHTML = `<button type="button" data-ttcols="${ttEsc(tb.dataset.ttkey)}" aria-haspopup="dialog">⇅ מיון וסינון</button><small></small>`;
+      at.parentNode.insertBefore(tools, bar);
+    }
+    ttApply(tb);
+  });
+}
+
+function ttApply(tb) {
+  const st = TT.st[tb.dataset.ttkey] || {}, ex = st.ex || {}, rows = ttRows(tb), head = ttHead(tb), body = tb.tBodies[0];
+  const cols = Object.keys(ex);
+  let shown = 0;
+  rows.forEach(r => { const ok = cols.every(j => !ex[j].has(ttText(r.cells[j]))); r.classList.toggle("tt-hide", !ok); shown += ok; });
+  const order = rows.slice().sort((a, b) => a.dataset.tti - b.dataset.tti);
+  if (st.sort) {
+    const [j, dir] = st.sort, v = new Map(rows.map(r => [r, ttKey(r.cells[j])])), vals = [...v.values()].filter(x => x != null);
+    const num = vals.filter(x => typeof x === "number").length * 2 >= vals.length;
+    order.sort((a, b) => ttCmp(v.get(a), v.get(b), dir, num) || a.dataset.tti - b.dataset.tti);
+  }
+  order.forEach(r => body.appendChild(r));
+  head.forEach((th, j) => { const b = th.querySelector(".ttb"); if (!b) return;
+    const s = st.sort?.[0] === j ? st.sort[1] : 0;
+    th.classList.toggle("tt-asc", s > 0); th.classList.toggle("tt-desc", s < 0);
+    th.setAttribute("aria-sort", s > 0 ? "ascending" : s < 0 ? "descending" : "none");
+    b.classList.toggle("on", !!ex[j]?.size); b.textContent = s > 0 ? "▲" : s < 0 ? "▼" : "▾"; });
+  const bar = ttBarOf(tb); if (!bar) return;
+  const hint = bar.previousElementSibling?.classList.contains("cdtools") && bar.previousElementSibling.querySelector("small");
+  if (hint) hint.textContent = `${shown < rows.length ? `${shown} מתוך ${rows.length}` : rows.length} שורות · לפי כל עמודה`;
+  bar.hidden = !(st.sort || cols.length);
+  if (bar.hidden) return;
+  const name = j => `<b>${ttEsc(ttLabel(head[j]) || "☆")}</b>`;
+  bar.innerHTML = `<span>${shown < rows.length ? `מוצגות <b>${shown}</b> מתוך ${rows.length} שורות` : `${rows.length} שורות`}`
+    + (st.sort ? ` · ממוין לפי ${name(st.sort[0])} ${st.sort[1] > 0 ? "↑" : "↓"}` : "")
+    + (cols.length ? ` · מסונן לפי ${cols.map(name).join(", ")}` : "") + `</span>`
+    + `<button type="button" data-ttreset="1" data-tip="המיון והסדר המקוריים, בלי סינון">↺ איפוס לברירת המחדל</button>`;
+}
+
+function ttSet(k, f) {
+  const st = TT.st[k] || (TT.st[k] = {}); st.ex ||= {};
+  f(st);
+  Object.keys(st.ex).forEach(j => st.ex[j].size || delete st.ex[j]);
+  if (!st.sort && !Object.keys(st.ex).length) delete TT.st[k];
+  const tb = ttTable(k); if (tb) ttApply(tb);
+}
+
+function ttOpen(btn) {
+  ttClose();
+  const th = btn.closest("th"), tb = th.closest("table"), k = tb.dataset.ttkey, j = +btn.dataset.ttc;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  // the values of the rows that pass the other columns' filters, as in Excel
+  const pass = r => Object.keys(ex).every(c => +c === j || !ex[c].has(ttText(r.cells[c])));
+  const counts = new Map();
+  ttRows(tb).filter(pass).forEach(r => { const v = ttText(r.cells[j]); counts.set(v, (counts.get(v) || 0) + 1); });
+  (ex[j] || []).forEach(v => counts.has(v) || counts.set(v, 0));
+  const vals = [...counts.keys()], sv = vals.map(ttVal);
+  const num = sv.filter(x => typeof x === "number").length * 2 >= sv.filter(x => x != null).length;
+  const order = vals.map((_, i) => i).sort((a, b) => ttCmp(sv[a], sv[b], 1, false) || vals[a].localeCompare(vals[b], "he"));
+  const s = st.sort?.[0] === j ? st.sort[1] : 0, hint = th.dataset.tth;
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>${ttEsc(ttLabel(th) || "עמודה")}</b>${hint ? `<small>${ttEsc(hint)}</small>` : ""}</div>
+    <button type="button" class="ttsort${s > 0 ? " on" : ""}" data-dir="1">${num ? "↑ מיון מהקטן לגדול" : "↑ מיון מא׳ עד ת׳"}</button>
+    <button type="button" class="ttsort${s < 0 ? " on" : ""}" data-dir="-1">${num ? "↓ מיון מהגדול לקטן" : "↓ מיון מת׳ עד א׳"}</button>
+    <div class="ttsep"></div>
+    <input type="search" class="ttq" placeholder="חיפוש ברשימה…" aria-label="חיפוש ברשימה" autocomplete="off">
+    <div class="ttall"><button type="button" data-ttall="1">✓ בחירת הכול</button><button type="button" data-ttall="0">✕ ביטול הכול</button></div>
+    <div class="ttlist">${order.map(i => `<label><input type="checkbox" data-i="${i}" ${ex[j]?.has(vals[i]) ? "" : "checked"}><span>${vals[i] === "" ? "(ריק)" : ttEsc(vals[i])}</span><small>${counts.get(vals[i])}</small></label>`).join("")}</div>
+    <div class="ttfoot"><button type="button" class="ttclear" ${ex[j]?.size ? "" : "disabled"}>ניקוי הסינון</button><button type="button" class="ttcancel">ביטול</button><button type="button" class="ttok">אישור</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j, vals, btn };
+  if (innerWidth > 640) {                    // under the header; phones get a sheet at the bottom (CSS)
+    const r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px";
+    pop.style.top = (r.bottom + 6 + h > innerHeight - 8 ? Math.max(8, r.top - h - 6) : r.bottom + 6) + "px";
+  }
+  if (!matchMedia("(pointer: coarse)").matches) pop.querySelector(".ttq").focus();
+}
+function ttCols(btn) {          // phones: the columns of a card table in one list; a tap opens that column's menu
+  ttClose();
+  const k = btn.dataset.ttcols, tb = ttTable(k); if (!tb) return;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>מיון וסינון</b><small>בחרו עמודה כדי למיין לפיה או לסנן את הערכים שלה</small></div><div class="ttcols">`
+    + ttHead(tb).map((th, j) => !th.querySelector(".ttb") ? "" : `<button type="button" class="ttcol" data-ttcol="${j}"><span>${ttEsc(ttLabel(th) || "עמודה " + (j + 1))}</span>`
+      + `<small>${st.sort?.[0] === j ? `<b>${st.sort[1] > 0 ? "▲ ממוין" : "▼ ממוין"}</b> ` : ""}${ex[j]?.size ? "<b>מסונן</b> " : ""}‹</small></button>`).join("")
+    + `</div><div class="ttfoot"><button type="button" class="ttcancel">סגירה</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j: -1, vals: [], btn };
+}
+function ttClose() { if (!TT.pop) return; const b = TT.pop.btn; TT.pop.el.remove(); TT.pop = null; if (b?.isConnected && !matchMedia("(pointer: coarse)").matches) b.focus({ preventScroll: true }); }
+function ttCanOk() { const P = TT.pop; if (!P) return;
+  P.el.querySelector(".ttok").disabled = ![...P.el.querySelectorAll(".ttlist label:not([hidden]) input")].some(cb => cb.checked); }
+function ttOk() {
+  const P = TT.pop; if (!P || P.el.querySelector(".ttok").disabled) return;
+  const searching = !!P.el.querySelector(".ttq").value.trim(), ex = new Set();
+  // as in Excel: with a search, only the matching values that are ticked stay
+  P.el.querySelectorAll(".ttlist input").forEach(cb => { if (!cb.checked || (searching && cb.closest("label").hidden)) ex.add(P.vals[+cb.dataset.i]); });
+  ttSet(P.k, st => { if (ex.size) st.ex[P.j] = ex; else delete st.ex[P.j]; });
+  ttClose();
+}
+function ttBind() {
+  if (TT.bound) return;
+  TT.bound = true;
+  // capture: handled here before the page's own click handlers
+  document.addEventListener("click", e => {
+    const t = e.target, P = TT.pop;
+    if (P && P.el.contains(t)) {
+      e.stopPropagation();
+      const col = t.closest("[data-ttcol]");
+      if (col) { const b = ttHead(ttTable(P.k))[+col.dataset.ttcol]?.querySelector(".ttb"); if (b) ttOpen(b); return; }
+      const sb = t.closest(".ttsort");
+      if (sb) { const d = +sb.dataset.dir; ttSet(P.k, st => st.sort = st.sort?.[0] === P.j && st.sort[1] === d ? null : [P.j, d]); ttClose(); }
+      else if (t.closest("[data-ttall]")) { const on = t.closest("[data-ttall]").dataset.ttall === "1";
+        P.el.querySelectorAll(".ttlist label:not([hidden]) input").forEach(cb => cb.checked = on); ttCanOk(); }
+      else if (t.closest(".ttclear")) { ttSet(P.k, st => delete st.ex[P.j]); ttClose(); }
+      else if (t.closest(".ttcancel")) ttClose();
+      else if (t.closest(".ttok")) ttOk();
+      return;
+    }
+    const b = t.closest(".ttb");
+    if (b) { e.stopPropagation(); e.preventDefault(); P?.btn === b ? ttClose() : ttOpen(b); return; }
+    const cb = t.closest("[data-ttcols]");
+    if (cb) { e.stopPropagation(); e.preventDefault(); P?.btn === cb ? ttClose() : ttCols(cb); return; }
+    if (P) ttClose();                          // a click outside closes the menu and still does what it was for
+    const rs = t.closest("[data-ttreset]");
+    if (rs) { e.stopPropagation(); const nx = rs.closest(".ttbar")?.nextElementSibling, tb = nx?.matches("table") ? nx : nx?.querySelector("table");
+      if (tb) { delete TT.st[tb.dataset.ttkey]; ttApply(tb); } return; }
+    const th = t.closest("th.tt");
+    if (th && th.dataset.legmap == null && !t.closest("a, button, input, select")) {
+      e.stopPropagation();
+      const tb = th.closest("table"), j = ttHead(tb).indexOf(th);
+      ttSet(tb.dataset.ttkey, st => { const s = st.sort?.[0] === j ? st.sort[1] : 0; st.sort = s === 0 ? [j, 1] : s > 0 ? [j, -1] : null; });
+    }
+  }, true);
+  document.addEventListener("change", e => { if (TT.pop?.el.contains(e.target)) ttCanOk(); });
+  document.addEventListener("input", e => {
+    if (!TT.pop || !e.target.classList?.contains("ttq")) return;
+    const q = e.target.value.trim().toLowerCase();
+    TT.pop.el.querySelectorAll(".ttlist label").forEach(l => l.hidden = !!q && !l.textContent.toLowerCase().includes(q));
+    ttCanOk();
+  });
+  document.addEventListener("keydown", e => {
+    if (!TT.pop) return;
+    if (e.key === "Escape") { e.preventDefault(); ttClose(); }
+    else if (e.key === "Enter" && e.target.classList?.contains("ttq")) { e.preventDefault(); ttOk(); }
+  }, true);
+}
+
+a11yInit($("a11yb"), render);
+try { TOKEN = sessionStorage.getItem("lc-admin") || ""; } catch (e) {}
+if (!REPO) $("adm").hidden = true; else if (TOKEN) { $("admin").hidden = false; login(); }
+render(); load();
+setInterval(load, 30000); setInterval(render, 10000);
+</script>
+</body>
+</html>
