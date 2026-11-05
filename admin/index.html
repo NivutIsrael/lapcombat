@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-njmzYvca7PTVYgpjUIfcvyM26Q0+V1Ub8XPcSkkhXT4=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-GK95sB/IW5D0audgLvvP5U6dRtfS0OUgz8ORGqUcz3Y=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -281,7 +281,7 @@ async function login() {
     $("who").innerHTML = `מחובר כ-<b>${esc(ME)}</b> <button type="button" id="out">יציאה</button>`;
     $("out").onclick = logout;
     list();
-    dataInit();
+    await dataInit();          // the upload (owner only) - awaited, so login() is done when it is
   } catch (e) { say(m, e.status === 401 ? "המפתח לא תקין או שפג תוקפו" : "לא הצלחנו להתחבר: " + e.message); TOKEN = ""; try { sessionStorage.removeItem("lc-admin"); } catch (x) {} }
 }
 function logout() { TOKEN = ""; ME = ""; try { sessionStorage.removeItem("lc-admin"); } catch (e) {} $("who").textContent = ""; $("panel").hidden = true; $("upcard").hidden = true; $("login").hidden = false; say($("lmsg"), "יצאת. המפתח נמחק מהדפדפן.", true); }
