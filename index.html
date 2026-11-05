@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-KB8B+V0Sk8PQTdiBco7oJDf7TfWMCAonZ4pxGcAB0P4=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2lv9tfMTcL6cNwIBGZOefBAD+cNaQcWykVtRLkXlBOg=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f4efe3" media="(prefers-color-scheme: light)">
@@ -368,7 +368,7 @@ $("theme").onclick = () => setTheme(THEMES[(THEMES.indexOf(document.documentElem
 
 const last = D.comps.map(c => c.updated || "").sort().pop();
 $("stats").innerHTML = `<span><b>${D.comps.length}</b>תחרויות</span><span><b>${Object.keys(D.runners).length}</b>נווטים</span>`
-  + (last ? `<span>עודכן לאחרונה <b>${esc(fdate(last))}</b></span>` : "");
+  + (last ? `<span>עודכן לאחרונה <b>${esc(fupd(last) || fdate(last))}</b></span>` : "");   // date and time
 $("ncomp").textContent = D.comps.length > 1 ? "מהחדשה לישנה" : "";
 // the live links: as built into the page, then as the admins keep them now (live.json on the site)
 const liveClean = j => { const out = Object.create(null), c = j && typeof j === "object" && j.comps && typeof j.comps === "object" ? j.comps : {};
