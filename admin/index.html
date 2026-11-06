@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fUXXnxUflvM3ncHL+Qtp2E3oRMJZN6MnI5wh20C9hiQ=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-9BT5TgsuOlc6lbJaLAjrB3q4byhG1kJH04z4oq8qij4=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -33,6 +33,8 @@ select { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(-
 input[type=file] { padding: 8px; }
 .files { margin: 8px 0 0; padding: 0; list-style: none; } .files li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--rule); font-size: calc(14px * var(--ts, 1)); }
 .files li small { color: var(--muted); } .files li.bad { color: var(--bad); }
+.files li > span { min-width: 0; overflow-wrap: anywhere; } .files li small { flex: none; display: inline-flex; align-items: center; gap: 6px; }
+.files li small button { padding: 5px 12px; }
 input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 .act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -45,6 +47,25 @@ details { margin-top: 12px; color: var(--ink-2); } summary { cursor: pointer; fo
 details ol { padding-inline-start: 20px; } code { background: var(--paper-2); padding: 1px 5px; border-radius: 4px; direction: ltr; unicode-bidi: embed; }
 [hidden] { display: none !important; }
 @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+/* a date: typed day.month.year, or picked in the calendar (in Hebrew, right to left) */
+.dt { position: relative; display: flex; gap: 6px; }
+.dt input { flex: 1 1 auto; width: auto; min-width: 0; text-align: right; }
+.calb { flex: none; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; border-color: var(--rule-2); background: var(--paper); }
+.calb svg { width: 20px; height: 20px; }
+.dth { margin: 4px 0 0; font-size: calc(13px * var(--ts, 1)); color: var(--muted); } .dth.err { color: var(--bad); font-weight: 600; }
+.cal { position: absolute; top: calc(100% + 6px); inset-inline-start: 0; z-index: 30; width: 300px; max-width: 100%; padding: 10px;   /* never wider than its field */
+  background: var(--surface); color: var(--ink); border: 1px solid var(--rule-2); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.22); }
+.cal .ch { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; } .cal .ch b { font-size: calc(15px * var(--ts, 1)); }
+.cal .ch button, .cal .cf button { padding: 5px 12px; border-color: var(--rule-2); }
+.cal table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.cal th { font-size: calc(12px * var(--ts, 1)); font-weight: 600; color: var(--muted); padding: 2px 0 4px; text-align: center; }
+.cal td { padding: 1px; text-align: center; }
+.cal td button { width: 100%; min-height: 38px; padding: 0; font-weight: 500; border: 1px solid transparent; background: none; border-radius: 8px; }
+.cal td button:hover { background: var(--paper-2); }
+.cal td button[aria-current="date"] { border-color: var(--purple); color: var(--purple); font-weight: 700; }
+.cal td button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.cal .cf { display: flex; justify-content: space-between; gap: 6px; margin-top: 8px; }
+@media (max-width: 560px) { .cal { width: auto; inset-inline: 0; } }   /* phones: as wide as the field */
 
 /* accessibility toolbar: text size (every font size is calc(px * --ts), see scalable()), contrast and reading aids */
 :root[data-text="l"] { --ts: 1.15; } :root[data-text="xl"] { --ts: 1.3; }
@@ -100,6 +121,9 @@ th.tt-asc, th.tt-desc { color: var(--accent); }
 .ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
 .ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
 tr.tt-hide { display: none; }
+/* the row number (מס״ד) each table starts with: narrow and quiet */
+th.ttn, td.ttn { width: 1%; white-space: nowrap; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+td.ttn { font-size: calc(12px * var(--ts, 1)); }
 .ttbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; padding: 6px 10px; border-radius: 8px;
          font-size: calc(12px * var(--ts, 1)); color: var(--ink-2); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .ttbar[hidden] { display: none; }
@@ -156,6 +180,8 @@ tr.tt-hide { display: none; }
   table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }
   table.cards td.cd-main { order: 3; font-size: calc(16px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
   table.cards td.cd-star { order: 4; }
+  table.cards td.ttn { order: 4; width: auto; margin-inline-start: auto; font-size: calc(12px * var(--ts, 1)); color: var(--muted); }   /* the row number: "#12", at the end of the top line */
+  table.cards td.ttn::before { content: "#"; }
   table.cards td.cd-full { flex-basis: 100%; }
   table.cards td.cd-hide, table.cards td:empty { display: none; }
   table.cards .bar { min-width: 0; display: inline; } table.cards .bar i { display: none; } table.cards .bar b { font-weight: inherit; }
@@ -210,7 +236,7 @@ tr.tt-hide { display: none; }
         <h2>תחרות שעוד לא באתר</h2>
         <p class="note">תחרות קרובה או שמתקיימת עכשיו: היא תופיע בראש האתר עם כפתור לתוצאות החיות, והניתוח יתחבר אליה אחרי התחרות.</p>
         <div class="row"><div><label for="nt">שם התחרות</label><input id="nt" maxlength="160" placeholder="אליפות ישראל - יער אודם - יום 3"></div>
-          <div><label for="nd">תאריך</label><input id="nd" type="date"></div></div>
+          <div><label for="nd">תאריך</label><div class="dt"><input id="nd" dir="ltr" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="14" aria-describedby="nd-h"><button type="button" class="calb" data-cal="nd" aria-label="בחירת התאריך בלוח השנה" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><p class="dth" id="nd-h">יום.חודש.שנה – למשל 14.11.2026</p></div></div>
         <label for="nu">הקישור לתוצאות החיות במולקה</label><input id="nu" dir="ltr" placeholder="https://jp.mulka2.com/cloud/live/index.jsp?eventId=…">
         <label for="ns">מזהה (לא חובה)</label><input id="ns" dir="ltr" maxlength="80" placeholder="odem-3-25-10-2026">
         <p class="note" style="font-size: calc(13px * var(--ts, 1));margin-top:4px">אם כבר יש במחשב תיקייה לתחרות, כתבו את שם התיקייה באותיות קטנות, כדי שהניתוח יתחבר לאותה תחרות.</p>
@@ -222,9 +248,9 @@ tr.tt-hide { display: none; }
         <p class="note">הקבצים נשמרים במאגר הפרטי, ו-GitHub מריץ עליהם את כל הניתוח – אותו קוד כמו במחשב – ומפרסם את האתר, בדרך כלל תוך 3–5 דקות.
           קובץ בשם שכבר קיים בתחרות מחליף אותו.</p>
         <label for="ucomp">תחרות</label><select id="ucomp"></select>
-        <div id="ufolder"></div>
+        <div id="ufolder"></div><input id="urp" type="file" hidden aria-hidden="true" tabindex="-1">
         <div id="unew" hidden><div class="row"><div><label for="uname">שם התיקייה (אותיות באנגלית, ספרות ומקפים)</label><input id="uname" dir="ltr" maxlength="60" placeholder="Odem-3"></div>
-          <div><label for="udate">תאריך</label><input id="udate" type="date"></div></div>
+          <div><label for="udate">תאריך</label><div class="dt"><input id="udate" dir="ltr" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="14" aria-describedby="udate-h"><button type="button" class="calb" data-cal="udate" aria-label="בחירת התאריך בלוח השנה" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><p class="dth" id="udate-h">יום.חודש.שנה – למשל 14.11.2026</p></div></div>
           <label for="utitle">השם באתר (עד שיש דוח)</label><input id="utitle" maxlength="160" placeholder="אליפות ישראל - יער אודם - יום 3"></div>
         <label for="ufiles">הקבצים</label>
         <input id="ufiles" type="file" multiple accept=".htm,.html,.lxm,.xml,.ocd">
@@ -241,7 +267,7 @@ tr.tt-hide { display: none; }
   </main>
 </div>
 <script>
-const D = {"repo":"NivutIsrael/lapcombat","data_repo":"NivutIsrael/lapcombat-data","gateway":"https://script.google.com/macros/s/AKfycbyNFxH0etZDR3MAPqQedC1EFQvNP_CwiNAl0qut1hPOgufTvxUFMHSNvHDdbjqqo-skoA/exec","live":{"v":1,"comps":{"odem-2-24-10-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId=202610247pasGNIW-sjvenGdSg9Kcg","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24","updated":"2026-11-05T20:10:42Z","by":"NivutIsrael"}}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 2026/10/24","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 2026/10/23","date":"2026-10-23"}]};
+const D = {"repo":"NivutIsrael/lapcombat","data_repo":"NivutIsrael/lapcombat-data","gateway":"https://script.google.com/macros/s/AKfycbyNFxH0etZDR3MAPqQedC1EFQvNP_CwiNAl0qut1hPOgufTvxUFMHSNvHDdbjqqo-skoA/exec","live":{"v":1,"comps":{"odem-2-24-10-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId=202610247pasGNIW-sjvenGdSg9Kcg","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24","updated":"2026-11-05T20:10:42Z","by":"NivutIsrael"},"hacarmel-3-14-11-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId","title":"שער הכרמל- ליגת יער- מחזור 1 · 14.11.2026","date":"2026-11-14","updated":"2026-11-06T07:56:47Z","by":"Owner"}}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 23.10.2026","date":"2026-10-23"}]};
 if (window.top !== window.self) { document.body.textContent = ""; throw new Error("framed"); }   // never inside another site's frame
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -291,6 +317,110 @@ async function change(key, entry, what) {
   }
 }
 const say = (el, text, ok) => { el.textContent = text; el.className = "msg " + (ok ? "ok" : "err"); };
+// ---- dates: typed and shown day.month.year, as in Israel (14.11.2026), with a calendar in Hebrew. Not the browser's own date
+// field: that one shows the browser's language format (11/14/2026 in an English browser), whatever the page says.
+const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+const p2 = n => String(n).padStart(2, "0"), ymdS = (y, m, d) => `${y}-${p2(m)}-${p2(d)}`;
+const realDay = (y, m, d) => { const t = new Date(Date.UTC(y, m - 1, d));
+  return y >= 2000 && y <= 2099 && t.getUTCFullYear() === y && t.getUTCMonth() === m - 1 && t.getUTCDate() === d; };
+const fdate = s => YMD.test(s || "") ? s.split("-").map(Number).reverse().join(".") : "";        // "2026-11-04" -> "4.11.2026"
+const longDate = s => { if (!YMD.test(s || "")) return ""; const [y, m, d] = s.split("-").map(Number);
+  return `יום ${DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} · ${d} ב${MONTHS[m - 1]} ${y}`; };
+// a title saved with the date year first ("· 2026/10/24", as LapCombat and Mulka write it): shown as in Israel
+const heDates = t => String(t ?? "").replace(/(^|\D)(\d{4})[\/.-](\d{1,2})[\/.-](\d{1,2})(?!\d)/g,
+  (all, pre, y, m, d) => realDay(+y, +m, +d) ? `${pre}${+d}.${+m}.${y}` : all);
+// what an admin types -> "2026-11-14", else "": 14.11.2026, 14/11/26, 14-11-2026, 14 11 2026, 14112026 (a year first, as in
+// 2026-11-14, is fine too). A day that does not exist - 31.11, or 11/14 written the American way - is not a date.
+function parseDate(text) {
+  const s = String(text || "").replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "").replace(/\s+/g, " ").trim();
+  let m = /^(\d{4}) ?[.\/-] ?(\d{1,2}) ?[.\/-] ?(\d{1,2})$/.exec(s), y, mo, d;
+  if (m) [y, mo, d] = [+m[1], +m[2], +m[3]];
+  else if ((m = /^(\d{1,2}) ?[.\/,\- ] ?(\d{1,2}) ?[.\/,\- ] ?(\d{4}|\d{2})$/.exec(s) || /^(\d{2})(\d{2})(\d{4}|\d{2})$/.exec(s)))
+    [d, mo, y] = [+m[1], +m[2], m[3].length === 2 ? 2000 + +m[3] : +m[3]];
+  else return "";
+  return realDay(y, mo, d) ? ymdS(y, mo, d) : "";
+}
+const DATE_HINT = "יום.חודש.שנה – למשל 14.11.2026", DATE_BAD = "זה לא תאריך: כותבים יום.חודש.שנה, למשל 14.11.2026";
+const dateOf = id => parseDate($(id).value);
+function hintDate(id, strict) {           // under the field: the day it is ("יום שבת · 14 בנובמבר 2026"), so a mistake shows at once
+  const el = $(id), v = parseDate(el.value), bad = !v && !!el.value.trim() && strict;
+  $(id + "-h").textContent = v ? longDate(v) : bad ? DATE_BAD : DATE_HINT;
+  $(id + "-h").classList.toggle("err", bad);
+  if (bad) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid");
+}
+function setDate(id, v) { $(id).value = v ? fdate(v) : ""; hintDate(id, false); }
+const DATE_IDS = ["nd", "udate"];
+for (const id of DATE_IDS) {
+  $(id).addEventListener("input", () => hintDate(id, false));
+  $(id).addEventListener("change", () => { const v = dateOf(id); if (v) $(id).value = fdate(v); hintDate(id, true); });
+  hintDate(id, false);
+}
+// the calendar: right to left, the week from Sunday; arrows move a day / a week, Page Up/Down a month, Esc closes
+const CAL = document.createElement("div");
+CAL.className = "cal"; CAL.id = "cal"; CAL.hidden = true; CAL.setAttribute("role", "dialog"); CAL.setAttribute("aria-label", "בחירת תאריך");
+let calFor = "", calAt = "";              // the field it fills, and the day that has the focus
+const todayS = () => { const n = new Date(); return ymdS(n.getFullYear(), n.getMonth() + 1, n.getDate()); };
+const plusDays = (s, k) => { const [y, m, d] = s.split("-").map(Number), t = new Date(Date.UTC(y, m - 1, d + k));
+  return ymdS(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()); };
+const plusMonths = (s, k) => { let [y, m, d] = s.split("-").map(Number); m += k; y += Math.floor((m - 1) / 12); m = ((m - 1) % 12 + 12) % 12 + 1;
+  return ymdS(y, m, Math.min(d, new Date(Date.UTC(y, m, 0)).getUTCDate())); };
+const inRange = s => s < "2000-01-01" ? "2000-01-01" : s > "2099-12-31" ? "2099-12-31" : s;
+const calBtn = id => document.querySelector(`[data-cal="${id}"]`);
+function calDraw(focus) {
+  calAt = inRange(calAt);
+  const [y, m] = calAt.split("-").map(Number), sel = dateOf(calFor), today = todayS();
+  const first = new Date(Date.UTC(y, m - 1, 1)).getUTCDay(), days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  let rows = "", row = "<td></td>".repeat(first);
+  for (let d = 1; d <= days; d++) {
+    const s = ymdS(y, m, d);
+    row += `<td><button type="button" data-d="${s}" tabindex="${s === calAt ? 0 : -1}" aria-label="${esc(longDate(s))}"`
+      + `${s === sel ? ' aria-pressed="true"' : ""}${s === today ? ' aria-current="date"' : ""}>${d}</button></td>`;
+    if ((first + d) % 7 === 0 || d === days) { rows += `<tr>${row}</tr>`; row = ""; }
+  }
+  CAL.innerHTML = `<div class="ch"><button type="button" data-mv="-1" aria-label="החודש הקודם">→</button><b aria-live="polite">${MONTHS[m - 1]} ${y}</b>`
+    + `<button type="button" data-mv="1" aria-label="החודש הבא">←</button></div>`
+    + `<table><thead><tr>${["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"].map((t, i) => `<th scope="col" title="יום ${DAYS[i]}">${t}</th>`).join("")}</tr></thead>`
+    + `<tbody>${rows}</tbody></table><div class="cf"><button type="button" data-d="${today}">היום</button><button type="button" data-close>סגירה</button></div>`;
+  if (focus) CAL.querySelector(`td [data-d="${calAt}"]`)?.focus();
+}
+function calOpen(id) {
+  DATE_IDS.forEach(i => calBtn(i)?.setAttribute("aria-expanded", "false"));
+  calFor = id; calAt = dateOf(id) || todayS();
+  calBtn(id).closest(".dt").appendChild(CAL); CAL.hidden = false; calBtn(id).setAttribute("aria-expanded", "true");
+  calDraw(true);
+  CAL.scrollIntoView?.({ block: "nearest" });
+}
+function calClose(back) {
+  if (CAL.hidden) return;
+  CAL.hidden = true; calBtn(calFor)?.setAttribute("aria-expanded", "false");
+  if (back) calBtn(calFor)?.focus();
+}
+document.addEventListener("click", ev => {
+  const b = ev.target.closest?.("[data-cal]"); if (!b) return;
+  if (CAL.hidden || calFor !== b.dataset.cal) calOpen(b.dataset.cal); else calClose(true);
+});
+document.addEventListener("pointerdown", ev => { if (!CAL.hidden && !CAL.contains(ev.target) && !ev.target.closest?.("[data-cal]")) calClose(false); });
+document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !CAL.hidden) { ev.preventDefault(); calClose(true); } });
+CAL.addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  if (b.dataset.mv) { calAt = plusMonths(calAt, +b.dataset.mv); calDraw(false); CAL.querySelector(`[data-mv="${b.dataset.mv}"]`).focus(); }
+  else if (b.dataset.d) { setDate(calFor, b.dataset.d); calClose(true); }
+  else if ("close" in b.dataset) calClose(true);
+});
+CAL.addEventListener("keydown", ev => {
+  const b = ev.target.closest("td [data-d]"); if (!b) return;
+  const dow = new Date(b.dataset.d + "T00:00:00Z").getUTCDay();
+  const to = { ArrowLeft: plusDays(b.dataset.d, 1), ArrowRight: plusDays(b.dataset.d, -1),    // right to left: the next day is on the left
+    ArrowDown: plusDays(b.dataset.d, 7), ArrowUp: plusDays(b.dataset.d, -7), Home: plusDays(b.dataset.d, -dow), End: plusDays(b.dataset.d, 6 - dow),
+    PageDown: plusMonths(b.dataset.d, ev.shiftKey ? 12 : 1), PageUp: plusMonths(b.dataset.d, ev.shiftKey ? -12 : -1) }[ev.key];
+  if (!to) return;
+  ev.preventDefault(); calAt = to; calDraw(true);
+});
+CAL.addEventListener("focusout", ev => {      // Tab out of the calendar closes it
+  const to = ev.relatedTarget;
+  if (to && !CAL.contains(to) && !to.closest?.("[data-cal]")) calClose(false);
+});
 const GW = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]{20,}\/exec$/.test(D.gateway || "") ? D.gateway : "";
 let MODE = "", GWT = "";       // "gh": a GitHub key in this tab; "gw": an email sign-in, the gateway keeps the key
 const STATUS = { auth: 401, conflict: 409, github: 502, busy: 429, scope: 403 };
@@ -477,8 +607,8 @@ function list() {
   for (const [k, e] of Object.entries(LIVE)) if (!comps.some(c => c.slug === k)) comps.push({ slug: k, title: e.title || k, date: e.date, only: true });
   comps.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   $("list").innerHTML = comps.map(c => { const e = LIVE[c.slug];
-    return `<div class="comp" data-k="${esc(c.slug)}"><h3>${esc(c.title)}</h3>
-      <div class="meta">${esc(c.date)} · ${esc(c.slug)}${c.only ? " · עוד אין דוח" : ""}${e ? ` · <span class="live"><i></i>יש קישור חי</span>${e.by ? ` · עודכן ע״י ${esc(e.by)}` : ""}` : ""}</div>
+    return `<div class="comp" data-k="${esc(c.slug)}"><h3>${esc(heDates(c.title))}</h3>
+      <div class="meta">${c.date ? `${esc(fdate(c.date))} · ` : ""}${esc(c.slug)}${c.only ? " · עוד אין דוח" : ""}${e ? ` · <span class="live"><i></i>יש קישור חי</span>${e.by ? ` · עודכן ע״י ${esc(e.by)}` : ""}` : ""}</div>
       <label for="u-${esc(c.slug)}">קישור לתוצאות החיות</label><input id="u-${esc(c.slug)}" dir="ltr" value="${esc(e?.url || "")}" placeholder="https://jp.mulka2.com/cloud/live/…">
       <div class="act"><button type="button" class="pri" data-save>שמירה</button>${e ? `<button type="button" class="del" data-del>הסרת הקישור</button>` : ""}</div>
       <p class="msg" role="status"></p></div>`; }).join("") || `<p class="note">אין עדיין תחרויות באתר.</p>`;
@@ -495,18 +625,17 @@ $("list").addEventListener("click", async ev => {
   } catch (e) { say(m, why(e)); box.querySelectorAll("button").forEach(x => x.disabled = false); }
 });
 $("add").onclick = async () => {
-  const m = $("amsg"), title = $("nt").value.trim(), date = $("nd").value, url = $("nu").value.trim();
+  const m = $("amsg"), title = $("nt").value.trim(), date = dateOf("nd"), url = $("nu").value.trim();
   let key = $("ns").value.trim().toLowerCase();
   if (!title) return say(m, "חסר שם התחרות");
-  if (!YMD.test(date)) return say(m, "חסר תאריך");
+  if (!date) { hintDate("nd", true); return say(m, $("nd").value.trim() ? DATE_BAD : "חסר תאריך"); }
   if (!mkOk(url)) return say(m, "רק קישור https לאתר mulka2.com");
   if (!key) { const [y, mo, d] = date.split("-"); key = `live-${+d}-${+mo}-${y}`; let n = 2, k0 = key; while (LIVE[key] || D.comps.some(c => c.slug === key)) key = `${k0}-${n++}`; }
   if (!SLUG.test(key)) return say(m, "מזהה: אותיות באנגלית קטנות, ספרות ומקפים");
   $("add").disabled = true; say(m, "שומר…", true);
   try {
-    const [y, mo, d] = date.split("-");
-    await change(key, { url, title: `${title} · ${y}/${mo}/${d}`, date }, `Live link: ${key} (new)`);
-    ["nt", "nd", "nu", "ns"].forEach(i => $(i).value = ""); list(); say(m, "נוספה. היא תופיע בראש האתר תוך כדקה.", true);
+    await change(key, { url, title: `${title} · ${fdate(date)}`, date }, `Live link: ${key} (new)`);
+    ["nt", "nu", "ns"].forEach(i => $(i).value = ""); setDate("nd", ""); list(); say(m, "נוספה. היא תופיע בראש האתר תוך כדקה.", true);
   } catch (e) { say(m, why(e)); }
   $("add").disabled = false;
 };
@@ -550,7 +679,12 @@ async function dataInit() {
   showFiles();
 }
 $("ucomp").onchange = () => { $("unew").hidden = !!$("ucomp").value; showFiles(); };
-// the files the competition has now; one that should not be there can be removed (the analysis is then built without it)
+// the files the competition has now: one can be replaced by a new version of it, or removed (the analysis is then built again)
+const iso = s => "\u2068" + s + "\u2069";        // a file name inside Hebrew text, kept in its own order (261024_4084-Category.lxm)
+const RPL = n => /\.(htm|html|lxm|xml|ocd)$/i.test(n);      // a data file: may be replaced (the .txt settings have their own fields)
+const FAMILY = n => /\.html?$/i.test(n) ? ".htm" : (/\.(lxm|xml|ocd)$/i.exec(n) || [])[1] ? "." + /\.(lxm|xml|ocd)$/i.exec(n)[1].toLowerCase() : "";
+// what the picker offers: phones do not know .lxm and .ocd, so for those any file (checked after it is picked)
+const ACCEPT = n => /\.html?$/i.test(n) ? ".htm,.html" : /\.xml$/i.test(n) ? ".xml" : "";
 async function showFiles() {
   const box = $("ufolder"), folder = $("ucomp").value;
   box.innerHTML = "";
@@ -559,22 +693,46 @@ async function showFiles() {
   try { files = await B.files(folder); } catch (e) { if ($("ucomp").value === folder) box.innerHTML = `<p class="msg err">${esc(why(e))}</p>`; return; }
   if ($("ucomp").value !== folder || !files.length) return;
   box.innerHTML = `<details class="have"><summary>הקבצים שכבר בתחרות (${files.length})</summary><ul class="files">${files.map(f =>
-    `<li><span>${esc(f.name)}</span><small>${+f.size < MB ? `${Math.max(1, Math.round(+f.size / 1024 || 0))}KB` : `${(+f.size / MB).toFixed(1)}MB`}${f.del ? ` <button type="button" class="del" data-rm="${esc(f.name)}">הסרה</button>` : ""}</small></li>`).join("")}</ul></details>`;
+    `<li><span dir="auto">${esc(f.name)}</span><small>${+f.size < MB ? `${Math.max(1, Math.round(+f.size / 1024 || 0))}KB` : `${(+f.size / MB).toFixed(1)}MB`}${f.del
+      ? `${RPL(f.name) ? `<button type="button" data-rp="${esc(f.name)}" aria-label="החלפת ${esc(f.name)} בגרסה חדשה">החלפה</button>` : ""}<button type="button" class="del" data-rm="${esc(f.name)}" aria-label="הסרת ${esc(f.name)}">הסרה</button>`
+      : ""}</small></li>`).join("")}</ul></details>`;
 }
+let REPLACE = "";            // the file the picked one replaces
+const lockFiles = on => $("ufolder").querySelectorAll("button").forEach(b => b.disabled = on);
 $("ufolder").addEventListener("click", async ev => {
+  const r = ev.target.closest("[data-rp]");
+  if (r) { REPLACE = r.dataset.rp; $("urp").value = ""; $("urp").accept = ACCEPT(REPLACE); $("urp").click(); return; }
   const b = ev.target.closest("[data-rm]"); if (!b) return;
   const folder = $("ucomp").value, name = b.dataset.rm, m = $("umsg");
-  if (!FOLDER.test(folder) || !MAY(name) || !confirm(`להסיר את ${name} מהתחרות ${folder}? הניתוח ייבנה מחדש בלעדיו.`)) return;
+  if (!FOLDER.test(folder) || !MAY(name) || !confirm(`להסיר את ${iso(name)} מהתחרות ${iso(folder)}? הניתוח ייבנה מחדש בלעדיו.`)) return;
   b.disabled = true; say(m, "מסיר…", true);
   try {
     const sha = await B.commit([{ path: `${folder}/${name}`, mode: "100644", type: "blob", sha: null }], `${folder}: removed ${name}`);
-    say(m, `${name} הוסר. GitHub בונה עכשיו את הניתוח מחדש.`, true); watch(sha); showFiles();
+    say(m, `${iso(name)} הוסר. GitHub בונה עכשיו את הניתוח מחדש.`, true); watch(sha); showFiles();
   } catch (e) { say(m, why(e)); b.disabled = false; }
 });
+// a new version of a file: saved under the file's own name, so it takes its place (the old one stays in the repository's history)
+$("urp").onchange = async () => {
+  const f = $("urp").files[0], name = REPLACE, folder = $("ucomp").value, m = $("umsg"), L = LIMIT();
+  REPLACE = "";
+  if (!f || !name || !FOLDER.test(folder) || !MAY(name) || !RPL(name)) return;
+  $("urp").value = "";
+  if (FAMILY(f.name) !== FAMILY(name)) return say(m, `${iso(f.name)} לא מתאים: את ${iso(name)} מחליפים בקובץ ${FAMILY(name)}`);
+  if (name.toLowerCase() !== "startlist.html" && IS_START(f.name))
+    return say(m, `${iso(f.name)} נראה כמו רשימת זינוק – אותה מעלים בהעלאה הרגילה, לא במקום ${iso(name)}`);
+  if (!f.size) return say(m, `${iso(f.name)} ריק`);
+  if (f.size > L * MB) return say(m, `${iso(f.name)} גדול מ-${L}MB${MODE === "gw" ? " בכניסה במייל (קובץ גדול יותר: בעל האתר, מהמחשב)" : ""}`);
+  if (!confirm(`להחליף את ${iso(name)} בתחרות ${iso(folder)} בקובץ ${iso(f.name)}?\nהקובץ יישמר בשם ${iso(name)}, והניתוח ייבנה מחדש.`)) return;
+  lockFiles(true); say(m, `מחליף את ${iso(name)}…`, true);
+  try {
+    const sha = await B.commit([{ path: `${folder}/${name}`, mode: "100644", type: "blob", sha: await B.blob(await fileB64(f)) }], `${folder}: replaced ${name}`);
+    say(m, `${iso(name)} הוחלף בגרסה החדשה. GitHub בונה עכשיו את הניתוח מחדש.`, true); watch(sha); showFiles();
+  } catch (e) { say(m, why(e)); lockFiles(false); }
+};
 function upFiles() {
   const fs = [...$("ufiles").files], L = LIMIT();
   $("ulist").innerHTML = fs.length ? `<ul class="files">${fs.map(f => { const k = KIND(f.name), ok = k && NAME_OK(f.name) && f.size <= L * MB;
-    return `<li class="${ok ? "" : "bad"}"><span>${esc(f.name)}</span><small>${ok ? esc(k) : !k ? "סוג קובץ לא מוכר" : f.size > L * MB ? `גדול מ-${L}MB` : "שם קובץ לא תקין"} · ${(f.size / MB).toFixed(2)}MB</small></li>`; }).join("")}</ul>` : "";
+    return `<li class="${ok ? "" : "bad"}"><span dir="auto">${esc(f.name)}</span><small>${ok ? esc(k) : !k ? "סוג קובץ לא מוכר" : f.size > L * MB ? `גדול מ-${L}MB` : "שם קובץ לא תקין"} · ${(f.size / MB).toFixed(2)}MB</small></li>`; }).join("")}</ul>` : "";
 }
 $("ufiles").onchange = upFiles;
 const fileB64 = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = () => no(r.error); r.readAsDataURL(f); });
@@ -582,9 +740,9 @@ async function upload() {
   const m = $("umsg"), files = [...$("ufiles").files], lx = $("ulx").value.trim();
   let folder = $("ucomp").value;
   if (!folder) {
-    const name = $("uname").value.trim(), date = $("udate").value;
+    const name = $("uname").value.trim(), date = dateOf("udate");
     if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,59}$/.test(name)) return say(m, "שם התחרות: אותיות באנגלית, ספרות ומקפים (למשל Odem-3)");
-    if (!YMD.test(date)) return say(m, "חסר תאריך");
+    if (!date) { hintDate("udate", true); return say(m, $("udate").value.trim() ? DATE_BAD : "חסר תאריך"); }
     const [y, mo, d] = date.split("-"); folder = `${name}-${+d}-${+mo}-${y}`;
     if (RESERVED.has(slugOf(folder))) return say(m, "השם הזה שמור לאתר עצמו – בחרו שם אחר");
     const same = DIRS.find(x => x !== folder && slugOf(x) === slugOf(folder));
@@ -592,7 +750,7 @@ async function upload() {
   }
   if (!files.length && !lx) return say(m, "בחרו קבצים להעלאה, או קישור Livelox");
   const L = LIMIT(), bad = files.find(f => !KIND(f.name) || !NAME_OK(f.name) || f.size > L * MB);
-  if (bad) return say(m, `הקובץ ${bad.name} לא מתאים – רק .htm, .lxm, .xml, .ocd עד ${L}MB${MODE === "gw" ? " בכניסה במייל (קובץ גדול יותר: בעל האתר, מהמחשב)" : ""}`);
+  if (bad) return say(m, `הקובץ ${iso(bad.name)} לא מתאים – רק .htm, .lxm, .xml, .ocd עד ${L}MB${MODE === "gw" ? " בכניסה במייל (קובץ גדול יותר: בעל האתר, מהמחשב)" : ""}`);
   if (files.reduce((s, f) => s + f.size, 0) > 90 * MB) return say(m, "יותר מ-90MB בפעם אחת – העלו בכמה חלקים");
   if (files.filter(f => IS_START(f.name)).length > 1) return say(m, "רק רשימת זינוק אחת בכל פעם");
   const isNew = !$("ucomp").value, title = isNew ? ($("utitle")?.value || "").trim().slice(0, 160) : "";
@@ -602,7 +760,7 @@ async function upload() {
   try {
     const tree = [];
     for (const [i, f] of files.entries()) {
-      say(m, `מעלה ${f.name} (${i + 1}/${files.length})…`, true);
+      say(m, `מעלה ${iso(f.name)} (${i + 1}/${files.length})…`, true);
       tree.push({ path: `${folder}/${IS_START(f.name) ? "startlist.html" : f.name}`, mode: "100644", type: "blob", sha: await B.blob(await fileB64(f)) });
     }
     if (title) tree.push({ path: `${folder}/title.txt`, mode: "100644", type: "blob", sha: await B.blob(b64enc(title + "\n")) });
@@ -611,7 +769,7 @@ async function upload() {
     const sha = await B.commit(tree, `${folder}: ${files.length} files${lx ? " + Livelox link" : ""}`);
     say(m, `הקבצים נשמרו ב-${folder}. GitHub בונה עכשיו את הניתוח.`, true);
     $("ufiles").value = ""; $("ulx").value = ""; upFiles();
-    if (isNew) ["uname", "udate", "utitle"].forEach(i => { if ($(i)) $(i).value = ""; });
+    if (isNew) { ["uname", "utitle"].forEach(i => { if ($(i)) $(i).value = ""; }); setDate("udate", ""); }
     if (!DIRS.includes(folder)) { DIRS = [folder, ...DIRS]; $("ucomp").insertAdjacentHTML("beforeend", `<option value="${esc(folder)}">${esc(folder)}</option>`); }
     $("ucomp").value = folder; $("unew").hidden = true; showFiles();
     watch(sha);
@@ -761,12 +919,18 @@ const ttKey = td => {                        // what a cell is sorted by (data-v
   const v = td.dataset.v;
   return v == null ? ttVal(ttText(td)) : v === "" ? null : isFinite(v) ? +v : v;
 };
+// categories as orienteers look for them: D (women) by age, then H (men), then the rest (בינוני, קצרצר …) by the alphabet;
+// a competitor's category that is not given comes last. Any other text is simply by the alphabet.
+const catKey = k => { const m = /^([DH])\s*(\d+)\s*(.*)$/i.exec(k);     // [group, age, the rest]: D14A -> [0, 14, "A"]
+  return m ? [m[1].toUpperCase() === "D" ? 0 : 1, +m[2], m[3]] : [k ? 2 : 3, 0, k]; };
+const catCmp = (a, b) => { const x = catKey(String(a ?? "")), y = catKey(String(b ?? ""));
+  return x[0] - y[0] || x[1] - y[1] || x[2].localeCompare(y[2], "he", { numeric: true }); };
 // empty cells always last; in a column of numbers, text counts as empty
 function ttCmp(a, b, dir, num) {
   if (num) { if (typeof a !== "number") a = null; if (typeof b !== "number") b = null; }
   if (a == null || b == null) return a == null ? (b == null ? 0 : 1) : -1;
   const d = typeof a === "number" && typeof b === "number" ? a - b : typeof a === "number" ? -1 : typeof b === "number" ? 1
-    : String(a).localeCompare(String(b), "he", { numeric: true });
+    : catCmp(a, b);
   return d * dir;
 }
 const ttRows = tb => [...tb.tBodies[0].rows];
@@ -783,6 +947,10 @@ function tableTools(root, scope = "") {
     const box = tb.closest(".card, section, aside, #me") || root;
     const title = (box.querySelector("h2, h3")?.textContent || "").replace(/\s+/g, " ").trim();
     tb.dataset.ttkey = `${scope}|${title}|${[...box.querySelectorAll("table")].indexOf(tb)}`;
+    // every table starts with the row number (מס״ד): the rows in the order they are shown now, after sorting and filtering
+    [...tb.tHead.rows].forEach((tr, i, all) => tr.insertAdjacentHTML("afterbegin", i === all.length - 1
+      ? `<th class="ttn" scope="col" data-tt="no" data-short="">מס״ד</th>` : `<th class="ttn"></th>`));
+    [...tb.tBodies[0].rows, ...(tb.tFoot ? tb.tFoot.rows : [])].forEach(r => r.insertAdjacentHTML("afterbegin", `<td class="ttn"></td>`));
     ttRows(tb).forEach((r, i) => r.dataset.tti = i);
     const head = ttHead(tb);
     // the card view on phones: each cell learns its column's short name and its role (rank / name / main ...)
@@ -820,6 +988,8 @@ function ttApply(tb) {
     order.sort((a, b) => ttCmp(v.get(a), v.get(b), dir, num) || a.dataset.tti - b.dataset.tti);
   }
   order.forEach(r => body.appendChild(r));
+  let n = 0;
+  order.forEach(r => { const c = r.cells[0]; if (c?.classList.contains("ttn")) c.textContent = r.classList.contains("tt-hide") ? "" : ++n; });
   head.forEach((th, j) => { const b = th.querySelector(".ttb"); if (!b) return;
     const s = st.sort?.[0] === j ? st.sort[1] : 0;
     th.classList.toggle("tt-asc", s > 0); th.classList.toggle("tt-desc", s < 0);
