@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-9BT5TgsuOlc6lbJaLAjrB3q4byhG1kJH04z4oq8qij4=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2l1/fJ86vxul6GEvmVEHwim9YhXjtQmzLR9oSf/cHQQ=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -35,6 +35,7 @@ input[type=file] { padding: 8px; }
 .files li small { color: var(--muted); } .files li.bad { color: var(--bad); }
 .files li > span { min-width: 0; overflow-wrap: anywhere; } .files li small { flex: none; display: inline-flex; align-items: center; gap: 6px; }
 .files li small button { padding: 5px 12px; }
+.files li { flex-wrap: wrap; } .files li .rpbox { flex-basis: 100%; padding: 2px 0 6px; } .files li .rpbox label { margin-top: 4px; }
 input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 .act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -659,9 +660,7 @@ async function dataInit() {
     $("upcard").hidden = false;
     try { dirs = (await B.folders()).sort().reverse(); }
     catch (e) { $("ugo").disabled = true; say($("umsg"), "אי אפשר להעלות כרגע: " + why(e)); return; }
-    DIRS = dirs;
-    $("ucomp").innerHTML = `<option value="">+ תחרות חדשה…</option>` + dirs.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join("");
-    $("ucomp").value = dirs[0] || ""; $("unew").hidden = !!$("ucomp").value; $("ugo").disabled = false; $("umsg").textContent = "";
+    fillComps(dirs); $("unew").hidden = !!$("ucomp").value; $("ugo").disabled = false; $("umsg").textContent = "";
     showFiles(); upFiles();
     return;
   }
@@ -673,15 +672,34 @@ async function dataInit() {
   let dirs = [];
   try { dirs = (await B.folders()).sort().reverse(); }
   catch (e) { $("upcard").hidden = false; $("ugo").disabled = true; say($("umsg"), "אי אפשר להעלות כרגע: " + why(e)); return; }   // never without the list
-  DIRS = dirs;
-  $("ucomp").innerHTML = `<option value="">+ תחרות חדשה…</option>` + dirs.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join("");
-  $("ucomp").value = dirs[0] || ""; $("unew").hidden = !!$("ucomp").value; $("upcard").hidden = false; $("ugo").disabled = false; $("umsg").textContent = "";
+  fillComps(dirs); $("unew").hidden = !!$("ucomp").value; $("upcard").hidden = false; $("ugo").disabled = false; $("umsg").textContent = "";
   showFiles();
+}
+// the competitions to upload into: the folders of the private repository, and those already on the site without files
+// (an upcoming one added above, with its live link): their folder is made under the same web address, so its start
+// list and later its analysis join the competition the home page already shows
+const folderOf = slug => slug.charAt(0).toUpperCase() + slug.slice(1);       // hacarmel-3-14-11-2026 -> Hacarmel-3-14-11-2026
+function fillComps(dirs, pick) {
+  DIRS = dirs;
+  const have = new Set(dirs.map(slugOf)), soon = [];
+  [...Object.entries(LIVE).map(([slug, e]) => ({ slug, title: e.title, date: e.date })), ...D.comps].forEach(c => {
+    if (!SLUG.test(c.slug || "") || have.has(c.slug) || RESERVED.has(c.slug) || soon.some(x => x.slug === c.slug)) return;
+    soon.push(c); });
+  soon.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  $("ucomp").innerHTML = `<option value="">+ תחרות חדשה…</option>`
+    + (soon.length ? `<optgroup label="באתר, עוד בלי קבצים">${soon.map(c => `<option value="${esc(folderOf(c.slug))}">${esc(heDates(c.title || c.slug))} · ${esc(folderOf(c.slug))}</option>`).join("")}</optgroup>` : "")
+    + (dirs.length ? `<optgroup label="תחרויות עם קבצים">${dirs.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join("")}</optgroup>` : "");
+  $("ucomp").value = pick || dirs[0] || "";
 }
 $("ucomp").onchange = () => { $("unew").hidden = !!$("ucomp").value; showFiles(); };
 // the files the competition has now: one can be replaced by a new version of it, or removed (the analysis is then built again)
 const iso = s => "\u2068" + s + "\u2069";        // a file name inside Hebrew text, kept in its own order (261024_4084-Category.lxm)
-const RPL = n => /\.(htm|html|lxm|xml|ocd)$/i.test(n);      // a data file: may be replaced (the .txt settings have their own fields)
+// the settings files are a line of text: replaced by typing the new value right there (nobody has a link as a .txt file)
+const TXT = {
+  "livelox.txt": { label: "הקישור החדש לאירוע ב-Livelox", ph: "https://www.livelox.com/Events/Show/…", dir: "ltr", max: 300, ok: LXOK, bad: "רק קישור https לאתר livelox.com" },
+  "mulka_live.txt": { label: "הקישור החדש לתוצאות החיות במולקה", ph: "https://jp.mulka2.com/cloud/live/index.jsp?eventId=…", dir: "ltr", max: 300, ok: mkOk, bad: "רק קישור https לאתר mulka2.com" },
+  "title.txt": { label: "השם החדש של התחרות באתר (עד שיש דוח)", ph: "אליפות ישראל - יער אודם - יום 3", dir: "auto", max: 160, ok: v => !!v, bad: "כתבו את שם התחרות" } };
+const RPL = n => /\.(htm|html|lxm|xml|ocd)$/i.test(n) || !!TXT[n.toLowerCase()];   // a file that may be replaced by a new version
 const FAMILY = n => /\.html?$/i.test(n) ? ".htm" : (/\.(lxm|xml|ocd)$/i.exec(n) || [])[1] ? "." + /\.(lxm|xml|ocd)$/i.exec(n)[1].toLowerCase() : "";
 // what the picker offers: phones do not know .lxm and .ocd, so for those any file (checked after it is picked)
 const ACCEPT = n => /\.html?$/i.test(n) ? ".htm,.html" : /\.xml$/i.test(n) ? ".xml" : "";
@@ -692,16 +710,38 @@ async function showFiles() {
   let files = [];
   try { files = await B.files(folder); } catch (e) { if ($("ucomp").value === folder) box.innerHTML = `<p class="msg err">${esc(why(e))}</p>`; return; }
   if ($("ucomp").value !== folder || !files.length) return;
-  box.innerHTML = `<details class="have"><summary>הקבצים שכבר בתחרות (${files.length})</summary><ul class="files">${files.map(f =>
+  box.innerHTML = `<details class="have"${HAVE_OPEN ? " open" : ""}><summary>הקבצים שכבר בתחרות (${files.length})</summary><ul class="files">${files.map(f =>
     `<li><span dir="auto">${esc(f.name)}</span><small>${+f.size < MB ? `${Math.max(1, Math.round(+f.size / 1024 || 0))}KB` : `${(+f.size / MB).toFixed(1)}MB`}${f.del
       ? `${RPL(f.name) ? `<button type="button" data-rp="${esc(f.name)}" aria-label="החלפת ${esc(f.name)} בגרסה חדשה">החלפה</button>` : ""}<button type="button" class="del" data-rm="${esc(f.name)}" aria-label="הסרת ${esc(f.name)}">הסרה</button>`
       : ""}</small></li>`).join("")}</ul></details>`;
 }
-let REPLACE = "";            // the file the picked one replaces
+let REPLACE = "", HAVE_OPEN = false;     // the file the picked one replaces; the list stays open across its redraws
+$("ufolder").addEventListener("toggle", e => { if (e.target.matches?.("details.have")) HAVE_OPEN = e.target.open; }, true);
 const lockFiles = on => $("ufolder").querySelectorAll("button").forEach(b => b.disabled = on);
 $("ufolder").addEventListener("click", async ev => {
   const r = ev.target.closest("[data-rp]");
-  if (r) { REPLACE = r.dataset.rp; $("urp").value = ""; $("urp").accept = ACCEPT(REPLACE); $("urp").click(); return; }
+  if (r) {
+    const t = TXT[r.dataset.rp.toLowerCase()];
+    if (!t) { REPLACE = r.dataset.rp; $("urp").value = ""; $("urp").accept = ACCEPT(REPLACE); $("urp").click(); return; }
+    $("ufolder").querySelector(".rpbox")?.remove();                     // a settings file: its new value, typed here
+    r.closest("li").insertAdjacentHTML("beforeend", `<div class="rpbox"><label for="rpv">${esc(t.label)}</label>`
+      + `<input id="rpv" dir="${t.dir}" maxlength="${t.max}" placeholder="${esc(t.ph)}" autocomplete="off" spellcheck="false">`
+      + `<div class="act"><button type="button" class="pri" data-rpsave="${esc(r.dataset.rp)}">שמירה</button><button type="button" data-rpcancel>ביטול</button></div></div>`);
+    $("rpv").focus(); return;
+  }
+  if (ev.target.closest("[data-rpcancel]")) { const li = ev.target.closest("li"); ev.target.closest(".rpbox").remove(); li?.querySelector("[data-rp]")?.focus(); return; }
+  const sv = ev.target.closest("[data-rpsave]");
+  if (sv) {
+    const name = sv.dataset.rpsave, t = TXT[name.toLowerCase()], v = $("rpv").value.replace(/\s+/g, " ").trim(), folder = $("ucomp").value, m = $("umsg");
+    if (!t || !FOLDER.test(folder) || !MAY(name)) return;
+    if (!t.ok(v)) { say(m, t.bad); $("rpv").focus(); return; }
+    lockFiles(true); say(m, `מחליף את ${iso(name)}…`, true);
+    try {
+      const sha = await B.commit([{ path: `${folder}/${name}`, mode: "100644", type: "blob", sha: await B.blob(b64enc(v + "\n")) }], `${folder}: replaced ${name}`);
+      say(m, `${iso(name)} הוחלף. GitHub בונה עכשיו את הניתוח מחדש.`, true); watch(sha); showFiles();
+    } catch (e) { say(m, why(e)); lockFiles(false); }
+    return;
+  }
   const b = ev.target.closest("[data-rm]"); if (!b) return;
   const folder = $("ucomp").value, name = b.dataset.rm, m = $("umsg");
   if (!FOLDER.test(folder) || !MAY(name) || !confirm(`להסיר את ${iso(name)} מהתחרות ${iso(folder)}? הניתוח ייבנה מחדש בלעדיו.`)) return;
@@ -710,6 +750,11 @@ $("ufolder").addEventListener("click", async ev => {
     const sha = await B.commit([{ path: `${folder}/${name}`, mode: "100644", type: "blob", sha: null }], `${folder}: removed ${name}`);
     say(m, `${iso(name)} הוסר. GitHub בונה עכשיו את הניתוח מחדש.`, true); watch(sha); showFiles();
   } catch (e) { say(m, why(e)); b.disabled = false; }
+});
+$("ufolder").addEventListener("keydown", ev => {          // in the typed value: Enter saves, Esc puts it back
+  if (ev.target.id !== "rpv") return;
+  if (ev.key === "Enter") { ev.preventDefault(); $("ufolder").querySelector("[data-rpsave]")?.click(); }
+  else if (ev.key === "Escape") { ev.preventDefault(); $("ufolder").querySelector("[data-rpcancel]")?.click(); }
 });
 // a new version of a file: saved under the file's own name, so it takes its place (the old one stays in the repository's history)
 $("urp").onchange = async () => {
@@ -770,7 +815,7 @@ async function upload() {
     say(m, `הקבצים נשמרו ב-${folder}. GitHub בונה עכשיו את הניתוח.`, true);
     $("ufiles").value = ""; $("ulx").value = ""; upFiles();
     if (isNew) { ["uname", "utitle"].forEach(i => { if ($(i)) $(i).value = ""; }); setDate("udate", ""); }
-    if (!DIRS.includes(folder)) { DIRS = [folder, ...DIRS]; $("ucomp").insertAdjacentHTML("beforeend", `<option value="${esc(folder)}">${esc(folder)}</option>`); }
+    if (!DIRS.includes(folder)) fillComps([folder, ...DIRS], folder);       // it has files now
     $("ucomp").value = folder; $("unew").hidden = true; showFiles();
     watch(sha);
   } catch (e) { say(m, why(e)); }
@@ -832,7 +877,7 @@ const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחר
     <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
     <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
   <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
-  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
   <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
 function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
 function a11yPaint(el) {     // the buttons show the current choices

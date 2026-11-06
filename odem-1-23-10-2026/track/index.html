@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+VsKSwnCb2sRyAlWd5BHlCU4N8jBXlboORitilCcNDI=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ciGp7ozmNU4PffJNFIYSg9wkR7txPB6J9BAZWEEZdfw=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מעקב נווטים בשטח</title>
@@ -55,6 +55,9 @@ section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin:
 .day-t { margin-top: 8px; } .day-t summary { cursor: pointer; font-weight: 600; color: var(--purple); font-size: calc(13.5px * var(--ts, 1)); }
 .day-t table { width: 100%; border-collapse: collapse; font-size: calc(13px * var(--ts, 1)); margin-top: 6px; font-variant-numeric: tabular-nums; }
 .day-t th, .day-t td { text-align: right; padding: 5px 6px; border-bottom: 1px solid var(--rule); } .day-t th { color: var(--ink-2); font-weight: 600; }
+/* the finish forecast, under the counts */
+.fc { margin: -2px 0 12px; font-size: calc(14px * var(--ts, 1)); color: var(--ink-2); } .fc[hidden] { display: none; } .fc b { color: var(--ink); font-size: calc(17px * var(--ts, 1)); }
+.fc span { white-space: nowrap; }     /* "9 ב-30 הדקות הקרובות" stays one piece */
 /* the clubs that have runners out: a tap shows only that club's runners */
 .clubs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; font-size: calc(13px * var(--ts, 1)); }
 .clubs[hidden] { display: none; } .clubs .cl-t { color: var(--muted); flex-basis: 100%; }
@@ -221,6 +224,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     </div>
     <p class="warn">מידע עזר בלבד. הרשימה הקובעת היא של המארגנים. נווט שלא חזר? פנו מיד למזכירות התחרות.</p>
     <div class="sum" id="sum" aria-live="polite"></div>
+    <p class="fc" id="fc" aria-live="polite" hidden></p>
     <input id="q" type="search" placeholder="חיפוש נווט, קטגוריה או מועדון…" aria-label="חיפוש" autocomplete="off">
     <div class="clubs" id="clubs" role="group" aria-label="מועדונים עם נווטים בשטח" hidden></div>
     <div id="list"></div>
@@ -337,7 +341,7 @@ function row(p, st, now, lim, med = {}) {
       : st === "out" ? `<button type="button" class="back" data-mark="back" data-k="${esc(p.key)}">✓ חזר</button>` : ""}`
     + `${st === "wait" || st === "out" ? `<button type="button" class="dns" data-mark="dns" data-k="${esc(p.key)}">לא זינק</button>` : ""}`
     + `${p.man?.s === "dns" ? `<button type="button" data-undo="${esc(p.key)}">ביטול ״לא זינק״</button>` : ""}</div>` : "";
-  return { late, html: `<li class="${late ? "late" : st === "out" ? "out" : ""}"><span class="n">${esc(p.n)}${late ? `<span class="badge late">באיחור</span>` : ""}${man}</span>
+  return { late, due, html: `<li class="${late ? "late" : st === "out" ? "out" : ""}"><span class="n">${esc(p.n)}${late ? `<span class="badge late">באיחור</span>` : ""}${man}</span>
     <span class="x">${x}</span><span class="m">${meta}</span>${acts}</li>` };
 }
 const OPEN = new Set();          // the sections opened here stay open across renders
@@ -360,7 +364,7 @@ function spans(all, rel, now) {          // [start, back] of everyone who starte
   });
   return out;
 }
-const DAY = { v: [], x0: 0, n: 0, k: -1, at: null };    // the counts minute by minute, and where the crosshair is
+const DAY = { v: [], x0: 0, n: 0, k: -1, at: null, w: 0 };    // the counts minute by minute, where the crosshair is, the width drawn
 function dayChart(all, rel, now) {
   const sp = rel < 0 ? [] : spans(all, rel, now), box = $("day");
   box.hidden = !sp.length; if (!sp.length) return;
@@ -396,7 +400,7 @@ function dayChart(all, rel, now) {
     + `<path class="ar" d="${d}V${Y(0)}H${X(x0)}Z"/><path class="ln" d="${d}"/>`
     + `<circle class="dot" cx="${px}" cy="${py}" r="4"/><text class="lb" x="${px}" y="${Math.max(11, py - 9)}" text-anchor="${anchor(px)}">שיא ${peak}</text>`
     + `${nowMark}<line class="xh" y1="${Tp}" y2="${H - B}" visibility="hidden"/><circle class="dot xd" r="4" visibility="hidden"/></svg><div class="day-tip" aria-live="polite" hidden></div>`;
-  DAY.at = { X, Y, W, L, R, x1 };
+  DAY.at = { X, Y, W, L, R, x1 }; DAY.w = $("day-p").clientWidth;
   if (focused) { DAY.k = keepK; $("day-p").querySelector("svg").focus({ preventScroll: true }); }
   if (keepK >= 0 && keepK <= n) dayAt(keepK);
   // the same numbers as a table, hour by hour
@@ -435,8 +439,15 @@ function render() {
   const rel = dayRel(), now = rel === 0 ? nowS() : rel > 0 ? 86399 : 0, all = people(), lim = limits(all), med = typical(all);
   const w = norm($("q").value).split(" ").filter(Boolean);
   const S = { out: [], late: [], wait: [], back: [], dns: [] }, clubs = new Map(CLUB ? [[CLUB, { out: 0, late: 0 }]] : []);
+  const F = { m15: 0, m30: 0, none: 0, out: 0 };       // the finish forecast: due back within 15 / 30 minutes (the overdue are listed apart)
   all.forEach(p => { const st = stateOf(p, rel, now), r = row(p, st, now, lim, med);
     if (rel >= 0 && st === "out" && p.club) { const c = clubs.get(p.club) || { out: 0, late: 0 }; c.out++; c.late += r.late; clubs.set(p.club, c); }
+    if (rel === 0 && (st === "out" ? !r.late : st === "wait")) {
+      if (st === "out") F.out++;
+      if (r.due == null) { if (st === "out") F.none++; }
+      else if (r.due <= now + 900) { F.m15++; F.m30++; }                  // already due (not yet overdue) counts as any minute now
+      else if (r.due <= now + 1800) F.m30++;
+    }
     if ((CLUB && p.club !== CLUB) || (w.length && !w.every(x => norm(`${p.n} ${p.k} ${p.c} ${p.club}`).includes(x)))) { if (r.late) S.late.push(null); else S[st].push(null); return; }
     (r.late ? S.late : S[st]).push({ p, r, st }); });
   // the clubs with runners out, those with someone late first: a coach sees at once who of theirs is still out there
@@ -447,6 +458,10 @@ function render() {
   const n = k => S[k].length, shown = k => S[k].filter(Boolean);
   $("sum").innerHTML = `<span class="late"><b>${n("late")}</b>באיחור</span><span class="out"><b>${n("out") + n("late")}</b>בשטח</span>`
     + `<span><b>${n("back")}</b>חזרו</span><span><b>${n("wait")}</b>טרם זינקו</span><span><b>${n("dns")}</b>לא זינקו</span>`;
+  $("fc").hidden = !F.out;
+  $("fc").innerHTML = !F.out ? "" : F.none === F.out ? "צפויים להגיע לסיום: עוד אין הערכה – היא מתחילה כשבייצוא ממולקה יש 3 שסיימו את המסלול"
+    : `צפויים להגיע לסיום: <span><b>${F.m15}</b> ב-15 הדקות הקרובות</span> · <span><b>${F.m30}</b> ב-30 הדקות הקרובות</span>`
+      + (F.none ? ` · <span>ל-${F.none} מהנמצאים בשטח עוד אין הערכה</span>` : "");
   const sortOut = a => a.sort((x, y) => (x.p.m?.st ?? x.p.plan ?? 0) - (y.p.m?.st ?? y.p.plan ?? 0));
   const list = (title, arr, open = true) => arr.length ? (open ? `<section><h2>${title} <small>${arr.length}</small></h2><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></section>`
     : `<details data-t="${title}"${OPEN.has(title) ? " open" : ""}><summary>${title} · ${arr.length}</summary><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></details>`) : "";
@@ -787,10 +802,12 @@ $("day-p").addEventListener("pointerleave", e => { if (e.pointerType === "mouse"
 $("day-p").addEventListener("focusin", () => dayAt(DAY.k >= 0 ? DAY.k : DAY.n));
 $("day-p").addEventListener("focusout", dayOff);
 $("day-p").addEventListener("keydown", e => {
-  const to = { ArrowLeft: DAY.k - 5, ArrowRight: DAY.k + 5, Home: 0, End: DAY.n }[e.key];   // 5 minutes a key; time runs left to right
+  const k = DAY.k >= 0 ? DAY.k : DAY.n;
+  const to = { ArrowLeft: k - 5, ArrowRight: k + 5, Home: 0, End: DAY.n }[e.key];   // 5 minutes a key; time runs left to right
   if (to == null) return; e.preventDefault(); dayAt(to); });
-let dayResize = 0;
-addEventListener("resize", () => { clearTimeout(dayResize); dayResize = setTimeout(() => { if (!$("day").hidden) render(); }, 200); });
+let dayResize = 0;      // a phone fires "resize" as its address bar comes and goes: only a new width redraws the chart,
+addEventListener("resize", () => { clearTimeout(dayResize); dayResize = setTimeout(() => {      // and never under a finger (tick)
+  const w = $("day-p").clientWidth; if (!$("day").hidden && w && w !== DAY.w) tick(); }, 200); });
 const TITLE = String(D.title || "").replace(/\s*·\s*(?:\d{4}[\/.-]\d{1,2}[\/.-]\d{1,2}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})\s*$/, "");
 $("ttl").textContent = TITLE; document.title = `מעקב נווטים בשטח · ${TITLE}`;
 $("sub").textContent = ymd ? `${+ymd[3]}.${+ymd[2]}.${ymd[1]} · ${START.length} נווטים ברשימת הזינוק` : `${START.length} נווטים ברשימת הזינוק`;
@@ -826,7 +843,7 @@ const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחר
     <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
     <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
   <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
-  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
   <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
 function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
 function a11yPaint(el) {     // the buttons show the current choices
