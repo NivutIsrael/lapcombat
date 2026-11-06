@@ -2,11 +2,11 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-x1Ku5CLKoAtsObMgT/Ulu3yiuAbsa8d0O+tMi3uUEBQ=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SNej8utnsoFTKuUGQrZkbn4TFcsR8bhRtHvpJ0iw4/0=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ניהול · LapCombat</title>
+<title>ניהול · ניווט ישראל</title>
 <style>
 :root { color-scheme: light;
   --paper: #ffffff; --paper-2: #f0efec; --surface: #ffffff; --page: #ffffff; --chip: #f0efec;
@@ -694,7 +694,7 @@ const IS_START = n => /\.html?$/i.test(n) && /start|זינוק/i.test(n);
 const NAME_OK = n => /^[^\/\\:*?"<>|\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]{1,120}$/.test(n) && !n.startsWith(".") && !n.includes("..")
   && !/[ .]$/.test(n) && !/^(con|prn|aux|nul|com[0-9¹²³]|lpt[0-9¹²³])(\.|$)/i.test(n) && !/^report_.*\.html$/i.test(n);
 const MAY = n => NAME_OK(n) && (/\.(htm|html|lxm|xml|ocd)$/i.test(n) || ["livelox.txt", "title.txt", "mulka_live.txt", "startlist.html"].includes(n.toLowerCase()));
-const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/, RESERVED = new Set(["admin", "fonts"]);
+const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/, RESERVED = new Set(["admin", "fonts", "lapcombat"]);
 const slugOf = n => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "competition";
 const MB = 1024 * 1024, LIMIT = () => MODE === "gw" ? 30 : 50;      // MB per file (the gateway takes one file per request)
 let DIRS = [];
@@ -987,7 +987,7 @@ const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחר
     <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
     <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
   <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
-  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/nivutisrael.github.io/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
   <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
 // colours: light, dark, or as the system says - one choice for the whole site, kept in this browser
 const THEME_OPTS = [["", "אוטומטי"], ["light", "בהיר"], ["dark", "כהה"]];
