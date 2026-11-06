@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Ax9PirkEBV0WDHejRNlKontl1+PFSxOk8+Flj5M+4IM=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-R4X1CN3HO8vohx9gBuAVYncFC1civ7pHBAsmygia53E=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>זמני זינוק</title>
@@ -220,7 +220,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     <div id="now" aria-live="polite"></div>
     <div id="list"></div>
     <details class="check" id="check" hidden><summary></summary><ul></ul></details>
-    <p class="note">זמני הזינוק המתוכננים כפי שפורסמו לפני התחרות; ביום התחרות ייתכנו שינויים. · <a href="../track/">מעקב נווטים בשטח ←</a> · <a href="../qr/">🖨️ קודי QR להדפסה</a></p>
+    <p class="note">זמני הזינוק המתוכננים כפי שפורסמו לפני התחרות; ביום התחרות ייתכנו שינויים.<span id="trackl" hidden> · <a href="../track/">מעקב נווטים בשטח ←</a></span> · <a href="../qr/">🖨️ קודי QR להדפסה</a></p>
   </main>
 </div>
 <script>
@@ -237,8 +237,13 @@ const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", 
 const hasCourse = R.some(r => r.c), hasClub = R.some(r => r.club);
 let MODE = "time";
 // on the day itself: the starts of the next 10 minutes stand out
-const today = () => { if (!ymd) return false; const d = new Date(); return d.getFullYear() === +ymd[1] && d.getMonth() + 1 === +ymd[2] && d.getDate() === +ymd[3]; };
-const nowS = () => { const d = new Date(); return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds(); };
+let ILF = null;          // Israel time, whatever time zone the phone is set to
+try { ILF = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jerusalem", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hourCycle: "h23" }); } catch (e) {}
+const il = d => { if (!ILF) return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate(), hour: d.getHours(), minute: d.getMinutes(), second: d.getSeconds() };
+  const o = {}; for (const p of ILF.formatToParts(d)) if (p.type !== "literal") o[p.type] = +p.value; o.hour %= 24; return o; };
+const daysOff = () => { if (!ymd) return null; const p = il(new Date()); return Math.round((Date.UTC(p.year, p.month - 1, p.day) - Date.UTC(+ymd[1], ymd[2] - 1, +ymd[3])) / 86400000); };
+const today = () => daysOff() === 0;
+const nowS = () => { const p = il(new Date()); return p.hour * 3600 + p.minute * 60 + p.second; };
 const soon = r => today() && r.t != null && r.t >= nowS() - 60 && r.t <= nowS() + 600;
 function table(rows, withCat) {
   return `<div class="scroll"><table class="cards keyfirst"><thead><tr><th data-card="main" data-short="">שעה</th><th data-card="name" data-short="">שם</th>`
@@ -275,6 +280,7 @@ document.title = `זמני זינוק · ${TITLE}`;
 const first = timed(R).length ? timed(R)[0].t : null, last = timed(R).length ? timed(R).at(-1).t : null;
 $("sub").textContent = [ymd ? `${+ymd[3]} ב${MONTHS[ymd[2] - 1]} ${ymd[1]}` : "", `${R.length} נווטים`, `${new Set(R.map(r => r.k)).size} קטגוריות`,
   first != null ? `זינוק ראשון ${hms(first)} · אחרון ${hms(last)}` : ""].filter(Boolean).join(" · ");
+$("trackl").hidden = !(daysOff() === null || Math.abs(daysOff()) <= 1);     // the tracking page: the day before, of and after
 $("q").addEventListener("input", render);
 document.querySelectorAll(".seg [data-m]").forEach(b => b.addEventListener("click", () => { MODE = b.dataset.m;
   document.querySelectorAll(".seg [data-m]").forEach(x => x.setAttribute("aria-pressed", x === b)); render(); }));

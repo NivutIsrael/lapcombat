@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-0Aw1mVxjn0Tx7lXpu/rvENzq/Zgx8EzybebB3/DroSc=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-RpC0JvBIBrEsb8VwVJiMsZfSdY+QrahzsLbHkOUrKGc=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מעקב נווטים בשטח</title>
@@ -101,7 +101,8 @@ section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin:
 .clubs button i { font-style: normal; font-weight: 700; color: var(--red); }
 .clubs button[aria-pressed="true"] { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } .clubs button[aria-pressed="true"] i { color: inherit; }
 .rows li.late .x b { color: var(--red); } .badge { display: inline-block; font-size: calc(11.5px * var(--ts, 1)); font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-inline-start: 6px; }
-.badge.man { background: var(--chip); color: var(--ink-2); } .badge.late { background: var(--red); color: #fff; }
+.badge.man { background: var(--chip); color: var(--ink-2); } .badge.late { background: var(--red); color: var(--paper); }
+.rows li.late .x small, .rows li.out .x small, .rows li.late .m, .rows li.out .m { color: var(--ink-2); }
 .acts { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; } .acts button { padding: 6px 12px; font-size: calc(13.5px * var(--ts, 1)); }
 .acts .back { border-color: var(--green); color: var(--green); } .acts .dns { color: var(--ink-2); }
 details { margin: 14px 0 0; } summary { cursor: pointer; font-weight: 700; font-size: calc(16px * var(--ts, 1)); }
@@ -286,7 +287,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     <p class="warn">מידע עזר בלבד. הרשימה הקובעת היא של המארגנים. נווט שלא חזר? פנו מיד למזכירות התחרות.</p>
     <div class="sum" id="sum" aria-live="polite"></div>
     <p class="fc" id="fc" aria-live="polite" hidden></p>
-    <p class="off" id="off" role="status" hidden>אין חיבור – מוצג המצב האחרון שנשמר בטלפון. סימונים בסיום נשמרים כאן ויישלחו כשיחזור החיבור.</p>
+    <p class="off" id="off" role="status" hidden></p>
     <button type="button" class="eodbtn" id="eodbtn" hidden>📋 דוח סוף יום – מי לא דווח כחוזר</button>
     <input id="q" type="search" placeholder="חיפוש נווט, קטגוריה או מועדון…" aria-label="חיפוש" autocomplete="off">
     <div class="clubs" id="clubs" role="group" aria-label="מועדונים עם נווטים בשטח" hidden></div>
@@ -324,18 +325,28 @@ const START = (Array.isArray(D.rows) ? D.rows : []).filter(r => Array.isArray(r)
 // a runner is known by name; two of one name, by name and category
 const dupes = new Set(START.map(r => norm(r.n)).filter((n, i, a) => a.indexOf(n) !== i));
 const keyOf = (n, k) => dupes.has(norm(n)) && k ? `${norm(n)}#${norm(k)}` : norm(n);
+// ---- the competition's clock: Israel time, whatever time zone the phone is set to
+let ILF = null;
+try { ILF = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jerusalem", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hourCycle: "h23" }); } catch (e) {}
+const il = d => { if (!ILF) return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate(), hour: d.getHours(), minute: d.getMinutes(), second: d.getSeconds() };
+  const o = {}; for (const p of ILF.formatToParts(d)) if (p.type !== "literal") o[p.type] = +p.value; o.hour %= 24; return o; };
+const clock = d => { const p = il(d); return `${p.hour}:${String(p.minute).padStart(2, "0")}`; };
 // ---- the day: before it nobody is out, after it the clock stops
 const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(D.date || "");
-const dayRel = () => { if (!ymd) return 0; const n = new Date(), a = [n.getFullYear(), n.getMonth() + 1, n.getDate()], b = [+ymd[1], +ymd[2], +ymd[3]];
+const dayRel = () => { if (!ymd) return 0; const n = il(new Date()), a = [n.year, n.month, n.day], b = [+ymd[1], +ymd[2], +ymd[3]];
   for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1; return 0; };
-const nowS = () => { const d = new Date(); return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds(); };
-// ---- the tracking data, as on the site (refreshed every 30 s)
-let T = { mulka: null, manual: {} }, SITE_T = { mulka: null, manual: {} };      // shown; the site's copy as last read
+const nowS = () => { const p = il(new Date()); return p.hour * 3600 + p.minute * 60 + p.second; };
+// ---- the tracking data, as on the site: the public copy every 30 s, or (signed in) the file itself every minute.
+// n counts the saves: a copy with a lower n than the one this page has is older (GitHub Pages' cache can be 10 minutes
+// behind a save made here) and is not taken.
+let T = { n: 0, mulka: null, manual: {} }, SITE_T = { n: 0, mulka: null, manual: {} };      // shown; the site's copy as last read
+let DATA_AT = null, CACHED = false, FAILED = false;     // when the copy shown was read; it came from the phone's copy; the last read failed
 const copyT = t => JSON.parse(JSON.stringify(t));
 const STATES = new Set(["ok", "mp", "dnf", "dns", "out", "none"]), MANUAL = new Set(["back", "dns", "out"]);
 function clean(e) {
-  const out = { mulka: null, manual: {} };
+  const out = { n: 0, mulka: null, manual: {} };
   if (e && typeof e === "object") {
+    if (Number.isInteger(e.n) && e.n > 0 && e.n < 1e9) out.n = e.n;
     const m = e.mulka;
     if (m && typeof m === "object" && m.runners && typeof m.runners === "object") {
       out.mulka = { at: ISO.test(m.at || "") ? m.at : "", by: String(m.by || "").slice(0, 40), file: String(m.file || "").slice(0, 120), runners: {} };
@@ -347,12 +358,27 @@ function clean(e) {
   }
   return out;
 }
+function take(j, at, cached) {        // a tracking file read: shown, unless it is older than the copy this page has
+  if (!j || !j.comps || typeof j.comps !== "object" || Array.isArray(j.comps)) return false;
+  const e = clean(Object.hasOwn(j.comps, SLUG) ? j.comps[SLUG] : null);
+  DATA_AT = at; CACHED = cached; FAILED = false;
+  if (e.n < SITE_T.n) { tick(); return false; }
+  SITE_T = e; T = overlay(copyT(SITE_T)); tick(); return true;
+}
+let SIGNED_READ = -1e9;
 function load() {
   if (!/^https?:$/.test(location.protocol) || !SLUG) return;
-  fetch(`../../track.json?t=${Math.floor(Date.now() / 15000)}`, { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(j => {
-    if (!j || !j.comps || typeof j.comps !== "object" || Array.isArray(j.comps)) return;
-    SITE_T = clean(Object.hasOwn(j.comps, SLUG) ? j.comps[SLUG] : null); T = overlay(copyT(SITE_T)); tick();
-  }).catch(() => {});
+  if (ME) {                 // signed in: the file itself (not the public copy, minutes behind), once a minute
+    if (mono() - SIGNED_READ < 55000) return;
+    SIGNED_READ = mono();
+    return getTrack().then(f => take(f.content ? JSON.parse(b64dec(f.content)) : { v: 1, comps: {} }, new Date(), false))
+      .catch(() => { FAILED = true; tick(); });
+  }
+  fetch(`../../track.json?t=${Math.floor(Date.now() / 15000)}`, { cache: "no-store" }).then(r => {
+    if (!r.ok) throw new Error(String(r.status));
+    const kept = r.headers.get("x-lc-at");           // the phone's copy (no connection): when it was kept
+    return r.json().then(j => take(j, kept && !isNaN(new Date(kept)) ? new Date(kept) : new Date(), !!kept));
+  }).catch(() => { FAILED = true; tick(); });
 }
 // ---- who is where
 function people() {
@@ -418,8 +444,8 @@ let TOUCH = -1e9, QUIET = -1e9;   // the last touch on the list; no tap counts f
 const tick = () => { if (mono() - TOUCH < 2500) return setTimeout(tick, 1000); render(); };
 // ---- the day: how many runners were out on the course at each moment - from the start times, the Mulka export and the taps
 const daySec = s => { const d = new Date(s); if (isNaN(d)) return null;       // a moment of the competition day, in seconds of the day
-  if (ymd && (d.getFullYear() !== +ymd[1] || d.getMonth() + 1 !== +ymd[2] || d.getDate() !== +ymd[3])) return null;
-  return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds(); };
+  const p = il(d); if (ymd && (p.year !== +ymd[1] || p.month !== +ymd[2] || p.day !== +ymd[3])) return null;
+  return p.hour * 3600 + p.minute * 60 + p.second; };
 function spans(all, rel, now) {          // [start, back] of everyone who started; back is Infinity while not reported back
   const mAt = T.mulka ? daySec(T.mulka.at) : null, out = [];
   all.forEach(p => {
@@ -503,8 +529,22 @@ function dayPointer(e) {
   if (t < DAY.x0 - 600 || t > DAY.x0 + DAY.n * 60 + 600) return dayOff();
   dayAt(Math.round((t - DAY.x0) / 60));
 }
+const set = (id, html) => { const e = $(id); if (e._h !== html) { e.innerHTML = html; e._h = html; } };   // only a change touches the page
+const age = () => !DATA_AT ? "" : FAILED || CACHED || Date.now() - DATA_AT > 150000 ? `לא התעדכן מאז ${clock(DATA_AT)}` : `נכון ל-${clock(DATA_AT)}`;
+function offline() {
+  $("off").hidden = navigator.onLine !== false && !CACHED && !FAILED;
+  if (!$("off").hidden) $("off").textContent = `${navigator.onLine === false ? "אין חיבור" : "אין חיבור לאתר"} – מוצג המצב${DATA_AT ? ` מ-${clock(DATA_AT)}` : " האחרון שנשמר בטלפון"}.`
+    + (ME ? (KEPT ? " סימונים בסיום נשמרים כאן ויישלחו כשיחזור החיבור." : " סימונים בסיום יישלחו כשיחזור החיבור – אל תסגרו את הדף.") : "");
+}
 function render() {
   const rel = dayRel(), now = rel === 0 ? nowS() : rel > 0 ? 86399 : 0, all = people(), lim = limits(all), med = typical(all);
+  offline();
+  if (rel > 0 && !T.mulka && !Object.keys(T.manual || {}).length) {     // after the day, nothing was tracked: no one is claimed to be out
+    set("sum", ""); set("clubs", ""); $("clubs").hidden = true; $("fc").hidden = true; $("day").hidden = true; $("eodbtn").hidden = true; $("eod").hidden = true;
+    set("list", `<p class="note">התחרות הסתיימה · לא נאספו בה נתוני מעקב: לא הועלה ייצוא ממולקה ולא סומנו חוזרים.</p>`);
+    $("src").textContent = age();
+    return;
+  }
   const w = norm($("q").value).split(" ").filter(Boolean);
   const S = { out: [], late: [], wait: [], back: [], dns: [] }, clubs = new Map(CLUB ? [[CLUB, { out: 0, late: 0 }]] : []);
   const F = { m15: 0, m30: 0, none: 0, out: 0 };       // the finish forecast: due back within 15 / 30 minutes (the overdue are listed apart)
@@ -521,29 +561,28 @@ function render() {
   // the clubs with runners out, those with someone late first: a coach sees at once who of theirs is still out there
   const cl = [...clubs].filter(([c, x]) => x.out || c === CLUB).sort((a, b) => b[1].late - a[1].late || b[1].out - a[1].out || a[0].localeCompare(b[0], "he"));
   $("clubs").hidden = !cl.length;
-  $("clubs").innerHTML = cl.length ? `<span class="cl-t">מועדונים עם נווטים בשטח – נגיעה מציגה רק את המועדון:</span>` + cl.map(([c, x]) =>
-    `<button type="button" data-club="${esc(c)}" aria-pressed="${c === CLUB}">${esc(c)} · ${x.out}${x.late ? ` <i>(${x.late} באיחור)</i>` : ""}</button>`).join("") : "";
+  set("clubs", cl.length ? `<span class="cl-t">מועדונים עם נווטים בשטח – נגיעה מציגה רק את המועדון:</span>` + cl.map(([c, x]) =>
+    `<button type="button" data-club="${esc(c)}" aria-pressed="${c === CLUB}">${esc(c)} · ${x.out}${x.late ? ` <i>(${x.late} באיחור)</i>` : ""}</button>`).join("") : "");
   const n = k => S[k].length, shown = k => S[k].filter(Boolean);
-  $("sum").innerHTML = `<span class="late"><b>${n("late")}</b>באיחור</span><span class="out"><b>${n("out") + n("late")}</b>בשטח</span>`
-    + `<span><b>${n("back")}</b>חזרו</span><span><b>${n("wait")}</b>טרם זינקו</span><span><b>${n("dns")}</b>לא זינקו</span>`;
+  set("sum", `<span class="late"><b>${n("late")}</b>באיחור</span><span class="out"><b>${n("out") + n("late")}</b>בשטח</span>`
+    + `<span><b>${n("back")}</b>חזרו</span><span><b>${n("wait")}</b>טרם זינקו</span><span><b>${n("dns")}</b>לא זינקו</span>`);
   $("fc").hidden = !F.out;
-  $("fc").innerHTML = !F.out ? "" : F.none === F.out ? "צפויים להגיע לסיום: עוד אין הערכה – היא מתחילה כשבייצוא ממולקה יש 3 שסיימו את המסלול"
+  set("fc", !F.out ? "" : F.none === F.out ? "צפויים להגיע לסיום: עוד אין הערכה – היא מתחילה כשבייצוא ממולקה יש 3 שסיימו את המסלול"
     : `צפויים להגיע לסיום: <span><b>${F.m15}</b> ב-15 הדקות הקרובות</span> · <span><b>${F.m30}</b> ב-30 הדקות הקרובות</span>`
-      + (F.none ? ` · <span>ל-${F.none} מהנמצאים בשטח עוד אין הערכה</span>` : "");
+      + (F.none ? ` · <span>ל-${F.none} מהנמצאים בשטח עוד אין הערכה</span>` : ""));
   const sortOut = a => a.sort((x, y) => (x.p.m?.st ?? x.p.plan ?? 0) - (y.p.m?.st ?? y.p.plan ?? 0));
   const list = (title, arr, open = true) => arr.length ? (open ? `<section><h2>${title} <small>${arr.length}</small></h2><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></section>`
     : `<details data-t="${title}"${OPEN.has(title) ? " open" : ""}><summary>${title} · ${arr.length}</summary><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></details>`) : "";
-  $("list").innerHTML = (rel < 0 ? `<p class="note">התחרות עוד לא התחילה. ביום התחרות יופיעו כאן מי בשטח ומי חזר.</p>` : "")
+  set("list", (rel < 0 ? `<p class="note">התחרות עוד לא התחילה. ביום התחרות יופיעו כאן מי בשטח ומי חזר.</p>` : "")
     + list("באיחור", sortOut(shown("late"))) + list("בשטח", sortOut(shown("out")))
     + list("טרם זינקו", shown("wait").sort((x, y) => (x.p.plan ?? 1e9) - (y.p.plan ?? 1e9)), rel === 0)
     + list("חזרו", shown("back"), false) + list("לא זינקו", shown("dns"), false)
-    || `<p class="note">${w.length ? "לא נמצא נווט כזה" : "אין נתונים"}</p>`;
+    || `<p class="note">${w.length ? "לא נמצא נווט כזה" : "אין נתונים"}</p>`);
   const m = T.mulka, lastMan = Object.values(T.manual || {}).map(x => x.at).sort().pop();
-  const at = s => { const d = new Date(s); return isNaN(d) ? "" : `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`; };
+  const at = s => { const d = new Date(s); return isNaN(d) ? "" : clock(d); };
   $("src").textContent = [m ? `לפי הייצוא ממולקה מ-${at(m.at)}` : "עוד לא הועלה ייצוא ממולקה – לפי זמני הזינוק בלבד",
-    lastMan ? `סימון ידני אחרון ${at(lastMan)}` : "", "מתעדכן אוטומטית כל חצי דקה"].filter(Boolean).join(" · ");
+    lastMan ? `סימון ידני אחרון ${at(lastMan)}` : "", age()].filter(Boolean).join(" · ");
   dayChart(all, rel, now);
-  $("off").hidden = navigator.onLine !== false;
   $("eodbtn").hidden = rel < 0;
   if (!$("eod").hidden) eodShow(false);
 }
@@ -554,7 +593,7 @@ function eodRows() {
   return all.filter(p => stateOf(p, rel, now) === "out").map(p => ({ p, r: row(p, "out", now, lim, med), start: p.m?.st ?? p.plan }))
     .sort((a, b) => (b.r.late - a.r.late) || ((a.start ?? 0) - (b.start ?? 0)) || a.p.n.localeCompare(b.p.n, "he"));
 }
-const eodWhen = () => { const d = new Date(); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const eodWhen = () => clock(DATA_AT && DATA_AT < new Date() ? DATA_AT : new Date());     // as of the data shown, not of the phone's clock
 function eodText(rows) {
   const day = ymd ? ` · ${+ymd[3]}.${+ymd[2]}.${ymd[1]}` : "";
   return [`דוח סוף יום · ${TITLE}${day} · ${eodWhen()}`, `לא דווחו כחוזרים: ${rows.length}${rows.some(x => x.r.late) ? ` (באיחור: ${rows.filter(x => x.r.late).length})` : ""}`, ""]
@@ -576,20 +615,19 @@ function eodShow(scroll = true) {
 // saved; a saved one stays shown (SAVED) until the site's copy has it (GitHub Pages takes a minute or so). One change of a
 // runner against another phone's: the later one wins. An undo is {s: null, at}.
 const PENDING = new Map(), SAVED = new Map(), OTHERS = new Map(); let PENDING_MULKA = null, SAVED_MULKA = null, FLUSH = 0, SAVING = false, FAILS = 0;
-const KEEP = `lc-track-pending:${SLUG}`, SHOWN = 300000;
+const KEEP = `lc-track-pending:${SLUG}`, SHOWN = 1200000;      // a saved change is shown until a copy of the site has its save (n), 20 minutes at most
+let KEPT = true;            // false: this browser keeps nothing for the page (a private window, full storage) - then the page says so
+const here = () => KEPT ? "מה שלא נשמר שמור בדפדפן הזה." : "הדפדפן הזה לא שומר את מה שלא נשמר – אל תסגרו את הדף עד שהשמירה תצליח.";
 const soon = () => new Date(Date.now() + 600000).toISOString().slice(0, 19) + "Z";
 const newer = (a, b) => !b || String(b.at || "") > soon() || String(a.at || "") >= String(b.at || "");
 const atOf = x => { const a = String(x || ""); return a > soon() ? "" : a; };     // a time far ahead counts as the oldest
 function put1(manual, k, v) { if (!newer(v, manual[k])) return; if (v.s) manual[k] = { s: v.s, at: v.at, by: v.by || "" }; else delete manual[k]; }
 function overlay(t) {
   const now = Date.now();
-  for (const [k, v] of SAVED) {
-    const r = t.manual[k], there = v.s ? r && r.at >= v.at : !r || r.at > v.at;
-    if (there || now - v.t > SHOWN) SAVED.delete(k); else put1(t.manual, k, v);
-  }
+  for (const [k, v] of SAVED) if ((t.n || 0) >= v.n || now - v.t > SHOWN) SAVED.delete(k); else put1(t.manual, k, v);
   for (const [k, v] of PENDING) put1(t.manual, k, v);
   for (const [k, v] of OTHERS) if (!PENDING.has(k)) put1(t.manual, k, v);     // another tab's, not saved yet: shown here, saved by that tab
-  if (SAVED_MULKA) { if ((t.mulka && atOf(t.mulka.at) >= SAVED_MULKA.m.at) || now - SAVED_MULKA.t > SHOWN) SAVED_MULKA = null; else t.mulka = SAVED_MULKA.m; }
+  if (SAVED_MULKA) { if ((t.n || 0) >= SAVED_MULKA.n || now - SAVED_MULKA.t > SHOWN) SAVED_MULKA = null; else t.mulka = SAVED_MULKA.m; }
   if (PENDING_MULKA && (!t.mulka || atOf(t.mulka.at) <= PENDING_MULKA.at)) t.mulka = PENDING_MULKA;
   return t;
 }
@@ -613,7 +651,8 @@ function keep(done = new Map(), doneMulka = null) {
     let mk = was && !(doneMulka && was.at === doneMulka.at) ? was : null;
     if (PENDING_MULKA && (!mk || atOf(mk.at) <= PENDING_MULKA.at)) mk = PENDING_MULKA;
     if (m.size || mk) localStorage.setItem(KEEP, JSON.stringify({ m: [...m], mk })); else localStorage.removeItem(KEEP);
-  } catch (e) {}
+    return (KEPT = true);
+  } catch (e) { return (KEPT = false); }
 }
 function restore() {
   const { m, mk } = stored();
@@ -629,9 +668,9 @@ addEventListener("storage", e => {
   const now = stored(), t = Date.now();
   for (const x of old && Array.isArray(old.m) ? old.m : []) {
     const [k, v] = Array.isArray(x) ? x : [], mine = PENDING.get(k);
-    if (v && !now.m.has(k) && mine && mine.at === v.at && mine.s === v.s) { PENDING.delete(k); SAVED.set(k, { ...mine, t }); }
+    if (v && !now.m.has(k) && mine && mine.at === v.at && mine.s === v.s) { PENDING.delete(k); SAVED.set(k, { ...mine, t, n: SITE_T.n + 1 }); }
   }
-  if (old && old.mk && !now.mk && PENDING_MULKA && PENDING_MULKA.at === old.mk.at) { SAVED_MULKA = { m: PENDING_MULKA, t }; PENDING_MULKA = null; }
+  if (old && old.mk && !now.mk && PENDING_MULKA && PENDING_MULKA.at === old.mk.at) { SAVED_MULKA = { m: PENDING_MULKA, t, n: SITE_T.n + 1 }; PENDING_MULKA = null; }
   OTHERS.clear();
   for (const [k, v] of now.m) if (!PENDING.has(k)) OTHERS.set(k, v);
   T = overlay(copyT(SITE_T)); tick();
@@ -693,7 +732,7 @@ async function flush() {
   if (mono() < NOT_BEFORE) return later(0);
   SAVING = true; say("שומר…", true);
   const changes = new Map(PENDING), mulka = PENDING_MULKA;
-  let wait = 0;
+  let wait = 0, saved = null;
   try {
     for (let i = 0; i < 4; i++) {
       let all = null;
@@ -703,29 +742,31 @@ async function flush() {
       const mine = clean(Object.hasOwn(all.comps, SLUG) ? all.comps[SLUG] : null);
       for (const [k, v] of changes) put1(mine.manual, k, v);
       if (mulka && (!mine.mulka || atOf(mine.mulka.at) <= mulka.at)) mine.mulka = mulka;
-      all.comps[SLUG] = mine;
+      mine.n = (mine.n || 0) + 1;
+      all.comps[SLUG] = saved = mine;
       const what = [mulka ? "Mulka export" : "", changes.size ? `${changes.size} at the finish` : ""].filter(Boolean).join(" + ");
       try { await putTrack(b64enc(JSON.stringify(all) + "\n"), sha, MODE === "gw" ? `Track ${SLUG}: ${what}` : `Track ${SLUG}: ${what} - ${ME}`); break; }
       catch (e) { if (!(e.status === 409 || e.status === 422) || i === 3) throw e; }   // another admin saved: read again, apply on top
     }
     const now = Date.now();
-    for (const [k, v] of changes) { if (PENDING.get(k) === v) PENDING.delete(k); SAVED.set(k, { ...v, t: now }); }
-    if (mulka) { if (PENDING_MULKA === mulka) PENDING_MULKA = null; SAVED_MULKA = { m: mulka, t: now }; }
+    for (const [k, v] of changes) { if (PENDING.get(k) === v) PENDING.delete(k); SAVED.set(k, { ...v, t: now, n: saved.n }); }
+    if (mulka) { if (PENDING_MULKA === mulka) PENDING_MULKA = null; SAVED_MULKA = { m: mulka, t: now, n: saved.n }; }
+    if (saved.n > SITE_T.n) { SITE_T = copyT(saved); DATA_AT = new Date(); FAILED = false; CACHED = false; }   // the site has it now: older copies are not taken
     keep(changes, mulka); FAILS = 0; LAST_SAVE = mono(); NOT_BEFORE = 0;
     clearTimeout(FLUSH); FLUSH = 0;              // a timer set during this save (from before it) would not wait the GAP
-    const d = new Date(); say(`נשמר ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")} · באתר תוך כדקה`, true);
+    say(`נשמר ${clock(new Date())}`, true);
   } catch (e) {
     SAVING = false;
-    if (e.status === 401) return signedOut(MODE === "gw" ? "פג תוקף הכניסה – היכנסו שוב. מה שלא נשמר שמור בדפדפן הזה ויישמר אחרי הכניסה."
-                                                        : "המפתח לא תקין או שפג תוקפו – היכנסו שוב. מה שלא נשמר שמור בדפדפן הזה.");
+    if (e.status === 401) return signedOut((MODE === "gw" ? "פג תוקף הכניסה – היכנסו שוב. " : "המפתח לא תקין או שפג תוקפו – היכנסו שוב. ")
+                                           + (KEPT ? "מה שלא נשמר שמור בדפדפן הזה ויישמר אחרי הכניסה." : here()));
     if (e.code === "scope" || e.code === "path" || e.code === "bad" || e.code === "size" || (!e.code && (e.status === 403 || e.status === 404)))
-      return say((!e.code ? `למפתח אין הרשאת כתיבה (GitHub: ${e.message})` : `השמירה נדחתה: ${e.message}`) + " – פנו לבעל האתר. מה שלא נשמר שמור בדפדפן הזה.");
+      return say((!e.code ? `למפתח אין הרשאת כתיבה (GitHub: ${e.message})` : `השמירה נדחתה: ${e.message}`) + " – פנו לבעל האתר. " + here());
     FAILS++;
     wait = e.code === "busy" ? Math.max(20, e.retry || 60) * 1000 : Math.min(120000, 3000 * 2 ** FAILS);
     NOT_BEFORE = mono() + wait;
     later(0);
     say(`${e.code === "github" ? `תקלה בשרת הכניסה מול GitHub (${e.gh})` : e.code === "busy" ? "יותר מדי שמירות כרגע" : e.code === "net" ? "אין חיבור"
-         : "שגיאה בשמירה: " + e.message} · ננסה שוב בעוד ${inText(Math.round((FLUSH_AT - mono()) / 1000))}. מה שלא נשמר שמור בדפדפן הזה.`);
+         : "שגיאה בשמירה: " + e.message} · ננסה שוב בעוד ${inText(Math.round((FLUSH_AT - mono()) / 1000))}. ${here()}`);
     return;
   }
   SAVING = false;
@@ -769,8 +810,8 @@ function parseMulka(text) {
       cr.querySelectorAll("PersonResult").forEach(pr => {
         const fam = pr.querySelector("Person > Name > Family")?.textContent || "", giv = pr.querySelector("Person > Name > Given")?.textContent || "";
         const res = pr.querySelector("Result"), s = S[squash(res?.querySelector("Status")?.textContent)] || "none";
-        const tm = parseFloat(res?.querySelector("Time")?.textContent), sd = new Date(res?.querySelector("StartTime")?.textContent || "");
-        put(`${fam} ${giv}`, cls, s, s === "ok" && isFinite(tm) ? Math.round(tm) : null, isNaN(sd) ? null : sd.getHours() * 3600 + sd.getMinutes() * 60 + sd.getSeconds());
+        const tm = parseFloat(res?.querySelector("Time")?.textContent), sd = new Date(res?.querySelector("StartTime")?.textContent || ""), sp = isNaN(sd) ? null : il(sd);
+        put(`${fam} ${giv}`, cls, s, s === "ok" && isFinite(tm) ? Math.round(tm) : null, sp ? sp.hour * 3600 + sp.minute * 60 + sp.second : null);
       }); });
   } else {
     doc.querySelectorAll("class").forEach(cl => { const cls = cl.getAttribute("name") || "";
@@ -802,6 +843,7 @@ function signedIn() {
   NOT_BEFORE = 0; FAILS = 0;
   $("alog").hidden = true; $("aemail").hidden = true; $("atools").hidden = false; $("who").textContent = `מחובר כ-${ME}`; $("admin").hidden = false;
   say(PENDING.size || PENDING_MULKA ? "שומר את מה שחיכה לשמירה…" : "", true); render(); if (PENDING.size || PENDING_MULKA) flush();
+  SIGNED_READ = -1e9; load();          // from now on the file itself, not the public copy
 }
 function signedOut(text, ok) {      // what was not saved yet stays (here and in this browser) for the next sign-in
   clearTimeout(FLUSH); FLUSH = 0; ME = ""; TOKEN = ""; GWT = ""; MODE = "";
@@ -817,7 +859,8 @@ $("aout").onclick = async () => {        // every sign-in of this tab ends, on t
   for (const t of tokens) { GWT = t; try { await gw("logout"); } catch (e) { if (e.status !== 401) ok = false; } }
   try { ["lc-track-gw", "lc-admin-gw", "lc-admin"].forEach(k => sessionStorage.removeItem(k)); } catch (e) {}
   stopResume();
-  const left = PENDING.size || PENDING_MULKA ? " יש סימונים שעוד לא נשמרו – הם שמורים בדפדפן הזה ויישמרו בכניסה הבאה." : "";
+  const left = !(PENDING.size || PENDING_MULKA) ? "" : KEPT ? " יש סימונים שעוד לא נשמרו – הם שמורים בדפדפן הזה ויישמרו בכניסה הבאה."
+    : " יש סימונים שעוד לא נשמרו, והדפדפן הזה לא שומר אותם – היכנסו שוב לפני שסוגרים את הדף.";
   signedOut((ok ? "יצאת." : "יצאת בדפדפן הזה, אבל שרת הכניסה לא ענה – הכניסה תפוג מעצמה תוך 12 שעות.") + left, ok);
 };
 // ---- the email code (the gateway sends it to an approved address). The code goes with the request this tab made; the
@@ -895,10 +938,21 @@ $("eodcopy").onclick = async () => { const b = $("eodcopy"), t = eodText(eodRows
   catch (e) { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); b.textContent = "✓ הועתק"; } catch (x) {} a.remove(); }
   setTimeout(() => { b.textContent = "📋 העתקה לשליחה"; }, 2500); };
 $("eodprint").onclick = () => { document.documentElement.classList.add("print-eod"); print(); setTimeout(() => document.documentElement.classList.remove("print-eod"), 1000); };
-addEventListener("online", render); addEventListener("offline", render);
-// the page opens without a connection too: the worker (sw.js, at the site's root) keeps it and the latest tracking file
-if ("serviceWorker" in navigator && location.protocol === "https:" && !FRAMED)
-  navigator.serviceWorker.register(new URL("../../sw.js", location.href), { scope: new URL("../../", location.href).pathname }).catch(() => {});
+addEventListener("online", () => { render(); load(); }); addEventListener("offline", render);
+// the page opens without a connection too: the worker (sw.js, at the site's root) keeps it and the latest tracking file.
+// The first visit puts them on the phone itself (the worker only starts with the next one), each marked with when.
+async function keepForOffline() {
+  const c = await caches.open("track-v2");
+  for (const u of [location.origin + location.pathname, new URL("../../track.json", location.href).href]) {
+    if (await c.match(u)) continue;
+    const r = await fetch(u, { cache: "no-store" });
+    if (!r.ok) continue;
+    const h = new Headers(r.headers); h.set("x-lc-at", new Date().toISOString());
+    await c.put(u, new Response(await r.blob(), { status: r.status, statusText: r.statusText, headers: h }));
+  }
+}
+if ("serviceWorker" in navigator && window.isSecureContext && /^https?:$/.test(location.protocol) && !FRAMED)
+  navigator.serviceWorker.register(new URL("../../sw.js", location.href), { scope: new URL("../../", location.href).pathname }).then(keepForOffline).catch(() => {});
 $("clubs").addEventListener("click", e => { const b = e.target.closest("[data-club]"); if (!b) return;
   CLUB = CLUB === b.dataset.club ? "" : b.dataset.club; render(); document.querySelector(`#clubs [data-club="${CSS.escape(b.dataset.club)}"]`)?.focus(); });
 // the day chart: the crosshair follows the mouse or a finger (a vertical swipe still scrolls), and the arrow keys
@@ -1313,6 +1367,7 @@ if (OTP.rids.length && !FRAMED) { $("em").value = OTP.email; $("codebox").hidden
 if (!REPO || FRAMED) { $("adm").hidden = true; TOKEN = ""; }
 else if (TOKEN) { $("admin").hidden = false; login(); } else if (GW) resume();
 if (PENDING.size || PENDING_MULKA) { T = overlay(T); if (!FRAMED && REPO) { $("admin").hidden = false; if (!TOKEN) say(`יש ${PENDING.size + (PENDING_MULKA ? 1 : 0)} שינויים שעוד לא נשמרו – היכנסו כדי לשמור אותם.`); } }
+try { localStorage.setItem("lc-probe", "1"); localStorage.removeItem("lc-probe"); } catch (e) { KEPT = false; }
 render(); load();
 setInterval(load, 30000); setInterval(tick, 10000);
 </script>
