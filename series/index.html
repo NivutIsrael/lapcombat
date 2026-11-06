@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-TCYz77EoEWxm6B9xFgAcktywM/G57rFiUFJuaMBNTuU=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fqBwdzCSfLYglnuQMTScRqJsF1fHYR3Go3Iy4MpYD2A=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>תוצאות משולבות וליגות · ניווט ישראל</title>
@@ -268,6 +268,54 @@ const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחר
   <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
   <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/nivutisrael.github.io/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
   <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
+// ---- a result as a picture, to send on WhatsApp and the like. Drawn here, in the browser; nothing is sent anywhere
+// until the person shares or saves it. o: {name, club, comp, date, cat, cp, f, t, behind, m, st}
+const SHARE_FONT = (w, px) => `${w} ${px}px system-ui, -apple-system, "Segoe UI", Arial, sans-serif`;
+const shareTime = t => t == null ? "–" : t >= 3600 ? `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}:${String(Math.round(t % 60)).padStart(2, "0")}`
+  : `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, "0")}`;
+function shareDraw(o) {
+  const W = 1080, H = 1080, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const x = cv.getContext("2d"), R = W - 80, L = 80;
+  const fit = (text, w, px, max) => { do { x.font = SHARE_FONT(w, px); px -= 2; } while (x.measureText(text).width > max && px > 20); };
+  const rtl = (text, y, w, px, color, max = R - L) => { x.direction = "rtl"; x.textAlign = "right"; x.fillStyle = color; fit(text, w, px, max); x.fillText(text, R, y); };
+  const ltrAt = (text, xx, y, w, px, color, align = "left") => { x.direction = "ltr"; x.textAlign = align; x.fillStyle = color; x.font = SHARE_FONT(w, px); x.fillText(text, xx, y); };
+  x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, H);
+  const g = x.createLinearGradient(0, 0, W, 0); g.addColorStop(0, "#eb6834"); g.addColorStop(.5, "#6250d6"); g.addColorStop(1, "#2671cc");
+  x.fillStyle = g; x.fillRect(0, 0, W, 18);
+  rtl("ניווט ישראל · תוצאות וניתוח", 96, 700, 30, "#2671cc");
+  rtl(o.comp || "", 156, 600, 38, "#52514e");
+  if (o.date) ltrAt(o.date, R, 206, 500, 32, "#6b6a65", "right");
+  rtl(o.name || "", 330, 800, 84, "#0b0b0b");
+  rtl([o.cat ? `קטגוריה ${o.cat}` : "", o.club || ""].filter(Boolean).join(" · "), 394, 500, 38, "#52514e");
+  // the place, big, in a box
+  x.fillStyle = "#eef5fd"; x.beginPath(); x.roundRect ? x.roundRect(L, 450, R - L, 250, 28) : x.rect(L, 450, R - L, 250); x.fill();
+  if (o.cp != null) {
+    rtl("מקום בקטגוריה", 530, 600, 40, "#1c5cab", 420);
+    if (o.f) rtl(`מתוך ${o.f} שסיימו`, 600, 500, 36, "#52514e", 420);
+    ltrAt(String(o.cp), L + 60, 660, 800, 190, "#2671cc");
+  } else rtl(o.st === "MP" ? "פסילה (MP)" : "לא סיים", 600, 800, 90, "#52514e");
+  // the numbers: the name on the right, the number on the left - each in its own direction
+  const rows = [["זמן", shareTime(o.t)], ["פער מהמנצח", o.behind ? "+" + shareTime(o.behind) : o.cp === 1 ? "המנצח" : "–"],
+                ["זמן שאבד בטעויות", o.m != null && o.t ? `${shareTime(o.m)} (${Math.round(o.m / o.t * 100)}%)` : "–"]];
+  rows.forEach(([k, v], i) => { const y = 800 + i * 82;
+    x.fillStyle = "#e1e0d9"; x.fillRect(L, y - 58, R - L, 2);
+    rtl(k, y, 500, 38, "#52514e", 520);
+    if (/^[\d+:().% –]+$/.test(v)) ltrAt(v, L, y, 700, 44, "#0b0b0b"); else { x.direction = "rtl"; x.textAlign = "left"; x.fillStyle = "#0b0b0b"; x.font = SHARE_FONT(700, 44); x.fillText(v, L, y); } });
+  ltrAt("nivutisrael.github.io", W / 2, 1040, 500, 30, "#6b6a65", "center");
+  return cv;
+}
+async function shareCard(o) {
+  const cv = shareDraw(o), blob = await new Promise(ok => cv.toBlob(ok, "image/png"));
+  const name = `${String(o.name || "result").replace(/[\\/:*?"<>|]+/g, " ").trim()} - ${String(o.comp || "").replace(/[\\/:*?"<>|]+/g, " ").trim()}`.slice(0, 90) + ".png";
+  const file = new File([blob], name, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: `${o.name} · ${o.comp}` }); return "shared"; }
+    catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;      // no sharing here: the picture is saved
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  return "saved";
+}
 // colours: light, dark, or as the system says - one choice for the whole site, kept in this browser
 const THEME_OPTS = [["", "אוטומטי"], ["light", "בהיר"], ["dark", "כהה"]];
 function themePaint() {
