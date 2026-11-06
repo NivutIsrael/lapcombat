@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wUYbBgwERksEAyw9AzlmVwBPxIu9584nHsQPkibQio8=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-x1Ku5CLKoAtsObMgT/Ulu3yiuAbsa8d0O+tMi3uUEBQ=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -45,7 +45,6 @@ header h1 { font-size: calc(22px * var(--ts, 1)); margin: 0; } header a { color:
 button, .btn { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); }
 button.pri { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } button.pri:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 button.del { border-color: var(--bad); color: var(--bad); } button:disabled { opacity: .5; cursor: default; }
-#a11yb { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; border-color: var(--rule-2); padding: 6px 12px; } #a11yb svg { width: 17px; height: 17px; }
 .card { background: var(--surface); border: 1px solid var(--rule-2); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
 .card h2 { font-size: calc(18px * var(--ts, 1)); margin: 0 0 8px; }
 .note { color: var(--ink-2); margin: 0 0 12px; }
@@ -158,6 +157,15 @@ th.tt-asc, th.tt-desc { color: var(--accent); }
 .ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
 .ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
 tr.tt-hide { display: none; }
+/* the two buttons in the top corner of every page: accessibility, and light / dark (its name next to it where there is room) */
+.hicons { display: flex; gap: 6px; align-items: center; flex: none; }
+.hicons button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 11px;
+  font: inherit; font-size: calc(13px * var(--ts, 1)); font-weight: 500; line-height: 1; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 8px; cursor: pointer; }
+.hicons button:hover { color: var(--accent); border-color: var(--accent); }
+.hicons svg { width: 18px; height: 18px; flex: none; }
+@media (max-width: 640px) { .hicons .hl { display: none; } .hicons button { width: 38px; padding: 0; } }
+@media print { .hicons { display: none !important; } }
 /* the row number (מס״ד) each table starts with: narrow and quiet */
 th.ttn, td.ttn { width: 1%; white-space: nowrap; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
 td.ttn { font-size: calc(12px * var(--ts, 1)); }
@@ -219,6 +227,8 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
   table.cards td.cd-star { order: 4; }
   table.cards td.ttn { order: 4; width: auto; margin-inline-start: auto; font-size: calc(12px * var(--ts, 1)); color: var(--muted); }   /* the row number: "#12", at the end of the top line */
   table.cards td.ttn::before { content: "#"; }
+  table.cards.keyfirst td.ttn { order: 0; margin-inline-start: 0; min-width: 26px; }
+  table.cards.keyfirst td.cd-main { order: 1; min-width: 66px; } table.cards.keyfirst td.cd-name { order: 2; }
   table.cards td.cd-full { flex-basis: 100%; }
   table.cards td.cd-hide, table.cards td:empty { display: none; }
   table.cards .bar { min-width: 0; display: inline; } table.cards .bar i { display: none; } table.cards .bar b { font-weight: inherit; }
@@ -234,7 +244,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 <div class="wrap">
   <header><h1>ניהול האתר · תוצאות חיות</h1>
     <div class="hb"><a href="../">← לאתר</a><span id="who"></span>
-      <button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> <span>נגישות</span></button></div></header>
+      <div class="hicons"><button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="hl">נגישות</span></button><button id="theme" type="button" aria-label="מצב תצוגה"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><span class="hl" data-theml>אוטומטי</span></button></div></div></header>
   <main id="main">
     <section class="card" id="login">
       <h2>כניסת מנהלים</h2>
@@ -979,6 +989,28 @@ const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחר
   <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
   <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/lapcombat/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
   <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
+// colours: light, dark, or as the system says - one choice for the whole site, kept in this browser
+const THEME_OPTS = [["", "אוטומטי"], ["light", "בהיר"], ["dark", "כהה"]];
+function themePaint() {
+  const t = document.documentElement.dataset.theme || "", l = (THEME_OPTS.find(([k]) => k === t) || THEME_OPTS[0])[1];
+  document.querySelectorAll("#theme").forEach(b => { b.setAttribute("aria-label", `מצב תצוגה: ${l} – לחיצה מחליפה`); b.title = `מצב תצוגה: ${l}`;
+    const s = b.querySelector("[data-theml]"); if (s) s.textContent = l; });
+}
+function themeSet(t) {
+  t = THEME_OPTS.some(([k]) => k === t) ? t : "";
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  lsSet("lc-theme", t); themePaint();
+}
+themeSet(lsGet("lc-theme"));            // at once, on every page
+// btn: the page's light / dark button; done(t): what the page redraws for it (the report's charts)
+function themeInit(btn, done) {
+  if (!btn) return;
+  themePaint();
+  btn.addEventListener("click", () => {
+    const i = THEME_OPTS.findIndex(([k]) => k === (document.documentElement.dataset.theme || ""));
+    const [t] = THEME_OPTS[(i + 1) % THEME_OPTS.length]; themeSet(t); done?.(t);
+  });
+}
 function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
 function a11yPaint(el) {     // the buttons show the current choices
   const t = lsGet("lc-text"), f = a11yFlags();
@@ -1264,7 +1296,7 @@ function ttBind() {
   }, true);
 }
 
-a11yInit($("a11yb"));
+a11yInit($("a11yb")); themeInit($("theme"));
 how(!!GW);                     // the email code first when the gateway is set up
 if (!REPO) say($("lmsg"), "האתר לא מוגדר (חסר שם המאגר)");
 else if (TOKEN) login();
