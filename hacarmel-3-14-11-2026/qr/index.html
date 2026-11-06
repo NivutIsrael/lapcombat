@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-klJDUEcKO3eyorsHqIo2AFhIm0jvXlZTalNiPfgLOGE=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>קודי QR · שער הכרמל- ליגת יער- מחזור 1</title>
+<style>
+:root { color-scheme: light;
+  --paper: #ffffff; --paper-2: #f0efec; --surface: #ffffff; --page: #ffffff; --chip: #f0efec;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #6b6a65; --rule: #e1e0d9; --rule-2: #c3c2b7; --grid: var(--rule); --ring: rgba(11,11,11,0.10);
+  --accent: #2671cc; --on-accent: #fff; --tab-on: color-mix(in srgb, var(--accent) 88%, #000);
+  --green: #006300; --bad: #c2410c; --red: #b3261e; --amber: #8a5a00; --soon: #eef5fd; --late: #fde3e1; --outbg: #fff4d6;
+  --s1: #2a78d6; --s2: #eb6834; --s7: #6250d6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --paper: #0d0d0d; --paper-2: #2c2c2a; --surface: #1a1a19; --page: #0d0d0d; --chip: #2c2c2a;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781; --rule: #2c2c2a; --rule-2: #4a4a46; --ring: rgba(255,255,255,0.10);
+  --accent: #3987e5; --green: #0ca30c; --bad: #f0936a; --red: #ff8a80; --amber: #f3c15f; --soon: #1a2a3f; --late: #4a1d1a; --outbg: #3d3214;
+  --s1: #3987e5; --s2: #d95926; --s7: #9085e9; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --paper: #0d0d0d; --paper-2: #2c2c2a; --surface: #1a1a19; --page: #0d0d0d; --chip: #2c2c2a;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781; --rule: #2c2c2a; --rule-2: #4a4a46; --ring: rgba(255,255,255,0.10);
+  --accent: #3987e5; --green: #0ca30c; --bad: #f0936a; --red: #ff8a80; --amber: #f3c15f; --soon: #1a2a3f; --late: #4a1d1a; --outbg: #3d3214;
+  --s1: #3987e5; --s2: #d95926; --s7: #9085e9; }
+/* high contrast: black on white (white on black in the dark), strong lines, darker colours - as in the reports */
+:root[data-contrast="high"] { --paper: #fff; --paper-2: #e6e6e6; --surface: #fff; --page: #fff; --chip: #e6e6e6;
+  --ink: #000; --ink-2: #111; --muted: #333; --rule: #767676; --rule-2: #444; --ring: #444;
+  --accent: #0047ab; --tab-on: var(--accent); --on-accent: #fff; --green: #005a00; --bad: #9a2a00; --red: #c00000; --s1: #0047ab; --s2: #b33a00; --s7: #4b2fbf; }
+@media (prefers-color-scheme: dark) { :root[data-contrast="high"]:not([data-theme="light"]) { --paper: #000; --paper-2: #222; --surface: #000; --page: #000; --chip: #222;
+  --ink: #fff; --ink-2: #f2f2f2; --muted: #d0d0d0; --rule: #8c8c8c; --rule-2: #bdbdbd; --ring: #bdbdbd;
+  --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; } }
+:root[data-theme="dark"][data-contrast="high"] { --paper: #000; --paper-2: #222; --surface: #000; --page: #000; --chip: #222;
+  --ink: #fff; --ink-2: #f2f2f2; --muted: #d0d0d0; --rule: #8c8c8c; --rule-2: #bdbdbd; --ring: #bdbdbd;
+  --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; }
+body::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--s2), var(--s7) 50%, var(--s1)); }   /* as on the reports */
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.5 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left)); }
+.kicker { margin: 4px 0 2px; color: var(--accent); font-weight: 700; letter-spacing: .06em; font-size: calc(13px * var(--ts, 1)); }
+h1 { margin: 0; font-size: calc(28px * var(--ts, 1)); } .sub { color: var(--ink-2); margin: 4px 0 14px; }
+.print { font: inherit; font-weight: 600; color: var(--on-accent); background: var(--tab-on); border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; margin: 0 0 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.q { border: 1px solid var(--rule-2); border-radius: 14px; padding: 16px; text-align: center; background: #fff; color: #0b0b0b; break-inside: avoid; }
+.q h2 { margin: 0 0 6px; font-size: calc(22px * var(--ts, 1)); } .q svg { width: 100%; max-width: 240px; height: auto; display: block; margin: 0 auto; }
+.q .u { font-size: calc(12px * var(--ts, 1)); color: #52514e; word-break: break-all; margin: 6px 0 2px; } .q p { margin: 4px 0 0; color: #52514e; }
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff; color: #000; } .sitebar, .print, .notice, .a11y { display: none !important; } body::before { display: none; }
+  .wrap { padding: 0; max-width: none; } .grid { grid-template-columns: 1fr 1fr; gap: 10mm; } .q { border: 1.5px solid #000; }
+}
+
+/* accessibility toolbar: text size (every font size is calc(px * --ts), see scalable()), contrast and reading aids */
+:root[data-text="l"] { --ts: 1.15; } :root[data-text="xl"] { --ts: 1.3; }
+.a11y { position: fixed; z-index: 45; width: 360px; max-width: calc(100vw - 16px); max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain;
+        background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        padding: 12px 14px 14px; direction: rtl; text-align: right; font-size: calc(14px * var(--ts, 1)); }
+.a11yh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: calc(16px * var(--ts, 1)); }
+.a11yx { font: inherit; background: none; border: 0; color: var(--ink-2); cursor: pointer; padding: 4px 8px; }
+.a11yl { font-size: calc(12.5px * var(--ts, 1)); color: var(--muted); margin-bottom: 6px; }
+.a11ys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.a11ys button { font-family: inherit; font-weight: 600; padding: 9px 4px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.2; }
+.a11ys button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.a11yg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.a11yf { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; font: inherit; padding: 9px 10px; border: 1px solid var(--ring);
+         border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.a11yf b { font-size: calc(13.5px * var(--ts, 1)); } .a11yf small { font-size: calc(11.5px * var(--ts, 1)); color: var(--muted); line-height: 1.35; }
+.a11yf[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+.a11yf[aria-pressed="true"] b::before { content: "✓ "; color: var(--accent); }
+@media (pointer: coarse) { .a11yf.fine { display: none; } }
+.a11yreset { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 8px; padding: 7px 12px; cursor: pointer; margin-bottom: 6px; }
+.a11ystmt { font-size: calc(13px * var(--ts, 1)); line-height: 1.6; color: var(--ink-2); border-top: 1px solid var(--grid); padding-top: 4px; }
+.a11ystmt summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 6px 0; }
+.a11ystmt p { margin: 6px 0; } .a11ystmt ul { margin: 4px 0; padding-inline-start: 18px; } .a11ystmt .upd { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+@media (max-width: 640px) {
+  .a11y { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh; border-radius: 16px 16px 0 0;
+          padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); } }
+/* the reading aids (classes on <html>) */
+:root.a-gray :is(.wrap > header, header.mast, #tabs, #pgtop, .ctxbar, main, footer, .bnav, .bar-top:not(.open)) { filter: grayscale(1); }
+:root.a-links a { background: #fff200 !important; color: #000 !important; text-decoration: underline !important; text-underline-offset: 3px; outline: 1px solid #000; border-radius: 2px; }
+:root.a-font, :root.a-font * { font-family: Arial, Helvetica, sans-serif !important; }
+:root.a-space :is(p, li, td, th, label, dd, dt, small, .desc, .note, .status, .lead) { line-height: 1.9 !important; letter-spacing: .05em !important; word-spacing: .15em !important; }
+:root.a-focus :focus { outline: 3px solid #ffbf00 !important; outline-offset: 2px !important; box-shadow: 0 0 0 6px #000 !important; }
+:root.a-motion *, :root.a-motion *::before, :root.a-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+:root.a-cursor, :root.a-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M6 3v34l9-8.5 6.5 14 6.5-3-6.5-13.5H34z' fill='%23000' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 6 3, auto !important; }
+/* the privacy notice: no cookies, only the preferences in this browser */
+.notice { position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 780px; margin: 0 auto;
+          background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.22);
+          padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; direction: rtl; text-align: right; font-size: calc(13.5px * var(--ts, 1)); }
+.notice p { margin: 0; flex: 1 1 300px; line-height: 1.5; }
+.notice .nb { display: flex; gap: 8px; flex-wrap: wrap; }
+.notice button { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--accent); }
+.notice .ok { background: var(--accent); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
+/* "skip to the content": the first stop of the keyboard */
+.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--accent); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
+        font-weight: 700; text-decoration: none; }
+.skip:focus { top: 10px; }
+/* tables: sort by a header click, ▾ opens sort + filter (as in Excel), a bar above the table resets it */
+th.tt { cursor: pointer; user-select: none; -webkit-user-select: none; }
+th.tt:hover { color: var(--ink); }
+th.tt-asc, th.tt-desc { color: var(--accent); }
+.ttb { font: calc(10px * var(--ts, 1))/1 system-ui, sans-serif; margin-inline-start: 4px; padding: 3px 4px; border: 1px solid var(--ring); border-radius: 4px;
+       background: var(--surface); color: var(--muted); cursor: pointer; vertical-align: middle; }
+.ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
+.ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
+tr.tt-hide { display: none; }
+/* the two buttons in the top corner of every page: accessibility, and light / dark (its name next to it where there is room) */
+.hicons { display: flex; gap: 6px; align-items: center; flex: none; }
+.hicons button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 11px;
+  font: inherit; font-size: calc(13px * var(--ts, 1)); font-weight: 500; line-height: 1; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 8px; cursor: pointer; }
+.hicons button:hover { color: var(--accent); border-color: var(--accent); }
+.hicons svg { width: 18px; height: 18px; flex: none; }
+@media (max-width: 640px) { .hicons .hl { display: none; } .hicons button { width: 38px; padding: 0; } }
+@media print { .hicons { display: none !important; } }
+/* the bar at the top of a page: the way to the site's other pages (on the right), the corner buttons (on the left), the
+   outside links after them; a line under it keeps it apart from the page itself. The same on every page. */
+.sitebar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "nav more icons"; align-items: start; gap: 8px;
+  padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--grid); }
+.sitebar > nav.navlinks { grid-area: nav; } .sitebar > .navlinks.more { grid-area: more; } .sitebar > .hicons { grid-area: icons; }
+.navlinks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+.sitebar .navlinks a, .sitebar .navlinks button { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; font: inherit; font-size: calc(14px * var(--ts, 1));
+  font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; text-decoration: none;
+  white-space: nowrap; cursor: pointer; }
+.sitebar .navlinks a:hover, .sitebar .navlinks button:hover { border-color: var(--accent); }
+.sitebar .navlinks a.home { color: var(--on-accent, #fff); background: var(--tab-on, color-mix(in srgb, var(--accent) 88%, #000)); border-color: transparent; }
+.sitebar .navlinks a.home:hover { background: var(--accent); }
+@media (max-width: 640px) {   /* phones: the site's pages and the corner buttons, then the outside links in a row of their own */
+  .sitebar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nav icons" "more more"; margin-bottom: 10px; padding-bottom: 10px; }
+  .navlinks { gap: 6px; } .sitebar .navlinks a, .sitebar .navlinks button { height: 36px; padding: 0 11px; font-size: calc(13px * var(--ts, 1)); } }
+/* the row number (מס״ד) each table starts with: narrow and quiet */
+th.ttn, td.ttn { width: 1%; white-space: nowrap; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+td.ttn { font-size: calc(12px * var(--ts, 1)); }
+.ttbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; padding: 6px 10px; border-radius: 8px;
+         font-size: calc(12px * var(--ts, 1)); color: var(--ink-2); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.ttbar[hidden] { display: none; }
+.ttbar button { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-inline-start: auto; }
+.ttbar button:hover { background: var(--accent); color: var(--on-accent, #fff); }
+.ttpop { position: fixed; z-index: 40; width: 270px; max-width: calc(100vw - 16px); background: var(--surface); color: var(--ink);
+         border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 10px; font-size: calc(13px * var(--ts, 1));
+         display: flex; flex-direction: column; gap: 6px; direction: rtl; text-align: right; }
+.ttpop .tthead small { display: block; color: var(--muted); font-size: calc(11px * var(--ts, 1)); font-weight: 400; }
+.ttpop .ttsort { font: inherit; text-align: right; background: none; border: 0; border-radius: 6px; padding: 7px 8px; color: var(--ink); cursor: pointer; }
+.ttpop .ttsort:hover, .ttpop .ttsort.on { background: var(--chip); }
+.ttpop .ttsort.on { font-weight: 600; color: var(--accent); }
+.ttpop .ttsep { border-top: 1px solid var(--grid); }
+.ttpop .ttq { font: inherit; padding: 7px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--page); color: var(--ink); width: 100%; }
+.ttpop .ttall, .ttpop .ttfoot { display: flex; gap: 6px; }
+.ttpop .ttall button, .ttpop .ttfoot button { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px;
+                                             background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.ttpop .ttfoot .ttok { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ttpop .ttfoot button:disabled { opacity: .45; cursor: default; }
+.ttpop .ttlist { max-height: 250px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 6px; padding: 2px 8px; overscroll-behavior: contain; }
+.ttpop .ttlist label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+.ttpop .ttlist label[hidden] { display: none; }
+.ttpop .ttlist span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ttpop .ttlist small { color: var(--muted); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.ttpop input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; flex: none; margin: 0; }
+@media (pointer: coarse) { .ttb { font-size: calc(12px * var(--ts, 1)); padding: 6px 7px; } .ttpop .ttlist label { padding: 9px 0; } .ttpop .ttsort { padding: 10px 8px; }
+  .ttpop .ttall button, .ttpop .ttfoot button { padding: 10px 8px; } .ttbar button { padding: 8px 12px; } }
+@media (max-width: 640px) {   /* phones: a sheet at the bottom of the screen */
+  .ttpop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh;
+           border-radius: 14px 14px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); }
+  .ttpop .ttlist { max-height: 42vh; } }
+.cd-only, .cdtools { display: none; }
+.ttpop .ttcols { display: flex; flex-direction: column; max-height: 62vh; overflow-y: auto; overscroll-behavior: contain; }
+.ttpop .ttcol { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: inherit; font-size: calc(15px * var(--ts, 1)); text-align: right;
+                background: none; border: 0; border-top: 1px solid var(--grid); padding: 12px 4px; color: var(--ink); cursor: pointer; }
+.ttpop .ttcol small { flex: none; color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+.ttpop .ttcol small b { color: var(--accent); font-weight: 600; }
+/* phones: a table marked "cards" shows each row as a card - rank, name and the main value on top, the other
+   columns as labelled details below; one "sort and filter" button above it lists every column */
+@media (max-width: 640px) {
+  table.cards, table.cards tbody, table.cards tfoot { display: block; }
+  table.cards thead { display: none; }
+  .cdtools { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--grid); }
+  .cdtools button { font: inherit; font-size: calc(14px * var(--ts, 1)); font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                    border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .cdtools small { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+  table.cards .cd-only { display: inline; }
+  table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
+  table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
+  table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }
+  table.cards td.cd-main { order: 3; font-size: calc(16px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-star { order: 4; }
+  table.cards td.ttn { order: 4; width: auto; margin-inline-start: auto; font-size: calc(12px * var(--ts, 1)); color: var(--muted); }   /* the row number: "#12", at the end of the top line */
+  table.cards td.ttn::before { content: "#"; }
+  table.cards.keyfirst td.ttn { order: 0; margin-inline-start: 0; min-width: 26px; }
+  table.cards.keyfirst td.cd-main { order: 1; min-width: 66px; } table.cards.keyfirst td.cd-name { order: 2; }
+  table.cards td.cd-full { flex-basis: 100%; }
+  table.cards td.cd-hide, table.cards td:empty { display: none; }
+  table.cards .bar { min-width: 0; display: inline; } table.cards .bar i { display: none; } table.cards .bar b { font-weight: inherit; }
+  table.cards tr.tt-hide { display: none; }
+  table.cards tfoot tr { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 10px 2px; }
+  table.cards tfoot td { display: block; border: 0; padding: 0; }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="sitebar"><nav class="navlinks" aria-label="דפים אחרים באתר"><a class="home" href="../../">← כל התחרויות</a></nav><div class="hicons"><button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="hl">נגישות</span></button><button id="theme" type="button" aria-label="מצב תצוגה"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><span class="hl" data-theml>אוטומטי</span></button></div></header>
+  <main id="main">
+    <p class="kicker">קודי QR לתלייה בכינוס</p><h1>שער הכרמל- ליגת יער- מחזור 1</h1><p class="sub">14.11.2026 · סורקים במצלמה של הטלפון</p>
+    <button type="button" class="print" id="print">🖨️ הדפסה</button>
+    <div class="grid"><div class="q"><h2>🔴 תוצאות חיות</h2><svg width="222" height="222" class="segno"><g transform="scale(6)"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#0b0b0b" d="M2 2.5h7m1 0h4m1 0h4m1 0h1m1 0h1m2 0h1m2 0h7m-33 1h1m5 0h1m5 0h3m3 0h2m1 0h2m3 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m4 0h2m1 0h2m1 0h5m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m5 0h2m1 0h1m3 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h3m3 0h2m1 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h1m1 0h2m1 0h3m1 0h1m2 0h1m1 0h1m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m1 0h3m1 0h1m2 0h8m-25 1h1m3 0h1m1 0h5m1 0h1m2 0h1m1 0h1m2 0h3m2 0h5m2 0h1m-33 1h3m2 0h1m4 0h1m4 0h4m4 0h1m1 0h1m3 0h3m-27 1h6m2 0h3m2 0h1m1 0h2m1 0h4m2 0h1m1 0h1m-32 1h1m2 0h1m3 0h2m2 0h3m5 0h3m1 0h2m1 0h1m4 0h2m-33 1h4m2 0h1m4 0h1m1 0h1m1 0h2m3 0h5m1 0h1m1 0h2m-30 1h1m1 0h2m1 0h1m4 0h5m3 0h4m1 0h1m1 0h1m-22 1h3m1 0h1m4 0h1m1 0h1m6 0h7m2 0h1m-30 1h1m4 0h1m2 0h3m1 0h5m2 0h1m2 0h4m-28 1h1m1 0h1m1 0h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h6m1 0h1m1 0h1m2 0h1m-31 1h3m1 0h1m1 0h1m1 0h7m2 0h1m2 0h1m1 0h1m1 0h1m3 0h3m-32 1h1m5 0h2m1 0h3m3 0h3m2 0h1m2 0h1m2 0h2m1 0h1m-30 1h5m3 0h1m1 0h2m1 0h3m1 0h3m1 0h2m1 0h1m1 0h2m3 0h1m-30 1h1m1 0h1m1 0h1m3 0h1m7 0h6m2 0h4m2 0h1m-33 1h4m5 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h3m2 0h1m1 0h1m1 0h1m-30 1h5m3 0h1m2 0h2m1 0h3m2 0h3m2 0h1m1 0h4m-28 1h2m1 0h3m3 0h1m3 0h1m2 0h2m1 0h1m2 0h1m1 0h1m3 0h1m-33 1h4m1 0h6m3 0h2m1 0h1m1 0h3m2 0h5m2 0h2m-25 1h2m1 0h3m1 0h4m3 0h1m1 0h1m3 0h1m1 0h2m-32 1h7m1 0h2m4 0h2m2 0h1m2 0h1m2 0h1m1 0h1m1 0h2m1 0h1m-32 1h1m5 0h1m3 0h6m3 0h6m3 0h1m3 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m3 0h2m1 0h1m3 0h1m1 0h1m1 0h6m2 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m2 0h2m2 0h2m5 0h1m1 0h5m-31 1h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h5m-30 1h1m5 0h1m2 0h1m1 0h1m2 0h5m2 0h2m1 0h1m-25 1h7m1 0h1m1 0h2m1 0h2m1 0h2m2 0h2m1 0h2m7 0h1"/></g></svg><p class="u" dir="ltr">jp.mulka2.com/cloud/live/index.jsp?eventId</p><p>התוצאות החיות של המארגנים במולקה</p></div></div>
+  </main>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+
+// ---- accessibility toolbar, for every page of the site (kept in this browser, like the colours): text size, high contrast
+// and reading aids; the accessibility statement; "skip to the content"; and the privacy notice (no cookies - only these choices)
+const A11Y = { sizes: [["", "רגיל"], ["l", "גדול"], ["xl", "גדול מאוד"]], el: null, btn: null, done: null,
+  flags: [["contrast", "ניגודיות גבוהה", "טקסט כהה על רקע אחיד, קווים וגבולות בולטים"], ["gray", "גווני אפור", "התצוגה בלי צבעים"],
+          ["links", "הדגשת קישורים", "קישורים ברקע צהוב עם קו תחתון"], ["font", "גופן קריא", "גופן Arial פשוט בכל הטקסט"],
+          ["space", "ריווח טקסט", "יותר רווח בין שורות, מילים ואותיות"], ["focus", "הדגשת מיקוד", "מסגרת בולטת סביב מה שנבחר במקלדת"],
+          ["motion", "עצירת תנועה", "בלי אנימציות ומעברים"], ["cursor", "סמן גדול", "סמן עכבר גדול (במחשב)"]] };
+const STORE = ["lc-theme", "lc-text", "lc-contrast", "lc-a11y", "lc-notice"];   // everything the site keeps in the browser
+const lsGet = k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
+const lsSet = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} };
+const a11yFlags = () => new Set(lsGet("lc-a11y").split(",").filter(Boolean).concat(lsGet("lc-contrast") === "high" ? ["contrast"] : []));
+function a11yApply() {
+  const h = document.documentElement, t = lsGet("lc-text"), f = a11yFlags();
+  if (t && A11Y.sizes.some(([k]) => k === t)) h.dataset.text = t; else delete h.dataset.text;
+  if (f.has("contrast")) h.dataset.contrast = "high"; else delete h.dataset.contrast;
+  A11Y.flags.forEach(([k]) => { if (k !== "contrast") h.classList.toggle("a-" + k, f.has(k)); });
+}
+function a11ySetFlag(k, on) {
+  if (k === "contrast") { lsSet("lc-contrast", on ? "high" : ""); return; }
+  const f = new Set(lsGet("lc-a11y").split(",").filter(Boolean));
+  if (on) f.add(k); else f.delete(k);
+  lsSet("lc-a11y", [...f].filter(x => A11Y.flags.some(([k2]) => k2 === x)).join(","));
+}
+a11yApply();
+const textScale = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ts")) || 1;
+const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחרויות ניווט. הנגשנו אותו לפי ההנחיות של WCAG 2.1 ברמה AA, שעליהן מבוסס תקן ישראלי 5568; לא נערכה בדיקת נגישות רשמית.</p>
+  <ul><li>אפשר לעבור על כל הדף במקלדת, והמיקוד גלוי. הקישור "דלג לתוכן" הוא העצירה הראשונה.</li>
+    <li>בסרגל הזה: הגדלת טקסט עד 130% בלי שהדף ייחתך או ייגלל לרוחב, ניגודיות גבוהה, גווני אפור, הדגשת קישורים, גופן קריא, ריווח טקסט, הדגשת מיקוד, עצירת תנועה וסמן גדול.</li>
+    <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
+    <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
+  <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/nivutisrael.github.io/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
+// ---- a result as a picture, to send on WhatsApp and the like. Drawn here, in the browser; nothing is sent anywhere
+// until the person shares or saves it. o: {name, club, comp, date, cat, cp, f, t, behind, m, st}
+const SHARE_FONT = (w, px) => `${w} ${px}px system-ui, -apple-system, "Segoe UI", Arial, sans-serif`;
+const shareTime = t => t == null ? "–" : t >= 3600 ? `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}:${String(Math.round(t % 60)).padStart(2, "0")}`
+  : `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, "0")}`;
+function shareDraw(o) {
+  const W = 1080, H = 1080, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const x = cv.getContext("2d"), R = W - 80, L = 80;
+  const fit = (text, w, px, max) => { do { x.font = SHARE_FONT(w, px); px -= 2; } while (x.measureText(text).width > max && px > 20); };
+  const rtl = (text, y, w, px, color, max = R - L) => { x.direction = "rtl"; x.textAlign = "right"; x.fillStyle = color; fit(text, w, px, max); x.fillText(text, R, y); };
+  const ltrAt = (text, xx, y, w, px, color, align = "left") => { x.direction = "ltr"; x.textAlign = align; x.fillStyle = color; x.font = SHARE_FONT(w, px); x.fillText(text, xx, y); };
+  x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, H);
+  const g = x.createLinearGradient(0, 0, W, 0); g.addColorStop(0, "#eb6834"); g.addColorStop(.5, "#6250d6"); g.addColorStop(1, "#2671cc");
+  x.fillStyle = g; x.fillRect(0, 0, W, 18);
+  rtl("ניווט ישראל · תוצאות וניתוח", 96, 700, 30, "#2671cc");
+  rtl(o.comp || "", 156, 600, 38, "#52514e");
+  if (o.date) ltrAt(o.date, R, 206, 500, 32, "#6b6a65", "right");
+  rtl(o.name || "", 330, 800, 84, "#0b0b0b");
+  rtl([o.cat ? `קטגוריה ${o.cat}` : "", o.club || ""].filter(Boolean).join(" · "), 394, 500, 38, "#52514e");
+  // the place, big, in a box
+  x.fillStyle = "#eef5fd"; x.beginPath(); x.roundRect ? x.roundRect(L, 450, R - L, 250, 28) : x.rect(L, 450, R - L, 250); x.fill();
+  if (o.cp != null) {
+    rtl("מקום בקטגוריה", 530, 600, 40, "#1c5cab", 420);
+    if (o.f) rtl(`מתוך ${o.f} שסיימו`, 600, 500, 36, "#52514e", 420);
+    ltrAt(String(o.cp), L + 60, 660, 800, 190, "#2671cc");
+  } else rtl(o.st === "MP" ? "פסילה (MP)" : "לא סיים", 600, 800, 90, "#52514e");
+  // the numbers: the name on the right, the number on the left - each in its own direction
+  const rows = [["זמן", shareTime(o.t)], ["פער מהמנצח", o.behind ? "+" + shareTime(o.behind) : o.cp === 1 ? "המנצח" : "–"],
+                ["זמן שאבד בטעויות", o.m != null && o.t ? `${shareTime(o.m)} (${Math.round(o.m / o.t * 100)}%)` : "–"]];
+  rows.forEach(([k, v], i) => { const y = 800 + i * 82;
+    x.fillStyle = "#e1e0d9"; x.fillRect(L, y - 58, R - L, 2);
+    rtl(k, y, 500, 38, "#52514e", 520);
+    if (/^[\d+:().% –]+$/.test(v)) ltrAt(v, L, y, 700, 44, "#0b0b0b"); else { x.direction = "rtl"; x.textAlign = "left"; x.fillStyle = "#0b0b0b"; x.font = SHARE_FONT(700, 44); x.fillText(v, L, y); } });
+  ltrAt("nivutisrael.github.io", W / 2, 1040, 500, 30, "#6b6a65", "center");
+  return cv;
+}
+async function shareCard(o) {
+  const cv = shareDraw(o), blob = await new Promise(ok => cv.toBlob(ok, "image/png"));
+  const name = `${String(o.name || "result").replace(/[\\/:*?"<>|]+/g, " ").trim()} - ${String(o.comp || "").replace(/[\\/:*?"<>|]+/g, " ").trim()}`.slice(0, 90) + ".png";
+  const file = new File([blob], name, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: `${o.name} · ${o.comp}` }); return "shared"; }
+    catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;      // no sharing here: the picture is saved
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  return "saved";
+}
+// colours: light, dark, or as the system says - one choice for the whole site, kept in this browser
+const THEME_OPTS = [["", "אוטומטי"], ["light", "בהיר"], ["dark", "כהה"]];
+function themePaint() {
+  const t = document.documentElement.dataset.theme || "", l = (THEME_OPTS.find(([k]) => k === t) || THEME_OPTS[0])[1];
+  document.querySelectorAll("#theme").forEach(b => { b.setAttribute("aria-label", `מצב תצוגה: ${l} – לחיצה מחליפה`); b.title = `מצב תצוגה: ${l}`;
+    const s = b.querySelector("[data-theml]"); if (s) s.textContent = l; });
+}
+function themeSet(t) {
+  t = THEME_OPTS.some(([k]) => k === t) ? t : "";
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  lsSet("lc-theme", t); themePaint();
+}
+themeSet(lsGet("lc-theme"));            // at once, on every page
+// btn: the page's light / dark button; done(t): what the page redraws for it (the report's charts)
+function themeInit(btn, done) {
+  if (!btn) return;
+  themePaint();
+  btn.addEventListener("click", () => {
+    const i = THEME_OPTS.findIndex(([k]) => k === (document.documentElement.dataset.theme || ""));
+    const [t] = THEME_OPTS[(i + 1) % THEME_OPTS.length]; themeSet(t); done?.(t);
+  });
+}
+function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
+function a11yPaint(el) {     // the buttons show the current choices
+  const t = lsGet("lc-text"), f = a11yFlags();
+  el.querySelectorAll("[data-ts]").forEach(b => b.setAttribute("aria-checked", b.dataset.ts === t));
+  el.querySelectorAll("[data-flag]").forEach(b => b.setAttribute("aria-pressed", f.has(b.dataset.flag)));
+}
+function a11yOpen() {
+  a11yClose();
+  const el = document.createElement("div");
+  el.className = "a11y"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "סרגל נגישות");
+  el.innerHTML = `<div class="a11yh"><b>סרגל נגישות</b><button type="button" class="a11yx" aria-label="סגירה">✕</button></div>
+    <div class="a11yl" id="a11ytl">גודל הטקסט</div>
+    <div class="a11ys" role="radiogroup" aria-labelledby="a11ytl">${A11Y.sizes.map(([k, n], i) =>
+      `<button type="button" role="radio" data-ts="${k}" style="font-size:${13 + i * 2}px">${n}</button>`).join("")}</div>
+    <div class="a11yg">${A11Y.flags.map(([k, n, d]) => `<button type="button" class="a11yf${k === "cursor" ? " fine" : ""}" data-flag="${k}"><b>${n}</b><small>${d}</small></button>`).join("")}</div>
+    <button type="button" class="a11yreset">↺ איפוס כל הגדרות הנגישות</button>
+    <details class="a11ystmt"><summary>הצהרת נגישות</summary>${A11Y_STATEMENT}</details>`;
+  a11yPaint(el);
+  document.body.appendChild(el);
+  A11Y.el = el; A11Y.btn.setAttribute("aria-expanded", "true");
+  if (innerWidth > 640) {                    // under the button; phones get a sheet at the bottom (CSS)
+    const r = A11Y.btn.getBoundingClientRect();
+    el.style.left = Math.max(8, Math.min(innerWidth - el.offsetWidth - 8, r.left)) + "px"; el.style.top = (r.bottom + 6) + "px";
+    el.style.maxHeight = (innerHeight - r.bottom - 18) + "px";
+  }
+  el.addEventListener("click", e => {
+    e.stopPropagation();
+    const b = e.target.closest("[data-ts], [data-flag], .a11yreset, .a11yx");
+    if (!b) return;
+    if (b.matches(".a11yx")) { a11yClose(); A11Y.btn.focus(); return; }
+    if (b.dataset.ts != null) lsSet("lc-text", b.dataset.ts);
+    else if (b.dataset.flag) a11ySetFlag(b.dataset.flag, b.getAttribute("aria-pressed") !== "true");
+    else { lsSet("lc-text", ""); lsSet("lc-contrast", ""); lsSet("lc-a11y", ""); }
+    a11yApply(); a11yPaint(el); A11Y.done?.();
+  });
+  el.querySelector('[aria-checked="true"]')?.focus({ preventScroll: true });
+}
+// the privacy notice, once: the site keeps no cookies, only the choices above (and the colours) in this browser
+function noticeInit() {
+  if (lsGet("lc-notice")) return;
+  const el = document.createElement("div");
+  el.className = "notice"; el.setAttribute("role", "region"); el.setAttribute("aria-label", "פרטיות ועוגיות");
+  el.innerHTML = `<p><b>פרטיות:</b> האתר לא משתמש בעוגיות (cookies), לא עוקב אחריך ולא מציג פרסומות. רק ההעדפות שבחרת – צבעים, גודל טקסט ונגישות – נשמרות בדפדפן שלך, כדי שיישארו גם בפעם הבאה.</p>
+    <div class="nb"><button type="button" class="ok">הבנתי</button><button type="button" class="del">מחיקת ההעדפות השמורות</button></div>`;
+  document.body.appendChild(el);
+  el.querySelector(".ok").addEventListener("click", e => { e.stopPropagation(); lsSet("lc-notice", "1"); el.remove(); });
+  el.querySelector(".del").addEventListener("click", e => { e.stopPropagation(); STORE.forEach(k => lsSet(k, "")); location.reload(); });
+}
+// btn: the page's accessibility button; done(): redraw what depends on the text (the report's charts)
+function a11yInit(btn, done) {
+  document.querySelectorAll("[data-skip]").forEach(a => a.addEventListener("click", e => {   // "skip to the content"
+    e.preventDefault(); e.stopPropagation(); const t = document.querySelector(a.dataset.skip);
+    if (t) { if (!t.hasAttribute("tabindex")) t.setAttribute("tabindex", "-1"); t.focus(); } }));
+  noticeInit();
+  if (!btn) return;
+  A11Y.btn = btn; A11Y.done = done;
+  btn.setAttribute("aria-haspopup", "dialog"); btn.setAttribute("aria-expanded", "false");
+  btn.addEventListener("click", e => { e.stopPropagation(); A11Y.el ? a11yClose() : a11yOpen(); });
+  document.addEventListener("click", e => { if (A11Y.el && !A11Y.el.contains(e.target) && !btn.contains(e.target)) a11yClose(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && A11Y.el) { a11yClose(); btn.focus(); } });
+}
+// ---- tables: Excel-style sort and filter on every column. The state survives re-renders (by table title);
+// a header click sorts ↑ / ↓ / back to the default; ▾ opens the menu; the bar above the table resets it all.
+const TT = { st: Object.create(null), pop: null, bound: false };
+const ttEsc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+// cell text -> a number (m:ss / h:mm:ss in seconds, "12.5%", "+3") or text; "" and "–" are empty
+function ttVal(s) {
+  const t = String(s ?? "").replace(/\u2212/g, "-").trim();
+  if (!t || t === "–" || t === "-") return null;
+  let m = /^([+-]?)(\d+):(\d{2})(?::(\d{2}))?(?!\d)/.exec(t);
+  if (m) { const v = m[4] != null ? m[2] * 3600 + m[3] * 60 + +m[4] : m[2] * 60 + +m[3]; return m[1] === "-" ? -v : v; }
+  m = /^[+-]?\d+(?:\.\d+)?(?![\d:/.])/.exec(t);
+  return m ? +m[0] : t;
+}
+const ttText = td => {                       // what a cell shows in the filter list
+  if (!td) return "";
+  if (td.dataset.f != null) return td.dataset.f;
+  const a = td.querySelector("a[data-runner]") || td.querySelector(".bar b");
+  return (a || td).textContent.replace(/\s+/g, " ").trim();
+};
+const ttKey = td => {                        // what a cell is sorted by (data-v when the text is not enough)
+  if (!td) return null;
+  const v = td.dataset.v;
+  return v == null ? ttVal(ttText(td)) : v === "" ? null : isFinite(v) ? +v : v;
+};
+// categories as orienteers look for them: D (women) by age, then H (men), then the rest (בינוני, קצרצר …) by the alphabet;
+// a competitor's category that is not given comes last. Any other text is simply by the alphabet.
+const catKey = k => { const m = /^([DH])\s*(\d+)\s*(.*)$/i.exec(k);     // [group, age, the rest]: D14A -> [0, 14, "A"]
+  return m ? [m[1].toUpperCase() === "D" ? 0 : 1, +m[2], m[3]] : [k ? 2 : 3, 0, k]; };
+const catCmp = (a, b) => { const x = catKey(String(a ?? "")), y = catKey(String(b ?? ""));
+  return x[0] - y[0] || x[1] - y[1] || x[2].localeCompare(y[2], "he", { numeric: true }); };
+// empty cells always last; in a column of numbers, text counts as empty
+function ttCmp(a, b, dir, num) {
+  if (num) { if (typeof a !== "number") a = null; if (typeof b !== "number") b = null; }
+  if (a == null || b == null) return a == null ? (b == null ? 0 : 1) : -1;
+  const d = typeof a === "number" && typeof b === "number" ? a - b : typeof a === "number" ? -1 : typeof b === "number" ? 1
+    : catCmp(a, b);
+  return d * dir;
+}
+const ttRows = tb => [...tb.tBodies[0].rows];
+const ttHead = tb => [...tb.tHead.rows[tb.tHead.rows.length - 1].cells];
+const ttLabel = th => [...th.childNodes].filter(n => !n.classList?.contains("ttb")).map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+const ttTable = k => [...document.querySelectorAll("table[data-ttkey]")].find(t => t.dataset.ttkey === k);
+const ttBarOf = tb => { const at = tb.closest(".scroll") || tb; return at.previousElementSibling?.classList.contains("ttbar") ? at.previousElementSibling : null; };
+
+function tableTools(root, scope = "") {
+  if (!root) return;
+  ttBind();
+  root.querySelectorAll("table").forEach(tb => {
+    if (!tb.tHead || !tb.tBodies[0] || tb.dataset.tt === "off" || tb.dataset.ttkey) return;
+    const box = tb.closest(".card, section, aside, #me") || root;
+    const title = (box.querySelector("h2, h3")?.textContent || "").replace(/\s+/g, " ").trim();
+    tb.dataset.ttkey = `${scope}|${title}|${[...box.querySelectorAll("table")].indexOf(tb)}`;
+    // every table starts with the row number (מס״ד): the rows in the order they are shown now, after sorting and filtering
+    [...tb.tHead.rows].forEach((tr, i, all) => tr.insertAdjacentHTML("afterbegin", i === all.length - 1
+      ? `<th class="ttn" scope="col" data-tt="no" data-short="">מס״ד</th>` : `<th class="ttn"></th>`));
+    [...tb.tBodies[0].rows, ...(tb.tFoot ? tb.tFoot.rows : [])].forEach(r => r.insertAdjacentHTML("afterbegin", `<td class="ttn"></td>`));
+    ttRows(tb).forEach((r, i) => r.dataset.tti = i);
+    const head = ttHead(tb);
+    // the card view on phones: each cell learns its column's short name and its role (rank / name / main ...)
+    if (tb.classList.contains("cards")) {
+      const short = th => [...th.childNodes].filter(n => n.nodeName !== "SMALL").map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+      const lab = head.map(th => th.dataset.short ?? short(th)), role = head.map(th => th.dataset.card);
+      ttRows(tb).forEach(r => [...r.cells].forEach((td, j) => { if (td.dataset.l == null && lab[j]) td.dataset.l = lab[j];
+        if (role[j]) td.classList.add("cd-" + role[j]); }));
+    }
+    head.forEach((th, j) => {
+      if (th.dataset.tt === "no") return;
+      th.classList.add("tt");
+      th.insertAdjacentHTML("beforeend", `<button type="button" class="ttb" data-ttc="${j}" aria-label="מיון וסינון" aria-haspopup="dialog">▾</button>`);
+    });
+    const bar = document.createElement("div"); bar.className = "ttbar"; bar.hidden = true;
+    const at = tb.closest(".scroll") || tb; at.parentNode.insertBefore(bar, at);
+    if (tb.classList.contains("cards") && head.some(th => th.dataset.tt !== "no")) {   // phones: the header is hidden, this button lists its columns
+      const tools = document.createElement("div"); tools.className = "cdtools";
+      tools.innerHTML = `<button type="button" data-ttcols="${ttEsc(tb.dataset.ttkey)}" aria-haspopup="dialog">⇅ מיון וסינון</button><small></small>`;
+      at.parentNode.insertBefore(tools, bar);
+    }
+    ttApply(tb);
+  });
+}
+
+function ttApply(tb) {
+  const st = TT.st[tb.dataset.ttkey] || {}, ex = st.ex || {}, rows = ttRows(tb), head = ttHead(tb), body = tb.tBodies[0];
+  const cols = Object.keys(ex);
+  let shown = 0;
+  rows.forEach(r => { const ok = cols.every(j => !ex[j].has(ttText(r.cells[j]))); r.classList.toggle("tt-hide", !ok); shown += ok; });
+  const order = rows.slice().sort((a, b) => a.dataset.tti - b.dataset.tti);
+  if (st.sort) {
+    const [j, dir] = st.sort, v = new Map(rows.map(r => [r, ttKey(r.cells[j])])), vals = [...v.values()].filter(x => x != null);
+    const num = vals.filter(x => typeof x === "number").length * 2 >= vals.length;
+    order.sort((a, b) => ttCmp(v.get(a), v.get(b), dir, num) || a.dataset.tti - b.dataset.tti);
+  }
+  order.forEach(r => body.appendChild(r));
+  let n = 0;
+  order.forEach(r => { const c = r.cells[0]; if (c?.classList.contains("ttn")) c.textContent = r.classList.contains("tt-hide") ? "" : ++n; });
+  head.forEach((th, j) => { const b = th.querySelector(".ttb"); if (!b) return;
+    const s = st.sort?.[0] === j ? st.sort[1] : 0;
+    th.classList.toggle("tt-asc", s > 0); th.classList.toggle("tt-desc", s < 0);
+    th.setAttribute("aria-sort", s > 0 ? "ascending" : s < 0 ? "descending" : "none");
+    b.classList.toggle("on", !!ex[j]?.size); b.textContent = s > 0 ? "▲" : s < 0 ? "▼" : "▾"; });
+  const bar = ttBarOf(tb); if (!bar) return;
+  const hint = bar.previousElementSibling?.classList.contains("cdtools") && bar.previousElementSibling.querySelector("small");
+  if (hint) hint.textContent = `${shown < rows.length ? `${shown} מתוך ${rows.length}` : rows.length} שורות · לפי כל עמודה`;
+  bar.hidden = !(st.sort || cols.length);
+  if (bar.hidden) return;
+  const name = j => `<b>${ttEsc(ttLabel(head[j]) || "☆")}</b>`;
+  bar.innerHTML = `<span>${shown < rows.length ? `מוצגות <b>${shown}</b> מתוך ${rows.length} שורות` : `${rows.length} שורות`}`
+    + (st.sort ? ` · ממוין לפי ${name(st.sort[0])} ${st.sort[1] > 0 ? "↑" : "↓"}` : "")
+    + (cols.length ? ` · מסונן לפי ${cols.map(name).join(", ")}` : "") + `</span>`
+    + `<button type="button" data-ttreset="1" data-tip="המיון והסדר המקוריים, בלי סינון">↺ איפוס לברירת המחדל</button>`;
+}
+
+function ttSet(k, f) {
+  const st = TT.st[k] || (TT.st[k] = {}); st.ex ||= {};
+  f(st);
+  Object.keys(st.ex).forEach(j => st.ex[j].size || delete st.ex[j]);
+  if (!st.sort && !Object.keys(st.ex).length) delete TT.st[k];
+  const tb = ttTable(k); if (tb) ttApply(tb);
+}
+
+function ttOpen(btn) {
+  ttClose();
+  const th = btn.closest("th"), tb = th.closest("table"), k = tb.dataset.ttkey, j = +btn.dataset.ttc;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  // the values of the rows that pass the other columns' filters, as in Excel
+  const pass = r => Object.keys(ex).every(c => +c === j || !ex[c].has(ttText(r.cells[c])));
+  const counts = new Map();
+  ttRows(tb).filter(pass).forEach(r => { const v = ttText(r.cells[j]); counts.set(v, (counts.get(v) || 0) + 1); });
+  (ex[j] || []).forEach(v => counts.has(v) || counts.set(v, 0));
+  const vals = [...counts.keys()], sv = vals.map(ttVal);
+  const num = sv.filter(x => typeof x === "number").length * 2 >= sv.filter(x => x != null).length;
+  const order = vals.map((_, i) => i).sort((a, b) => ttCmp(sv[a], sv[b], 1, false) || vals[a].localeCompare(vals[b], "he"));
+  const s = st.sort?.[0] === j ? st.sort[1] : 0, hint = th.dataset.tth;
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>${ttEsc(ttLabel(th) || "עמודה")}</b>${hint ? `<small>${ttEsc(hint)}</small>` : ""}</div>
+    <button type="button" class="ttsort${s > 0 ? " on" : ""}" data-dir="1">${num ? "↑ מיון מהקטן לגדול" : "↑ מיון מא׳ עד ת׳"}</button>
+    <button type="button" class="ttsort${s < 0 ? " on" : ""}" data-dir="-1">${num ? "↓ מיון מהגדול לקטן" : "↓ מיון מת׳ עד א׳"}</button>
+    <div class="ttsep"></div>
+    <input type="search" class="ttq" placeholder="חיפוש ברשימה…" aria-label="חיפוש ברשימה" autocomplete="off">
+    <div class="ttall"><button type="button" data-ttall="1">✓ בחירת הכול</button><button type="button" data-ttall="0">✕ ביטול הכול</button></div>
+    <div class="ttlist">${order.map(i => `<label><input type="checkbox" data-i="${i}" ${ex[j]?.has(vals[i]) ? "" : "checked"}><span>${vals[i] === "" ? "(ריק)" : ttEsc(vals[i])}</span><small>${counts.get(vals[i])}</small></label>`).join("")}</div>
+    <div class="ttfoot"><button type="button" class="ttclear" ${ex[j]?.size ? "" : "disabled"}>ניקוי הסינון</button><button type="button" class="ttcancel">ביטול</button><button type="button" class="ttok">אישור</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j, vals, btn };
+  if (innerWidth > 640) {                    // under the header; phones get a sheet at the bottom (CSS)
+    const r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px";
+    pop.style.top = (r.bottom + 6 + h > innerHeight - 8 ? Math.max(8, r.top - h - 6) : r.bottom + 6) + "px";
+  }
+  if (!matchMedia("(pointer: coarse)").matches) pop.querySelector(".ttq").focus();
+}
+function ttCols(btn) {          // phones: the columns of a card table in one list; a tap opens that column's menu
+  ttClose();
+  const k = btn.dataset.ttcols, tb = ttTable(k); if (!tb) return;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>מיון וסינון</b><small>בחרו עמודה כדי למיין לפיה או לסנן את הערכים שלה</small></div><div class="ttcols">`
+    + ttHead(tb).map((th, j) => !th.querySelector(".ttb") ? "" : `<button type="button" class="ttcol" data-ttcol="${j}"><span>${ttEsc(ttLabel(th) || "עמודה " + (j + 1))}</span>`
+      + `<small>${st.sort?.[0] === j ? `<b>${st.sort[1] > 0 ? "▲ ממוין" : "▼ ממוין"}</b> ` : ""}${ex[j]?.size ? "<b>מסונן</b> " : ""}‹</small></button>`).join("")
+    + `</div><div class="ttfoot"><button type="button" class="ttcancel">סגירה</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j: -1, vals: [], btn };
+}
+function ttClose() { if (!TT.pop) return; const b = TT.pop.btn; TT.pop.el.remove(); TT.pop = null; if (b?.isConnected && !matchMedia("(pointer: coarse)").matches) b.focus({ preventScroll: true }); }
+function ttCanOk() { const P = TT.pop; if (!P) return;
+  P.el.querySelector(".ttok").disabled = ![...P.el.querySelectorAll(".ttlist label:not([hidden]) input")].some(cb => cb.checked); }
+function ttOk() {
+  const P = TT.pop; if (!P || P.el.querySelector(".ttok").disabled) return;
+  const searching = !!P.el.querySelector(".ttq").value.trim(), ex = new Set();
+  // as in Excel: with a search, only the matching values that are ticked stay
+  P.el.querySelectorAll(".ttlist input").forEach(cb => { if (!cb.checked || (searching && cb.closest("label").hidden)) ex.add(P.vals[+cb.dataset.i]); });
+  ttSet(P.k, st => { if (ex.size) st.ex[P.j] = ex; else delete st.ex[P.j]; });
+  ttClose();
+}
+function ttBind() {
+  if (TT.bound) return;
+  TT.bound = true;
+  // capture: handled here before the page's own click handlers
+  document.addEventListener("click", e => {
+    const t = e.target, P = TT.pop;
+    if (P && P.el.contains(t)) {
+      e.stopPropagation();
+      const col = t.closest("[data-ttcol]");
+      if (col) { const b = ttHead(ttTable(P.k))[+col.dataset.ttcol]?.querySelector(".ttb"); if (b) ttOpen(b); return; }
+      const sb = t.closest(".ttsort");
+      if (sb) { const d = +sb.dataset.dir; ttSet(P.k, st => st.sort = st.sort?.[0] === P.j && st.sort[1] === d ? null : [P.j, d]); ttClose(); }
+      else if (t.closest("[data-ttall]")) { const on = t.closest("[data-ttall]").dataset.ttall === "1";
+        P.el.querySelectorAll(".ttlist label:not([hidden]) input").forEach(cb => cb.checked = on); ttCanOk(); }
+      else if (t.closest(".ttclear")) { ttSet(P.k, st => delete st.ex[P.j]); ttClose(); }
+      else if (t.closest(".ttcancel")) ttClose();
+      else if (t.closest(".ttok")) ttOk();
+      return;
+    }
+    const b = t.closest(".ttb");
+    if (b) { e.stopPropagation(); e.preventDefault(); P?.btn === b ? ttClose() : ttOpen(b); return; }
+    const cb = t.closest("[data-ttcols]");
+    if (cb) { e.stopPropagation(); e.preventDefault(); P?.btn === cb ? ttClose() : ttCols(cb); return; }
+    if (P) ttClose();                          // a click outside closes the menu and still does what it was for
+    const rs = t.closest("[data-ttreset]");
+    if (rs) { e.stopPropagation(); const nx = rs.closest(".ttbar")?.nextElementSibling, tb = nx?.matches("table") ? nx : nx?.querySelector("table");
+      if (tb) { delete TT.st[tb.dataset.ttkey]; ttApply(tb); } return; }
+    const th = t.closest("th.tt");
+    if (th && th.dataset.legmap == null && !t.closest("a, button, input, select")) {
+      e.stopPropagation();
+      const tb = th.closest("table"), j = ttHead(tb).indexOf(th);
+      ttSet(tb.dataset.ttkey, st => { const s = st.sort?.[0] === j ? st.sort[1] : 0; st.sort = s === 0 ? [j, 1] : s > 0 ? [j, -1] : null; });
+    }
+  }, true);
+  document.addEventListener("change", e => { if (TT.pop?.el.contains(e.target)) ttCanOk(); });
+  document.addEventListener("input", e => {
+    if (!TT.pop || !e.target.classList?.contains("ttq")) return;
+    const q = e.target.value.trim().toLowerCase();
+    TT.pop.el.querySelectorAll(".ttlist label").forEach(l => l.hidden = !!q && !l.textContent.toLowerCase().includes(q));
+    ttCanOk();
+  });
+  document.addEventListener("keydown", e => {
+    if (!TT.pop) return;
+    if (e.key === "Escape") { e.preventDefault(); ttClose(); }
+    else if (e.key === "Enter" && e.target.classList?.contains("ttq")) { e.preventDefault(); ttOk(); }
+  }, true);
+}
+
+$("print").onclick = () => print();
+a11yInit($("a11yb")); themeInit($("theme"));
+</script>
+</body>
+</html>

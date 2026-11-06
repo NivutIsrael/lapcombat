@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-DFi1j9VjlxVuYBnlqcGngczuNb+DrliSkYhwARjAnCs=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wcT3KtmBmjSdcr+a969Mb2jYqlRDB6KFnLJ5sN8wH4U=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מעקב נווטים בשטח</title>
@@ -75,6 +75,22 @@ section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin:
 .day-t { margin-top: 8px; } .day-t summary { cursor: pointer; font-weight: 600; color: var(--accent); font-size: calc(13.5px * var(--ts, 1)); }
 .day-t table { width: 100%; border-collapse: collapse; font-size: calc(13px * var(--ts, 1)); margin-top: 6px; font-variant-numeric: tabular-nums; }
 .day-t th, .day-t td { text-align: right; padding: 5px 6px; border-bottom: 1px solid var(--rule); } .day-t th { color: var(--ink-2); font-weight: 600; }
+/* no connection; the end-of-day report (who is not reported back), printed alone when asked */
+.off { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; background: var(--outbg); color: var(--ink); font-weight: 600; font-size: calc(14px * var(--ts, 1)); } .off[hidden] { display: none; }
+.eodbtn { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; padding: 9px 14px; margin: 0 0 12px; cursor: pointer; }
+.eodbtn[hidden] { display: none; }
+.eod { margin: 16px 0; background: var(--surface); border: 1.5px solid var(--red); border-radius: 12px; padding: 14px; } .eod[hidden] { display: none; }
+.eod h2 { margin: 0 0 4px; font-size: calc(18px * var(--ts, 1)); } .eod-s { margin: 0 0 10px; color: var(--ink-2); }
+.eod-b { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+.eod-b button { font: inherit; font-weight: 600; border: 1px solid var(--ring); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+.eodt { width: 100%; border-collapse: collapse; font-size: calc(14px * var(--ts, 1)); } .eodt th, .eodt td { text-align: right; padding: 6px 6px; border-bottom: 1px solid var(--rule); }
+.eodt th { color: var(--ink-2); font-size: calc(12.5px * var(--ts, 1)); } .eodt tr.late td { color: var(--red); font-weight: 600; }
+@media (max-width: 640px) {   /* phones: each runner one line that wraps - nothing wider than the screen */
+  .eodt thead { display: none; } .eodt, .eodt tbody { display: block; }
+  .eodt tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .eodt td { border: 0; padding: 0; } .eodt td:nth-child(2) { font-weight: 700; } .eodt td:empty { display: none; } }
+@media print { html.print-eod .wrap > *:not(main), html.print-eod main > *:not(#eod), html.print-eod .eod-b, html.print-eod body::before,
+  html.print-eod .notice, html.print-eod .a11y { display: none !important; } html.print-eod .eod { border: 0; padding: 0; } }
 /* the finish forecast, under the counts */
 .fc { margin: -2px 0 12px; font-size: calc(14px * var(--ts, 1)); color: var(--ink-2); } .fc[hidden] { display: none; } .fc b { color: var(--ink); font-size: calc(17px * var(--ts, 1)); }
 .fc span { white-space: nowrap; }     /* "9 ב-30 הדקות הקרובות" stays one piece */
@@ -270,9 +286,16 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     <p class="warn">מידע עזר בלבד. הרשימה הקובעת היא של המארגנים. נווט שלא חזר? פנו מיד למזכירות התחרות.</p>
     <div class="sum" id="sum" aria-live="polite"></div>
     <p class="fc" id="fc" aria-live="polite" hidden></p>
+    <p class="off" id="off" role="status" hidden>אין חיבור – מוצג המצב האחרון שנשמר בטלפון. סימונים בסיום נשמרים כאן ויישלחו כשיחזור החיבור.</p>
+    <button type="button" class="eodbtn" id="eodbtn" hidden>📋 דוח סוף יום – מי לא דווח כחוזר</button>
     <input id="q" type="search" placeholder="חיפוש נווט, קטגוריה או מועדון…" aria-label="חיפוש" autocomplete="off">
     <div class="clubs" id="clubs" role="group" aria-label="מועדונים עם נווטים בשטח" hidden></div>
     <div id="list"></div>
+    <section class="eod" id="eod" aria-labelledby="eod-h" hidden>
+      <h2 id="eod-h">דוח סוף יום</h2><p class="eod-s" id="eod-s"></p>
+      <div class="eod-b"><button type="button" id="eodcopy">📋 העתקה לשליחה</button><button type="button" id="eodprint">🖨️ הדפסה</button><button type="button" id="eodclose">סגירה</button></div>
+      <div id="eod-t"></div>
+    </section>
     <section class="day" id="day" aria-labelledby="day-h" hidden>
       <h2 id="day-h">כמה נווטים בשטח לאורך היום</h2>
       <p class="day-s" id="day-s"></p>
@@ -520,6 +543,33 @@ function render() {
   $("src").textContent = [m ? `לפי הייצוא ממולקה מ-${at(m.at)}` : "עוד לא הועלה ייצוא ממולקה – לפי זמני הזינוק בלבד",
     lastMan ? `סימון ידני אחרון ${at(lastMan)}` : "", "מתעדכן אוטומטית כל חצי דקה"].filter(Boolean).join(" · ");
   dayChart(all, rel, now);
+  $("off").hidden = navigator.onLine !== false;
+  $("eodbtn").hidden = rel < 0;
+  if (!$("eod").hidden) eodShow(false);
+}
+// ---- the end of the day: who is not reported back, for the safety officer - name, category, club, course, start
+// (no phone numbers: the site has none). Copied as text for a message, or printed alone.
+function eodRows() {
+  const rel = dayRel(), now = rel === 0 ? nowS() : rel > 0 ? 86399 : 0, all = people(), lim = limits(all), med = typical(all);
+  return all.filter(p => stateOf(p, rel, now) === "out").map(p => ({ p, r: row(p, "out", now, lim, med), start: p.m?.st ?? p.plan }))
+    .sort((a, b) => (b.r.late - a.r.late) || ((a.start ?? 0) - (b.start ?? 0)) || a.p.n.localeCompare(b.p.n, "he"));
+}
+const eodWhen = () => { const d = new Date(); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`; };
+function eodText(rows) {
+  const day = ymd ? ` · ${+ymd[3]}.${+ymd[2]}.${ymd[1]}` : "";
+  return [`דוח סוף יום · ${TITLE}${day} · ${eodWhen()}`, `לא דווחו כחוזרים: ${rows.length}${rows.some(x => x.r.late) ? ` (באיחור: ${rows.filter(x => x.r.late).length})` : ""}`, ""]
+    .concat(rows.map((x, i) => `${i + 1}. ${x.p.n}${x.r.late ? " – באיחור" : ""} · ${[x.p.k, x.p.club, x.p.c ? "מסלול " + x.p.c : ""].filter(Boolean).join(" · ")}`
+      + ` · זינק ${x.start != null ? hms(x.start) : "–"}`)).join("\n");
+}
+function eodShow(scroll = true) {
+  const rows = eodRows(), late = rows.filter(x => x.r.late).length;
+  $("eod").hidden = false;
+  $("eod-s").textContent = rows.length ? `${rows.length} ${rows.length === 1 ? "נווט לא דווח" : "נווטים לא דווחו"} כחוזרים${late ? `, ${late} מהם באיחור` : ""} – נכון ל-${eodWhen()}.`
+    : `כל מי שזינק דווח כחוזר – נכון ל-${eodWhen()}.`;
+  $("eod-t").innerHTML = rows.length ? `<table class="eodt"><thead><tr><th>#</th><th>שם</th><th>קטגוריה</th><th>מועדון</th><th>מסלול</th><th>זינק</th><th></th></tr></thead><tbody>`
+    + rows.map((x, i) => `<tr${x.r.late ? ' class="late"' : ""}><td>${i + 1}</td><td>${esc(x.p.n)}</td><td>${esc(x.p.k)}</td><td>${esc(x.p.club)}</td><td>${esc(x.p.c)}</td>`
+      + `<td>${x.start != null ? hms(x.start) : "–"}</td><td>${x.r.late ? "באיחור" : ""}</td></tr>`).join("") + `</tbody></table>` : "";
+  if (scroll) $("eod").scrollIntoView({ block: "start" });
 }
 // ---- admins: taps at the finish and the Mulka export, saved to the site (track.json) in small batches.
 // A change waits in PENDING - and in this browser, so a reload, a closed tab or a sign-in that ended keeps it - until it is
@@ -838,6 +888,17 @@ $("toKey").onclick = e => { e.preventDefault(); how(false); };
 $("adm").onclick = () => { $("admin").hidden = !$("admin").hidden; if (!$("admin").hidden && !ME) (GW ? $("em") : $("tok")).focus(); };
 $("go").onclick = () => { TOKEN = $("tok").value.trim(); $("tok").value = ""; if (TOKEN) login(); };
 $("q").addEventListener("input", render);
+$("eodbtn").onclick = () => eodShow();
+$("eodclose").onclick = () => { $("eod").hidden = true; $("eodbtn").focus(); };
+$("eodcopy").onclick = async () => { const b = $("eodcopy"), t = eodText(eodRows());
+  try { await navigator.clipboard.writeText(t); b.textContent = "✓ הועתק"; }
+  catch (e) { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); b.textContent = "✓ הועתק"; } catch (x) {} a.remove(); }
+  setTimeout(() => { b.textContent = "📋 העתקה לשליחה"; }, 2500); };
+$("eodprint").onclick = () => { document.documentElement.classList.add("print-eod"); print(); setTimeout(() => document.documentElement.classList.remove("print-eod"), 1000); };
+addEventListener("online", render); addEventListener("offline", render);
+// the page opens without a connection too: the worker (sw.js, at the site's root) keeps it and the latest tracking file
+if ("serviceWorker" in navigator && location.protocol === "https:" && !FRAMED)
+  navigator.serviceWorker.register(new URL("../../sw.js", location.href), { scope: new URL("../../", location.href).pathname }).catch(() => {});
 $("clubs").addEventListener("click", e => { const b = e.target.closest("[data-club]"); if (!b) return;
   CLUB = CLUB === b.dataset.club ? "" : b.dataset.club; render(); document.querySelector(`#clubs [data-club="${CSS.escape(b.dataset.club)}"]`)?.focus(); });
 // the day chart: the crosshair follows the mouse or a finger (a vertical swipe still scrolls), and the arrow keys

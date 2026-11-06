@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-LgfnwxWQo9OdS7AG6rNW35M500BnQJ2TyUC93V2kfU8=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-rZ0IVITPwIfp3Bgztc8rxusgEH+OVyDujqHMJKvP8tM=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -76,6 +76,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .msg { margin: 10px 0 0; font-weight: 600; } .msg.ok { color: var(--green); } .msg.err { color: var(--bad); }
 .comp { border-top: 1px solid var(--rule); padding: 14px 0; } .comp:first-of-type { border-top: 0; }
 .comp h3 { margin: 0; font-size: calc(16px * var(--ts, 1)); } .comp .meta { color: var(--muted); font-size: calc(13px * var(--ts, 1)); }
+.comp .qrl { float: left; font-size: calc(13px * var(--ts, 1)); font-weight: 600; color: var(--accent); }
 .live { display: inline-flex; align-items: center; gap: 6px; font-size: calc(13px * var(--ts, 1)); color: var(--green); font-weight: 600; }
 .live i { width: 8px; height: 8px; border-radius: 50%; background: #e0242a; }
 details { margin-top: 12px; color: var(--ink-2); } summary { cursor: pointer; font-weight: 600; color: var(--accent); }
@@ -670,6 +671,7 @@ function list() {
   comps.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   $("list").innerHTML = comps.map(c => { const e = LIVE[c.slug];
     return `<div class="comp" data-k="${esc(c.slug)}"><h3>${esc(heDates(c.title))}</h3>
+      ${D.comps.some(x => x.slug === c.slug) || (D.live && D.live.comps && D.live.comps[c.slug]) ? `<a class="qrl" href="../${esc(c.slug)}/qr/">🖨️ קודי QR להדפסה</a>` : ""}
       <div class="meta">${c.date ? `${esc(fdate(c.date))} · ` : ""}${esc(c.slug)}${c.only ? " · עוד אין דוח" : ""}${e ? ` · <span class="live"><i></i>יש קישור חי</span>${e.by ? ` · עודכן ע״י ${esc(e.by)}` : ""}` : ""}</div>
       <label for="u-${esc(c.slug)}">קישור לתוצאות החיות</label><input id="u-${esc(c.slug)}" dir="ltr" value="${esc(e?.url || "")}" placeholder="https://jp.mulka2.com/cloud/live/…">
       <div class="act"><button type="button" class="pri" data-save>שמירה</button>${e ? `<button type="button" class="del" data-del>הסרת הקישור</button>` : ""}</div>
