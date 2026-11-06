@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AE9cY3/lU7vgT2Jt1q8S3iue90CbQxu8WNhKxcn3BBE=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tVCJuuscMTZhIWDWSGhEh4WI2FYBsIJCi6I0gCReOnI=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מעקב נווטים בשטח</title>
@@ -319,7 +319,7 @@ const secs = v => { const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(squash(v))
 const hms = t => `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 const hm = t => `${Math.floor(t / 3600)}:${String(Math.floor(t % 3600 / 60)).padStart(2, "0")}`;
 const away = t => t < 6000 ? `${Math.floor(t / 60)} ד׳` : `${hm(t)} ש׳`;      // time on the course: minutes, or hours:minutes
-const START = (Array.isArray(D.rows) ? D.rows : []).filter(r => Array.isArray(r) && Number.isFinite(r[0]) && typeof r[1] === "string")
+const START = (Array.isArray(D.rows) ? D.rows : []).filter(r => Array.isArray(r) && (Number.isFinite(r[0]) || r[0] === null) && typeof r[1] === "string")
   .map(r => ({ plan: r[0], n: r[1], k: String(r[2] || ""), club: String(r[3] || ""), c: String(r[4] || "").replace(/_/g, " ") }));
 // a runner is known by name; two of one name, by name and category
 const dupes = new Set(START.map(r => norm(r.n)).filter((n, i, a) => a.indexOf(n) !== i));
@@ -535,7 +535,7 @@ function render() {
     : `<details data-t="${title}"${OPEN.has(title) ? " open" : ""}><summary>${title} · ${arr.length}</summary><ul class="rows">${arr.map(x => x.r.html).join("")}</ul></details>`) : "";
   $("list").innerHTML = (rel < 0 ? `<p class="note">התחרות עוד לא התחילה. ביום התחרות יופיעו כאן מי בשטח ומי חזר.</p>` : "")
     + list("באיחור", sortOut(shown("late"))) + list("בשטח", sortOut(shown("out")))
-    + list("טרם זינקו", shown("wait").sort((x, y) => (x.p.plan ?? 0) - (y.p.plan ?? 0)), rel === 0)
+    + list("טרם זינקו", shown("wait").sort((x, y) => (x.p.plan ?? 1e9) - (y.p.plan ?? 1e9)), rel === 0)
     + list("חזרו", shown("back"), false) + list("לא זינקו", shown("dns"), false)
     || `<p class="note">${w.length ? "לא נמצא נווט כזה" : "אין נתונים"}</p>`;
   const m = T.mulka, lastMan = Object.values(T.manual || {}).map(x => x.at).sort().pop();
