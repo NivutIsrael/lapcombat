@@ -39,7 +39,7 @@ body::before { content: ""; display: block; height: 4px; background: linear-grad
 body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.55 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
 .wrap { max-width: 980px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
 header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1.5px solid var(--ink); padding-bottom: 10px; }
-header a { color: var(--ink-2); } .hb { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+header a { color: var(--ink-2); }
 button { font: inherit; font-weight: 600; border-radius: 8px; padding: 7px 12px; cursor: pointer; border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink); }
 button.pri { background: var(--tab-on); color: var(--on-accent); border-color: var(--tab-on); } button:disabled { opacity: .5; }
 .kicker { margin: 18px 0 2px; color: var(--red); font-weight: 700; letter-spacing: .06em; font-size: calc(13px * var(--ts, 1)); }
@@ -159,6 +159,21 @@ tr.tt-hide { display: none; }
 .hicons svg { width: 18px; height: 18px; flex: none; }
 @media (max-width: 640px) { .hicons .hl { display: none; } .hicons button { width: 38px; padding: 0; } }
 @media print { .hicons { display: none !important; } }
+/* the bar at the top of a page: the way to the site's other pages (on the right), the corner buttons (on the left), the
+   outside links after them; a line under it keeps it apart from the page itself. The same on every page. */
+.sitebar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "nav more icons"; align-items: start; gap: 8px;
+  padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--grid); }
+.sitebar > nav.navlinks { grid-area: nav; } .sitebar > .navlinks.more { grid-area: more; } .sitebar > .hicons { grid-area: icons; }
+.navlinks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+.sitebar .navlinks a, .sitebar .navlinks button { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; font: inherit; font-size: calc(14px * var(--ts, 1));
+  font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; text-decoration: none;
+  white-space: nowrap; cursor: pointer; }
+.sitebar .navlinks a:hover, .sitebar .navlinks button:hover { border-color: var(--accent); }
+.sitebar .navlinks a.home { color: var(--on-accent, #fff); background: var(--tab-on, color-mix(in srgb, var(--accent) 88%, #000)); border-color: transparent; }
+.sitebar .navlinks a.home:hover { background: var(--accent); }
+@media (max-width: 640px) {   /* phones: the site's pages and the corner buttons, then the outside links in a row of their own */
+  .sitebar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nav icons" "more more"; margin-bottom: 10px; padding-bottom: 10px; }
+  .navlinks { gap: 6px; } .sitebar .navlinks a, .sitebar .navlinks button { height: 36px; padding: 0 11px; font-size: calc(13px * var(--ts, 1)); } }
 /* the row number (מס״ד) each table starts with: narrow and quiet */
 th.ttn, td.ttn { width: 1%; white-space: nowrap; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
 td.ttn { font-size: calc(12px * var(--ts, 1)); }
@@ -235,9 +250,8 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 <body>
 <a class="skip" href="#" data-skip="#main">דלג לתוכן</a>
 <div class="wrap">
-  <header><a href="../../">← כל התחרויות</a>
-    <div class="hb"><a href="../start/">זמני זינוק</a><button type="button" id="adm">כניסת מנהלים</button>
-      <div class="hicons"><button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="hl">נגישות</span></button><button id="theme" type="button" aria-label="מצב תצוגה"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><span class="hl" data-theml>אוטומטי</span></button></div></div></header>
+  <header class="sitebar"><nav class="navlinks" aria-label="דפים אחרים באתר"><a class="home" href="../../">← כל התחרויות</a><a href="../start/">⏱ זמני זינוק</a></nav><div class="hicons"><button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="hl">נגישות</span></button><button id="theme" type="button" aria-label="מצב תצוגה"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><span class="hl" data-theml>אוטומטי</span></button></div>
+    <div class="navlinks more"><button type="button" id="adm">כניסת מנהלים</button></div></header>
   <main id="main">
     <p class="kicker">מעקב נווטים בשטח</p><h1 id="ttl"></h1><p class="sub" id="sub"></p>
     <div id="admin" hidden>
