@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-V5f2d/A08VIeVr8cW5OMEOfA+Fq0RMeFd98IlzTXy1k=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-QptQlqDbHxVAwbgnCwU19PQc+4Os37sJL67uKqnXOtU=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -708,7 +708,7 @@ const IS_START = n => /\.html?$/i.test(n) && /start|זינוק/i.test(n);
 const NAME_OK = n => /^[^\/\\:*?"<>|\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]{1,120}$/.test(n) && !n.startsWith(".") && !n.includes("..")
   && !/[ .]$/.test(n) && !/^(con|prn|aux|nul|com[0-9¹²³]|lpt[0-9¹²³])(\.|$)/i.test(n) && !/^report_.*\.html$/i.test(n);
 const MAY = n => NAME_OK(n) && (/\.(htm|html|lxm|xml|ocd)$/i.test(n) || ["livelox.txt", "title.txt", "mulka_live.txt", "startlist.html"].includes(n.toLowerCase()));
-const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/, RESERVED = new Set(["admin", "fonts", "lapcombat"]);
+const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/, RESERVED = new Set(["admin", "fonts", "lapcombat", "series", "clubs"]);
 const slugOf = n => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "competition";
 const MB = 1024 * 1024, LIMIT = () => MODE === "gw" ? 30 : 50;      // MB per file (the gateway takes one file per request)
 let DIRS = [];

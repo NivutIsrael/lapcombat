@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-TCYz77EoEWxm6B9xFgAcktywM/G57rFiUFJuaMBNTuU=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תוצאות משולבות וליגות · ניווט ישראל</title>
+<style>
+:root { color-scheme: light;
+  --paper: #ffffff; --paper-2: #f0efec; --surface: #ffffff; --page: #ffffff; --chip: #f0efec;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #6b6a65; --rule: #e1e0d9; --rule-2: #c3c2b7; --grid: var(--rule); --ring: rgba(11,11,11,0.10);
+  --accent: #2671cc; --on-accent: #fff; --tab-on: color-mix(in srgb, var(--accent) 88%, #000);
+  --green: #006300; --bad: #c2410c; --red: #b3261e; --amber: #8a5a00; --soon: #eef5fd; --late: #fde3e1; --outbg: #fff4d6;
+  --s1: #2a78d6; --s2: #eb6834; --s7: #6250d6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --paper: #0d0d0d; --paper-2: #2c2c2a; --surface: #1a1a19; --page: #0d0d0d; --chip: #2c2c2a;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781; --rule: #2c2c2a; --rule-2: #4a4a46; --ring: rgba(255,255,255,0.10);
+  --accent: #3987e5; --green: #0ca30c; --bad: #f0936a; --red: #ff8a80; --amber: #f3c15f; --soon: #1a2a3f; --late: #4a1d1a; --outbg: #3d3214;
+  --s1: #3987e5; --s2: #d95926; --s7: #9085e9; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --paper: #0d0d0d; --paper-2: #2c2c2a; --surface: #1a1a19; --page: #0d0d0d; --chip: #2c2c2a;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781; --rule: #2c2c2a; --rule-2: #4a4a46; --ring: rgba(255,255,255,0.10);
+  --accent: #3987e5; --green: #0ca30c; --bad: #f0936a; --red: #ff8a80; --amber: #f3c15f; --soon: #1a2a3f; --late: #4a1d1a; --outbg: #3d3214;
+  --s1: #3987e5; --s2: #d95926; --s7: #9085e9; }
+/* high contrast: black on white (white on black in the dark), strong lines, darker colours - as in the reports */
+:root[data-contrast="high"] { --paper: #fff; --paper-2: #e6e6e6; --surface: #fff; --page: #fff; --chip: #e6e6e6;
+  --ink: #000; --ink-2: #111; --muted: #333; --rule: #767676; --rule-2: #444; --ring: #444;
+  --accent: #0047ab; --tab-on: var(--accent); --on-accent: #fff; --green: #005a00; --bad: #9a2a00; --red: #c00000; --s1: #0047ab; --s2: #b33a00; --s7: #4b2fbf; }
+@media (prefers-color-scheme: dark) { :root[data-contrast="high"]:not([data-theme="light"]) { --paper: #000; --paper-2: #222; --surface: #000; --page: #000; --chip: #222;
+  --ink: #fff; --ink-2: #f2f2f2; --muted: #d0d0d0; --rule: #8c8c8c; --rule-2: #bdbdbd; --ring: #bdbdbd;
+  --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; } }
+:root[data-theme="dark"][data-contrast="high"] { --paper: #000; --paper-2: #222; --surface: #000; --page: #000; --chip: #222;
+  --ink: #fff; --ink-2: #f2f2f2; --muted: #d0d0d0; --rule: #8c8c8c; --rule-2: #bdbdbd; --ring: #bdbdbd;
+  --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; }
+body::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--s2), var(--s7) 50%, var(--s1)); }   /* as on the reports */
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.55 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
+.kicker { margin: 4px 0 2px; color: var(--accent); font-weight: 700; letter-spacing: .06em; font-size: calc(13px * var(--ts, 1)); }
+h1 { margin: 0; font-size: calc(26px * var(--ts, 1)); line-height: 1.25; } .sub { color: var(--ink-2); margin: 6px 0 14px; max-width: 760px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.chips a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border: 1px solid var(--rule-2); border-radius: 999px; color: var(--ink);
+  background: var(--surface); text-decoration: none; font-weight: 600; font-size: calc(14px * var(--ts, 1)); }
+.chips a small { color: var(--muted); font-weight: 400; }
+.chips a.on { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } .chips a.on small { color: inherit; opacity: .85; }
+.chips.series a { border-radius: 8px; }
+.catsel { display: none; margin: 0 0 12px; font-weight: 600; } .catsel select { font: inherit; margin-inline-start: 8px; padding: 8px 10px; border: 1px solid var(--rule-2);
+  border-radius: 8px; background: var(--surface); color: var(--ink); min-width: 160px; }
+@media (max-width: 640px) { #cats { display: none; } .catsel { display: block; } }   /* phones: the categories in one list, not a screen of buttons */
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; background: var(--surface); }
+th { text-align: right; font-size: calc(12.5px * var(--ts, 1)); color: var(--ink-2); padding: 7px 8px; border-bottom: 1.5px solid var(--rule-2); white-space: nowrap; }
+th a { color: inherit; }
+td { padding: 7px 8px; border-bottom: 1px solid var(--rule); } td.n { font-weight: 600; } td.tot { font-weight: 700; white-space: nowrap; }
+td small { color: var(--muted); } td.no { color: var(--muted); }
+.up { color: var(--green); font-weight: 700; } .down { color: var(--bad); font-weight: 700; }
+.note { color: var(--muted); font-size: calc(13px * var(--ts, 1)); margin-top: 14px; } .empty { color: var(--muted); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* accessibility toolbar: text size (every font size is calc(px * --ts), see scalable()), contrast and reading aids */
+:root[data-text="l"] { --ts: 1.15; } :root[data-text="xl"] { --ts: 1.3; }
+.a11y { position: fixed; z-index: 45; width: 360px; max-width: calc(100vw - 16px); max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain;
+        background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        padding: 12px 14px 14px; direction: rtl; text-align: right; font-size: calc(14px * var(--ts, 1)); }
+.a11yh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: calc(16px * var(--ts, 1)); }
+.a11yx { font: inherit; background: none; border: 0; color: var(--ink-2); cursor: pointer; padding: 4px 8px; }
+.a11yl { font-size: calc(12.5px * var(--ts, 1)); color: var(--muted); margin-bottom: 6px; }
+.a11ys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.a11ys button { font-family: inherit; font-weight: 600; padding: 9px 4px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.2; }
+.a11ys button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.a11yg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.a11yf { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; font: inherit; padding: 9px 10px; border: 1px solid var(--ring);
+         border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.a11yf b { font-size: calc(13.5px * var(--ts, 1)); } .a11yf small { font-size: calc(11.5px * var(--ts, 1)); color: var(--muted); line-height: 1.35; }
+.a11yf[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+.a11yf[aria-pressed="true"] b::before { content: "✓ "; color: var(--accent); }
+@media (pointer: coarse) { .a11yf.fine { display: none; } }
+.a11yreset { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 1px solid var(--accent); border-radius: 8px; padding: 7px 12px; cursor: pointer; margin-bottom: 6px; }
+.a11ystmt { font-size: calc(13px * var(--ts, 1)); line-height: 1.6; color: var(--ink-2); border-top: 1px solid var(--grid); padding-top: 4px; }
+.a11ystmt summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: 6px 0; }
+.a11ystmt p { margin: 6px 0; } .a11ystmt ul { margin: 4px 0; padding-inline-start: 18px; } .a11ystmt .upd { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+@media (max-width: 640px) {
+  .a11y { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh; border-radius: 16px 16px 0 0;
+          padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); } }
+/* the reading aids (classes on <html>) */
+:root.a-gray :is(.wrap > header, header.mast, #tabs, #pgtop, .ctxbar, main, footer, .bnav, .bar-top:not(.open)) { filter: grayscale(1); }
+:root.a-links a { background: #fff200 !important; color: #000 !important; text-decoration: underline !important; text-underline-offset: 3px; outline: 1px solid #000; border-radius: 2px; }
+:root.a-font, :root.a-font * { font-family: Arial, Helvetica, sans-serif !important; }
+:root.a-space :is(p, li, td, th, label, dd, dt, small, .desc, .note, .status, .lead) { line-height: 1.9 !important; letter-spacing: .05em !important; word-spacing: .15em !important; }
+:root.a-focus :focus { outline: 3px solid #ffbf00 !important; outline-offset: 2px !important; box-shadow: 0 0 0 6px #000 !important; }
+:root.a-motion *, :root.a-motion *::before, :root.a-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+:root.a-cursor, :root.a-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M6 3v34l9-8.5 6.5 14 6.5-3-6.5-13.5H34z' fill='%23000' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 6 3, auto !important; }
+/* the privacy notice: no cookies, only the preferences in this browser */
+.notice { position: fixed; z-index: 44; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 780px; margin: 0 auto;
+          background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.22);
+          padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; direction: rtl; text-align: right; font-size: calc(13.5px * var(--ts, 1)); }
+.notice p { margin: 0; flex: 1 1 300px; line-height: 1.5; }
+.notice .nb { display: flex; gap: 8px; flex-wrap: wrap; }
+.notice button { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--accent); }
+.notice .ok { background: var(--accent); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
+/* "skip to the content": the first stop of the keyboard */
+.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--accent); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
+        font-weight: 700; text-decoration: none; }
+.skip:focus { top: 10px; }
+/* tables: sort by a header click, ▾ opens sort + filter (as in Excel), a bar above the table resets it */
+th.tt { cursor: pointer; user-select: none; -webkit-user-select: none; }
+th.tt:hover { color: var(--ink); }
+th.tt-asc, th.tt-desc { color: var(--accent); }
+.ttb { font: calc(10px * var(--ts, 1))/1 system-ui, sans-serif; margin-inline-start: 4px; padding: 3px 4px; border: 1px solid var(--ring); border-radius: 4px;
+       background: var(--surface); color: var(--muted); cursor: pointer; vertical-align: middle; }
+.ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
+.ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
+tr.tt-hide { display: none; }
+/* the two buttons in the top corner of every page: accessibility, and light / dark (its name next to it where there is room) */
+.hicons { display: flex; gap: 6px; align-items: center; flex: none; }
+.hicons button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 11px;
+  font: inherit; font-size: calc(13px * var(--ts, 1)); font-weight: 500; line-height: 1; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 8px; cursor: pointer; }
+.hicons button:hover { color: var(--accent); border-color: var(--accent); }
+.hicons svg { width: 18px; height: 18px; flex: none; }
+@media (max-width: 640px) { .hicons .hl { display: none; } .hicons button { width: 38px; padding: 0; } }
+@media print { .hicons { display: none !important; } }
+/* the bar at the top of a page: the way to the site's other pages (on the right), the corner buttons (on the left), the
+   outside links after them; a line under it keeps it apart from the page itself. The same on every page. */
+.sitebar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "nav more icons"; align-items: start; gap: 8px;
+  padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--grid); }
+.sitebar > nav.navlinks { grid-area: nav; } .sitebar > .navlinks.more { grid-area: more; } .sitebar > .hicons { grid-area: icons; }
+.navlinks { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+.sitebar .navlinks a, .sitebar .navlinks button { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; font: inherit; font-size: calc(14px * var(--ts, 1));
+  font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--ring); border-radius: 8px; text-decoration: none;
+  white-space: nowrap; cursor: pointer; }
+.sitebar .navlinks a:hover, .sitebar .navlinks button:hover { border-color: var(--accent); }
+.sitebar .navlinks a.home { color: var(--on-accent, #fff); background: var(--tab-on, color-mix(in srgb, var(--accent) 88%, #000)); border-color: transparent; }
+.sitebar .navlinks a.home:hover { background: var(--accent); }
+@media (max-width: 640px) {   /* phones: the site's pages and the corner buttons, then the outside links in a row of their own */
+  .sitebar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nav icons" "more more"; margin-bottom: 10px; padding-bottom: 10px; }
+  .navlinks { gap: 6px; } .sitebar .navlinks a, .sitebar .navlinks button { height: 36px; padding: 0 11px; font-size: calc(13px * var(--ts, 1)); } }
+/* the row number (מס״ד) each table starts with: narrow and quiet */
+th.ttn, td.ttn { width: 1%; white-space: nowrap; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; }
+td.ttn { font-size: calc(12px * var(--ts, 1)); }
+.ttbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; padding: 6px 10px; border-radius: 8px;
+         font-size: calc(12px * var(--ts, 1)); color: var(--ink-2); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.ttbar[hidden] { display: none; }
+.ttbar button { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-inline-start: auto; }
+.ttbar button:hover { background: var(--accent); color: var(--on-accent, #fff); }
+.ttpop { position: fixed; z-index: 40; width: 270px; max-width: calc(100vw - 16px); background: var(--surface); color: var(--ink);
+         border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 10px; font-size: calc(13px * var(--ts, 1));
+         display: flex; flex-direction: column; gap: 6px; direction: rtl; text-align: right; }
+.ttpop .tthead small { display: block; color: var(--muted); font-size: calc(11px * var(--ts, 1)); font-weight: 400; }
+.ttpop .ttsort { font: inherit; text-align: right; background: none; border: 0; border-radius: 6px; padding: 7px 8px; color: var(--ink); cursor: pointer; }
+.ttpop .ttsort:hover, .ttpop .ttsort.on { background: var(--chip); }
+.ttpop .ttsort.on { font-weight: 600; color: var(--accent); }
+.ttpop .ttsep { border-top: 1px solid var(--grid); }
+.ttpop .ttq { font: inherit; padding: 7px 9px; border: 1px solid var(--ring); border-radius: 6px; background: var(--page); color: var(--ink); width: 100%; }
+.ttpop .ttall, .ttpop .ttfoot { display: flex; gap: 6px; }
+.ttpop .ttall button, .ttpop .ttfoot button { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px;
+                                             background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.ttpop .ttfoot .ttok { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ttpop .ttfoot button:disabled { opacity: .45; cursor: default; }
+.ttpop .ttlist { max-height: 250px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 6px; padding: 2px 8px; overscroll-behavior: contain; }
+.ttpop .ttlist label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+.ttpop .ttlist label[hidden] { display: none; }
+.ttpop .ttlist span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ttpop .ttlist small { color: var(--muted); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.ttpop input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; flex: none; margin: 0; }
+@media (pointer: coarse) { .ttb { font-size: calc(12px * var(--ts, 1)); padding: 6px 7px; } .ttpop .ttlist label { padding: 9px 0; } .ttpop .ttsort { padding: 10px 8px; }
+  .ttpop .ttall button, .ttpop .ttfoot button { padding: 10px 8px; } .ttbar button { padding: 8px 12px; } }
+@media (max-width: 640px) {   /* phones: a sheet at the bottom of the screen */
+  .ttpop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; max-height: 86vh;
+           border-radius: 14px 14px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); }
+  .ttpop .ttlist { max-height: 42vh; } }
+.cd-only, .cdtools { display: none; }
+.ttpop .ttcols { display: flex; flex-direction: column; max-height: 62vh; overflow-y: auto; overscroll-behavior: contain; }
+.ttpop .ttcol { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: inherit; font-size: calc(15px * var(--ts, 1)); text-align: right;
+                background: none; border: 0; border-top: 1px solid var(--grid); padding: 12px 4px; color: var(--ink); cursor: pointer; }
+.ttpop .ttcol small { flex: none; color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+.ttpop .ttcol small b { color: var(--accent); font-weight: 600; }
+/* phones: a table marked "cards" shows each row as a card - rank, name and the main value on top, the other
+   columns as labelled details below; one "sort and filter" button above it lists every column */
+@media (max-width: 640px) {
+  table.cards, table.cards tbody, table.cards tfoot { display: block; }
+  table.cards thead { display: none; }
+  .cdtools { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--grid); }
+  .cdtools button { font: inherit; font-size: calc(14px * var(--ts, 1)); font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
+                    border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+  .cdtools small { color: var(--muted); font-size: calc(12px * var(--ts, 1)); }
+  table.cards .cd-only { display: inline; }
+  table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
+  table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
+  table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }
+  table.cards td.cd-main { order: 3; font-size: calc(16px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
+  table.cards td.cd-star { order: 4; }
+  table.cards td.ttn { order: 4; width: auto; margin-inline-start: auto; font-size: calc(12px * var(--ts, 1)); color: var(--muted); }   /* the row number: "#12", at the end of the top line */
+  table.cards td.ttn::before { content: "#"; }
+  table.cards.keyfirst td.ttn { order: 0; margin-inline-start: 0; min-width: 26px; }
+  table.cards.keyfirst td.cd-main { order: 1; min-width: 66px; } table.cards.keyfirst td.cd-name { order: 2; }
+  table.cards td.cd-full { flex-basis: 100%; }
+  table.cards td.cd-hide, table.cards td:empty { display: none; }
+  table.cards .bar { min-width: 0; display: inline; } table.cards .bar i { display: none; } table.cards .bar b { font-weight: inherit; }
+  table.cards tr.tt-hide { display: none; }
+  table.cards tfoot tr { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 10px 2px; }
+  table.cards tfoot td { display: block; border: 0; padding: 0; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#" data-skip="#main">דלג לתוכן</a>
+<div class="wrap">
+  <header class="sitebar"><nav class="navlinks" aria-label="דפים אחרים באתר"><a class="home" href="../">← כל התחרויות</a></nav><div class="hicons"><button id="a11yb" type="button" aria-label="סרגל נגישות"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.3" r="2.1" fill="currentColor"/><path d="M4.5 8.3c2.4.7 4.9 1.05 7.5 1.05s5.1-.35 7.5-1.05M12 9.4v5.2m0 0-3.3 6.4M12 14.6l3.3 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="hl">נגישות</span></button><button id="theme" type="button" aria-label="מצב תצוגה"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><span class="hl" data-theml>אוטומטי</span></button></div></header>
+  <main id="main">
+    <p class="kicker">תוצאות משולבות וליגות</p>
+    <nav class="chips series" id="list" aria-label="האירועים והליגות"></nav>
+    <h1 id="ttl"></h1><p class="sub" id="sub"></p>
+    <nav class="chips" id="cats" aria-label="קטגוריות"></nav>
+    <label class="catsel"><span>קטגוריה</span><select id="catsel"></select></label>
+    <section id="standing" aria-live="polite"></section>
+    <p class="note" id="note"></p>
+  </main>
+</div>
+<script>
+const D = {"series":[{"key":"77fdf334","kind":"days","name":"אליפות ישראל - יער אודם","year":"2026","rounds":[{"slug":"odem-1-23-10-2026","label":"יום 1","title":"אליפות ישראל- יער אודם- יום 1 · 23.10.2026","date":"2026-10-23"},{"slug":"odem-2-24-10-2026","label":"יום 2","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24"}],"cats":{"H75":[{"n":"קורנברג ישראל","cl":"ראשון לציון","days":[{"t":2221,"p":1,"st":""},{"t":2999,"p":1,"st":""}],"total":5220,"place":1,"move":0,"behind":0},{"n":"גרין וורן","cl":"השרון","days":[{"t":3042,"p":2,"st":""},{"t":4145,"p":2,"st":""}],"total":7187,"place":2,"move":0,"behind":1967},{"n":"אבוגני שמואל","cl":"גליל","days":[{"t":3767,"p":3,"st":""},{"t":5902,"p":3,"st":""}],"total":9669,"place":3,"move":0,"behind":4449}],"D70":[{"n":"לפושנר לובוב","cl":"גליל","days":[{"t":2978,"p":1,"st":""},{"t":3293,"p":1,"st":""}],"total":6271,"place":1,"move":0,"behind":0},{"n":"רביד דליה","cl":"תל אביב","days":[{"t":3452,"p":2,"st":""},{"t":4428,"p":3,"st":""}],"total":7880,"place":2,"move":0,"behind":1609},{"n":"משלי ליסה","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":3928,"p":2,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"גוטמן אילנה","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H80":[{"n":"דודלזק צביקה","cl":"מנשה","days":[{"t":3140,"p":1,"st":""},{"t":5463,"p":2,"st":""}],"total":8603,"place":1,"move":0,"behind":0},{"n":"ברג דוד","cl":"טכניון כרמל","days":[{"t":6911,"p":3,"st":""},{"t":5023,"p":1,"st":""}],"total":11934,"place":2,"move":1,"behind":3331},{"n":"מינסקי מנחם","cl":"השרון","days":[{"t":5028,"p":2,"st":""},{"t":8694,"p":3,"st":""}],"total":13722,"place":3,"move":-1,"behind":5119}],"D75":[{"n":"גורליק נאדזדה","cl":"גליל","days":[{"t":5316,"p":1,"st":""},{"t":5656,"p":1,"st":""}],"total":10972,"place":1,"move":0,"behind":0}],"H21A":[{"n":"יסעור רתם","cl":"יזרעאל","days":[{"t":1679,"p":1,"st":""},{"t":3690,"p":1,"st":""}],"total":5369,"place":1,"move":0,"behind":0},{"n":"יסעור ניצן","cl":"יזרעאל","days":[{"t":1728,"p":2,"st":""},{"t":3715,"p":2,"st":""}],"total":5443,"place":2,"move":0,"behind":74},{"n":"מצפון פלג","cl":"מנשה","days":[{"t":1786,"p":3,"st":""},{"t":3904,"p":3,"st":""}],"total":5690,"place":3,"move":0,"behind":321},{"n":"סגל ערן","cl":"מנשה","days":[{"t":1946,"p":5,"st":""},{"t":3973,"p":4,"st":""}],"total":5919,"place":4,"move":1,"behind":550},{"n":"אשל סהר","cl":"מנשה","days":[{"t":1895,"p":4,"st":""},{"t":4171,"p":5,"st":""}],"total":6066,"place":5,"move":-1,"behind":697},{"n":"קלקשטיין יובל","cl":"השרון","days":[{"t":2106,"p":7,"st":""},{"t":4651,"p":7,"st":""}],"total":6757,"place":6,"move":1,"behind":1388},{"n":"זורע אלון","cl":"אסא טכניון חיפה","days":[{"t":2308,"p":11,"st":""},{"t":4600,"p":6,"st":""}],"total":6908,"place":7,"move":4,"behind":1539},{"n":"מנור איתי","cl":"חבל מודיעין","days":[{"t":2146,"p":8,"st":""},{"t":4776,"p":8,"st":""}],"total":6922,"place":8,"move":0,"behind":1553},{"n":"זורע טל","cl":"תל אביב","days":[{"t":2429,"p":15,"st":""},{"t":5523,"p":10,"st":""}],"total":7952,"place":9,"move":6,"behind":2583},{"n":"שכטר דביר","cl":"חבל מודיעין","days":[{"t":2386,"p":13,"st":""},{"t":5789,"p":11,"st":""}],"total":8175,"place":10,"move":3,"behind":2806},{"n":"גילה אייל","cl":"יזרעאל","days":[{"t":2203,"p":10,"st":""},{"t":6892,"p":12,"st":""}],"total":9095,"place":11,"move":-1,"behind":3726},{"n":"נוסבוים איתם","cl":"אסא ירושלים","days":[{"t":2661,"p":16,"st":""},{"t":7078,"p":13,"st":""}],"total":9739,"place":12,"move":4,"behind":4370},{"n":"כחל עמר","cl":"אסא טכניון חיפה","days":[{"t":2090,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"יוגב רותם","cl":"מנשה","days":[{"t":2165,"p":9,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נוסבוים נדב","cl":"השרון","days":[{"t":2338,"p":12,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"אלפרט רועי","cl":"","days":[{"t":2407,"p":14,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נוסבוים עמרי","cl":"השרון","days":[{"t":2761,"p":17,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ברטרנד ארז","cl":"גליל","days":[{"t":null,"p":null,"st":"MP"},{"t":5235,"p":9,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H35A":[{"n":"גוסב איליה","cl":"תל אביב","days":[{"t":2405,"p":1,"st":""},{"t":5239,"p":1,"st":""}],"total":7644,"place":1,"move":0,"behind":0},{"n":"בורלינוב סרגיי","cl":"אסא תל אביב","days":[{"t":2562,"p":4,"st":""},{"t":5858,"p":2,"st":""}],"total":8420,"place":2,"move":2,"behind":776},{"n":"רביד נועם","cl":"תל אביב","days":[{"t":2484,"p":2,"st":""},{"t":5959,"p":3,"st":""}],"total":8443,"place":3,"move":-1,"behind":799},{"n":"יעקבי ארם","cl":"השרון","days":[{"t":2516,"p":3,"st":""},{"t":6356,"p":6,"st":""}],"total":8872,"place":4,"move":-1,"behind":1228},{"n":"פדוסין אנטון","cl":"תל אביב","days":[{"t":2839,"p":7,"st":""},{"t":6205,"p":4,"st":""}],"total":9044,"place":5,"move":2,"behind":1400},{"n":"קוזנצוב דמיטרי","cl":"תל אביב","days":[{"t":2825,"p":6,"st":""},{"t":6324,"p":5,"st":""}],"total":9149,"place":6,"move":0,"behind":1505},{"n":"יסעור ניר","cl":"יזרעאל","days":[{"t":2640,"p":5,"st":""},{"t":6902,"p":7,"st":""}],"total":9542,"place":7,"move":-2,"behind":1898},{"n":"אילגץ׳ גאורגי","cl":"תל אביב","days":[{"t":2929,"p":8,"st":""},{"t":8667,"p":8,"st":""}],"total":11596,"place":8,"move":0,"behind":3952}],"H50A":[{"n":"סקריפקו אלכסיי","cl":"גליל","days":[{"t":2032,"p":1,"st":""},{"t":3238,"p":1,"st":""}],"total":5270,"place":1,"move":0,"behind":0},{"n":"ויינר תומר","cl":"יזרעאל","days":[{"t":2165,"p":2,"st":""},{"t":3492,"p":3,"st":""}],"total":5657,"place":2,"move":0,"behind":387},{"n":"אבידן אליק","cl":"מנשה","days":[{"t":2369,"p":4,"st":""},{"t":3397,"p":2,"st":""}],"total":5766,"place":3,"move":1,"behind":496},{"n":"שורר רונן","cl":"גליל","days":[{"t":2210,"p":3,"st":""},{"t":3651,"p":5,"st":""}],"total":5861,"place":4,"move":-1,"behind":591},{"n":"גלוזשטיין ולרי","cl":"ראשון לציון","days":[{"t":2818,"p":8,"st":""},{"t":3571,"p":4,"st":""}],"total":6389,"place":5,"move":3,"behind":1119},{"n":"חלבה אמיר","cl":"תל אביב","days":[{"t":2769,"p":7,"st":""},{"t":4202,"p":6,"st":""}],"total":6971,"place":6,"move":1,"behind":1701},{"n":"סמירנוב אלכסנדר","cl":"גליל","days":[{"t":2609,"p":6,"st":""},{"t":5934,"p":9,"st":""}],"total":8543,"place":7,"move":-1,"behind":3273},{"n":"בולוטני מיכאל","cl":"גליל","days":[{"t":2466,"p":5,"st":""},{"t":6079,"p":11,"st":""}],"total":8545,"place":8,"move":-3,"behind":3275},{"n":"אליאס גיל","cl":"תל אביב","days":[{"t":3133,"p":9,"st":""},{"t":5497,"p":8,"st":""}],"total":8630,"place":9,"move":0,"behind":3360},{"n":"איגנטוב אנדרי","cl":"חבל מודיעין","days":[{"t":3605,"p":12,"st":""},{"t":5488,"p":7,"st":""}],"total":9093,"place":10,"move":2,"behind":3823},{"n":"בר-גד יזהר","cl":"תל אביב","days":[{"t":3840,"p":13,"st":""},{"t":6023,"p":10,"st":""}],"total":9863,"place":11,"move":2,"behind":4593},{"n":"זיו צפיר","cl":"מנשה","days":[{"t":3144,"p":10,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"יפה מור","cl":"השרון","days":[{"t":3193,"p":11,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גנדלמן אייל","cl":"השרון","days":[{"t":3895,"p":14,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"רינת גיל","cl":"גליל","days":[{"t":3965,"p":15,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ורבין עודד","cl":"תל אביב","days":[{"t":null,"p":null,"st":"DNF"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"H55":[{"n":"גרינברג גיל","cl":"תל אביב","days":[{"t":2397,"p":4,"st":""},{"t":3661,"p":1,"st":""}],"total":6058,"place":1,"move":3,"behind":0},{"n":"נוימן זיו","cl":"אסא טכניון חיפה","days":[{"t":2235,"p":3,"st":""},{"t":3891,"p":4,"st":""}],"total":6126,"place":2,"move":1,"behind":68},{"n":"סרגה אלי","cl":"חבל מודיעין","days":[{"t":2406,"p":5,"st":""},{"t":3890,"p":3,"st":""}],"total":6296,"place":3,"move":2,"behind":238},{"n":"שביב רן","cl":"חבל מודיעין","days":[{"t":2473,"p":7,"st":""},{"t":3867,"p":2,"st":""}],"total":6340,"place":4,"move":3,"behind":282},{"n":"גרנט עופר","cl":"מנשה","days":[{"t":2230,"p":2,"st":""},{"t":4306,"p":7,"st":""}],"total":6536,"place":5,"move":-3,"behind":478},{"n":"לויצקי פבל","cl":"תל אביב","days":[{"t":2693,"p":8,"st":""},{"t":4239,"p":6,"st":""}],"total":6932,"place":6,"move":2,"behind":874},{"n":"כצמן אדי","cl":"מנשה","days":[{"t":3067,"p":12,"st":""},{"t":4032,"p":5,"st":""}],"total":7099,"place":7,"move":5,"behind":1041},{"n":"מינסקי אבי","cl":"השרון","days":[{"t":2178,"p":1,"st":""},{"t":5247,"p":13,"st":""}],"total":7425,"place":8,"move":-7,"behind":1367},{"n":"כהן שלומי","cl":"גליל","days":[{"t":2952,"p":9,"st":""},{"t":4487,"p":8,"st":""}],"total":7439,"place":9,"move":0,"behind":1381},{"n":"ויסמן שאול","cl":"חבל מודיעין","days":[{"t":3061,"p":11,"st":""},{"t":4810,"p":10,"st":""}],"total":7871,"place":10,"move":1,"behind":1813},{"n":"שכטר גיל","cl":"חבל מודיעין","days":[{"t":3389,"p":15,"st":""},{"t":4927,"p":11,"st":""}],"total":8316,"place":11,"move":4,"behind":2258},{"n":"טל אביב","cl":"תל אביב","days":[{"t":3077,"p":13,"st":""},{"t":5854,"p":15,"st":""}],"total":8931,"place":12,"move":1,"behind":2873},{"n":"סלומון שלומי","cl":"גליל","days":[{"t":4681,"p":18,"st":""},{"t":4722,"p":9,"st":""}],"total":9403,"place":13,"move":5,"behind":3345},{"n":"אלעד חגי","cl":"תל אביב","days":[{"t":3217,"p":14,"st":""},{"t":6257,"p":16,"st":""}],"total":9474,"place":14,"move":0,"behind":3416},{"n":"סער יצחק","cl":"חבל מודיעין","days":[{"t":4595,"p":17,"st":""},{"t":5359,"p":14,"st":""}],"total":9954,"place":15,"move":2,"behind":3896},{"n":"ארז נחשון","cl":"ראשון לציון","days":[{"t":4994,"p":19,"st":""},{"t":8387,"p":17,"st":""}],"total":13381,"place":16,"move":3,"behind":7323},{"n":"צוק אילן","cl":"יזרעאל","days":[{"t":2466,"p":6,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ריינהרץ יניב","cl":"גליל","days":[{"t":3025,"p":10,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גור אלעזר","cl":"מנשה","days":[{"t":4542,"p":16,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ליאור איל","cl":"חבל מודיעין","days":[{"t":4995,"p":20,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"עפרון איתן","cl":"מנשה","days":[{"t":null,"p":null,"st":"-"},{"t":5058,"p":12,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H60A":[{"n":"שחורי איתי","cl":"חבל מודיעין","days":[{"t":2851,"p":4,"st":""},{"t":3722,"p":1,"st":""}],"total":6573,"place":1,"move":3,"behind":0},{"n":"מינצר צפריר","cl":"יזרעאל","days":[{"t":2854,"p":5,"st":""},{"t":3837,"p":2,"st":""}],"total":6691,"place":2,"move":3,"behind":118},{"n":"שמע נתי","cl":"חבל מודיעין","days":[{"t":2891,"p":6,"st":""},{"t":4035,"p":3,"st":""}],"total":6926,"place":3,"move":3,"behind":353},{"n":"ויינר עמית","cl":"חבל מודיעין","days":[{"t":3236,"p":9,"st":""},{"t":4167,"p":4,"st":""}],"total":7403,"place":4,"move":5,"behind":830},{"n":"הימן רפי","cl":"השרון","days":[{"t":3310,"p":11,"st":""},{"t":4567,"p":5,"st":""}],"total":7877,"place":5,"move":6,"behind":1304},{"n":"סט שי","cl":"יזרעאל","days":[{"t":3268,"p":10,"st":""},{"t":4645,"p":6,"st":""}],"total":7913,"place":6,"move":4,"behind":1340},{"n":"צפורי דרור","cl":"מנשה","days":[{"t":2767,"p":1,"st":""},{"t":5567,"p":9,"st":""}],"total":8334,"place":7,"move":-6,"behind":1761},{"n":"וולשטיין דן","cl":"מנשה","days":[{"t":4116,"p":17,"st":""},{"t":4916,"p":7,"st":""}],"total":9032,"place":8,"move":9,"behind":2459},{"n":"מלמד דרור","cl":"יזרעאל","days":[{"t":3604,"p":14,"st":""},{"t":5608,"p":10,"st":""}],"total":9212,"place":9,"move":5,"behind":2639},{"n":"הולנדר גדעון","cl":"תל אביב","days":[{"t":3014,"p":7,"st":""},{"t":6262,"p":13,"st":""}],"total":9276,"place":10,"move":-3,"behind":2703},{"n":"זלצמן אלכסנדר","cl":"ראשון לציון","days":[{"t":3990,"p":16,"st":""},{"t":5552,"p":8,"st":""}],"total":9542,"place":11,"move":5,"behind":2969},{"n":"יודפת עופר","cl":"חבל מודיעין","days":[{"t":3630,"p":15,"st":""},{"t":6015,"p":12,"st":""}],"total":9645,"place":12,"move":3,"behind":3072},{"n":"יעקבי אלישע","cl":"השרון","days":[{"t":4679,"p":19,"st":""},{"t":6998,"p":14,"st":""}],"total":11677,"place":13,"move":6,"behind":5104},{"n":"אבנר עוזי","cl":"גליל","days":[{"t":2800,"p":2,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"עמיעז איתן","cl":"חבל מודיעין","days":[{"t":2831,"p":3,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נחושתן ירון","cl":"חבל מודיעין","days":[{"t":3218,"p":8,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"סגל דוידי","cl":"מנשה","days":[{"t":3499,"p":12,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גול אפק","cl":"תל אביב","days":[{"t":3527,"p":13,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"עמר איציק","cl":"יזרעאל","days":[{"t":4561,"p":18,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נוסבוים יצחק","cl":"השרון","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"יבסייב אריה","cl":"יזרעאל","days":[{"t":null,"p":null,"st":"MP"},{"t":5852,"p":11,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"D35":[{"n":"זריהן בר","cl":"גליל","days":[{"t":2508,"p":1,"st":""},{"t":4015,"p":1,"st":""}],"total":6523,"place":1,"move":0,"behind":0},{"n":"גרינברג אניה","cl":"תל אביב","days":[{"t":3576,"p":4,"st":""},{"t":4203,"p":3,"st":""}],"total":7779,"place":2,"move":2,"behind":1256},{"n":"גלוזשטיין לודמילה","cl":"ראשון לציון","days":[{"t":3510,"p":3,"st":""},{"t":4636,"p":4,"st":""}],"total":8146,"place":3,"move":0,"behind":1623},{"n":"פינצ'וק אירינה","cl":"יזרעאל","days":[{"t":4253,"p":5,"st":""},{"t":6280,"p":5,"st":""}],"total":10533,"place":4,"move":1,"behind":4010},{"n":"קוזלוב אלכסנדרה","cl":"תל אביב","days":[{"t":3035,"p":2,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"טולקוב אלכסנדרה","cl":"תל אביב","days":[{"t":null,"p":null,"st":"-"},{"t":4111,"p":2,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H21C":[{"n":"אברהם דקל","cl":"אסא טכניון חיפה","days":[{"t":2617,"p":1,"st":""},{"t":3435,"p":2,"st":""}],"total":6052,"place":1,"move":0,"behind":0},{"n":"גנוסר נדב","cl":"חבל מודיעין","days":[{"t":2989,"p":2,"st":""},{"t":3545,"p":3,"st":""}],"total":6534,"place":2,"move":0,"behind":482},{"n":"Olbinskiy Vitalik","cl":"מנשה","days":[{"t":3292,"p":5,"st":""},{"t":3960,"p":4,"st":""}],"total":7252,"place":3,"move":2,"behind":1200},{"n":"אברהם רגב","cl":"אסא טכניון חיפה","days":[{"t":3117,"p":3,"st":""},{"t":4257,"p":5,"st":""}],"total":7374,"place":4,"move":-1,"behind":1322},{"n":"ריינליב דינסטי","cl":"מנשה","days":[{"t":3183,"p":4,"st":""},{"t":4934,"p":7,"st":""}],"total":8117,"place":5,"move":-1,"behind":2065},{"n":"ורולקר הראל","cl":"אסא טכניון חיפה","days":[{"t":4473,"p":10,"st":""},{"t":4446,"p":6,"st":""}],"total":8919,"place":6,"move":4,"behind":2867},{"n":"רשף עילי-יהודה","cl":"אסא טכניון חיפה","days":[{"t":3565,"p":6,"st":""},{"t":6436,"p":10,"st":""}],"total":10001,"place":7,"move":-1,"behind":3949},{"n":"גריידי מלאכי","cl":"אסא טכניון חיפה","days":[{"t":4142,"p":8,"st":""},{"t":7187,"p":11,"st":""}],"total":11329,"place":8,"move":0,"behind":5277},{"n":"יזרעאלי יהודה","cl":"יזרעאל","days":[{"t":3578,"p":7,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"טל אדר","cl":"אסא ירושלים","days":[{"t":4262,"p":9,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ענבר עמית","cl":"גליל","days":[{"t":null,"p":null,"st":"MP"},{"t":6233,"p":9,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"יוסף עידן","cl":"","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"קרן שקד","cl":"יזרעאל","days":[{"t":null,"p":null,"st":"-"},{"t":2975,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"קוזלוב ניקיטה","cl":"הפועל תל אביב","days":[{"t":null,"p":null,"st":"-"},{"t":5127,"p":8,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H45":[{"n":"Rigbi Liron","cl":"","days":[{"t":2740,"p":2,"st":""},{"t":3716,"p":1,"st":""}],"total":6456,"place":1,"move":1,"behind":0},{"n":"זידנוב דניס","cl":"השרון","days":[{"t":3248,"p":4,"st":""},{"t":4121,"p":2,"st":""}],"total":7369,"place":2,"move":2,"behind":913},{"n":"שחר ליעד","cl":"מנשה","days":[{"t":3390,"p":5,"st":""},{"t":4492,"p":3,"st":""}],"total":7882,"place":3,"move":2,"behind":1426},{"n":"לידור אורי","cl":"מנשה","days":[{"t":2978,"p":3,"st":""},{"t":6046,"p":5,"st":""}],"total":9024,"place":4,"move":-1,"behind":2568},{"n":"גרדי עומר","cl":"עמק חפר","days":[{"t":3716,"p":7,"st":""},{"t":6381,"p":7,"st":""}],"total":10097,"place":5,"move":2,"behind":3641},{"n":"שלו פלדמן","cl":"יזרעאל","days":[{"t":4463,"p":8,"st":""},{"t":5688,"p":4,"st":""}],"total":10151,"place":6,"move":2,"behind":3695},{"n":"יעקבי יוני","cl":"חבל מודיעין","days":[{"t":2679,"p":1,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"בושקוב מיכאל","cl":"גליל","days":[{"t":3669,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"פרוינד אור","cl":"טכניון כרמל","days":[{"t":6573,"p":9,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"אס אורי","cl":"טכניון כרמל","days":[{"t":8093,"p":10,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"בושקוב מיכאיל","cl":"גליל","days":[{"t":null,"p":null,"st":"-"},{"t":6203,"p":6,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"D18A":[{"n":"סבוראי עופר","cl":"מנשה","days":[{"t":2849,"p":1,"st":""},{"t":4686,"p":1,"st":""}],"total":7535,"place":1,"move":0,"behind":0},{"n":"משולם אופיר","cl":"תל אביב","days":[{"t":4457,"p":2,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H35B":[{"n":"קרול ליאור","cl":"תל אביב","days":[{"t":3221,"p":2,"st":""},{"t":3807,"p":1,"st":""}],"total":7028,"place":1,"move":1,"behind":0},{"n":"גפן גוש","cl":"טכניון כרמל","days":[{"t":2850,"p":1,"st":""},{"t":4647,"p":3,"st":""}],"total":7497,"place":2,"move":-1,"behind":469},{"n":"מה-טוב יואב","cl":"אסא ירושלים","days":[{"t":3717,"p":3,"st":""},{"t":4587,"p":2,"st":""}],"total":8304,"place":3,"move":0,"behind":1276},{"n":"שחף אסף","cl":"מנשה","days":[{"t":4225,"p":4,"st":""},{"t":5855,"p":4,"st":""}],"total":10080,"place":4,"move":0,"behind":3052},{"n":"לוי דניאל","cl":"חבל מודיעין","days":[{"t":4299,"p":5,"st":""},{"t":6696,"p":5,"st":""}],"total":10995,"place":5,"move":0,"behind":3967},{"n":"לזרי עובדיה","cl":"עמק חפר","days":[{"t":4566,"p":6,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"D21B":[{"n":"אליאס מעין","cl":"תל אביב","days":[{"t":3263,"p":3,"st":""},{"t":4663,"p":2,"st":""}],"total":7926,"place":1,"move":2,"behind":0},{"n":"אילן גאיה","cl":"יזרעאל","days":[{"t":4103,"p":6,"st":""},{"t":4481,"p":1,"st":""}],"total":8584,"place":2,"move":4,"behind":658},{"n":"רביד יעל","cl":"תל אביב","days":[{"t":2985,"p":2,"st":""},{"t":5746,"p":4,"st":""}],"total":8731,"place":3,"move":-1,"behind":805},{"n":"טל-מסינג טיאן","cl":"תל אביב","days":[{"t":4699,"p":7,"st":""},{"t":5687,"p":3,"st":""}],"total":10386,"place":4,"move":3,"behind":2460},{"n":"איגנטוב אידה","cl":"חבל מודיעין","days":[{"t":6598,"p":8,"st":""},{"t":6825,"p":5,"st":""}],"total":13423,"place":5,"move":3,"behind":5497},{"n":"צירפאנוב דריה","cl":"","days":[{"t":2910,"p":1,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"עבודי נועה","cl":"גליל","days":[{"t":3668,"p":4,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"יזרעאלי טלאל","cl":"יזרעאל","days":[{"t":3996,"p":5,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"H18A":[{"n":"שוב רונן","cl":"טכניון כרמל","days":[{"t":1823,"p":1,"st":""},{"t":3722,"p":2,"st":""}],"total":5545,"place":1,"move":0,"behind":0},{"n":"פרוינד אופק","cl":"טכניון כרמל","days":[{"t":2252,"p":4,"st":""},{"t":3486,"p":1,"st":""}],"total":5738,"place":2,"move":2,"behind":193},{"n":"סולאג' כליל","cl":"גליל","days":[{"t":2056,"p":3,"st":""},{"t":4441,"p":4,"st":""}],"total":6497,"place":3,"move":0,"behind":952},{"n":"דה-קוסטה אריאל","cl":"יזרעאל","days":[{"t":1877,"p":2,"st":""},{"t":4627,"p":5,"st":""}],"total":6504,"place":4,"move":-2,"behind":959},{"n":"לדרר שלו","cl":"מנשה","days":[{"t":2444,"p":6,"st":""},{"t":4197,"p":3,"st":""}],"total":6641,"place":5,"move":1,"behind":1096},{"n":"חדד-דגן דר","cl":"מנשה","days":[{"t":2441,"p":5,"st":""},{"t":5634,"p":6,"st":""}],"total":8075,"place":6,"move":-1,"behind":2530},{"n":"זליגמן הלל","cl":"טכניון כרמל","days":[{"t":2619,"p":7,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"H21B":[{"n":"שמואלי חן","cl":"יזרעאל","days":[{"t":2233,"p":3,"st":""},{"t":3659,"p":1,"st":""}],"total":5892,"place":1,"move":2,"behind":0},{"n":"מאירקוביץ יבגני","cl":"טכניון כרמל","days":[{"t":2175,"p":2,"st":""},{"t":3875,"p":2,"st":""}],"total":6050,"place":2,"move":0,"behind":158},{"n":"לנס רותם","cl":"יזרעאל","days":[{"t":2165,"p":1,"st":""},{"t":4371,"p":5,"st":""}],"total":6536,"place":3,"move":-2,"behind":644},{"n":"ליפמן אשל","cl":"השרון","days":[{"t":2590,"p":10,"st":""},{"t":4192,"p":3,"st":""}],"total":6782,"place":4,"move":6,"behind":890},{"n":"גנוסר יובל","cl":"חבל מודיעין","days":[{"t":2415,"p":6,"st":""},{"t":4371,"p":5,"st":""}],"total":6786,"place":5,"move":1,"behind":894},{"n":"רובין רז","cl":"טכניון כרמל","days":[{"t":2506,"p":8,"st":""},{"t":4314,"p":4,"st":""}],"total":6820,"place":6,"move":2,"behind":928},{"n":"גנוסר תומר","cl":"חבל מודיעין","days":[{"t":2427,"p":7,"st":""},{"t":4623,"p":8,"st":""}],"total":7050,"place":7,"move":0,"behind":1158},{"n":"לנס עידן","cl":"יזרעאל","days":[{"t":2673,"p":13,"st":""},{"t":4447,"p":7,"st":""}],"total":7120,"place":8,"move":5,"behind":1228},{"n":"שמואלי מופז","cl":"יזרעאל","days":[{"t":2373,"p":5,"st":""},{"t":4770,"p":10,"st":""}],"total":7143,"place":9,"move":-4,"behind":1251},{"n":"ברקן אורי","cl":"יזרעאל","days":[{"t":2586,"p":9,"st":""},{"t":4747,"p":9,"st":""}],"total":7333,"place":10,"move":-1,"behind":1441},{"n":"פנייקוב בני","cl":"יזרעאל","days":[{"t":2658,"p":11,"st":""},{"t":5055,"p":11,"st":""}],"total":7713,"place":11,"move":0,"behind":1821},{"n":"ויינר יגאל","cl":"יזרעאל","days":[{"t":2662,"p":12,"st":""},{"t":5377,"p":12,"st":""}],"total":8039,"place":12,"move":0,"behind":2147},{"n":"רז-רוטשילד דניאל","cl":"אסא ירושלים","days":[{"t":3193,"p":15,"st":""},{"t":5377,"p":12,"st":""}],"total":8570,"place":13,"move":2,"behind":2678},{"n":"קלקשטיין נדב","cl":"השרון","days":[{"t":3208,"p":16,"st":""},{"t":5812,"p":14,"st":""}],"total":9020,"place":14,"move":2,"behind":3128},{"n":"רביד יואב","cl":"תל אביב","days":[{"t":4081,"p":17,"st":""},{"t":6627,"p":15,"st":""}],"total":10708,"place":15,"move":2,"behind":4816},{"n":"בהט עידו","cl":"יזרעאל","days":[{"t":2233,"p":3,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ברקאי סתיו","cl":"מנשה","days":[{"t":2859,"p":14,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"קלניצקי אלכס","cl":"תל אביב","days":[{"t":5639,"p":18,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H40":[{"n":"לדרר חגי","cl":"מנשה","days":[{"t":2380,"p":3,"st":""},{"t":4120,"p":1,"st":""}],"total":6500,"place":1,"move":2,"behind":0},{"n":"ארצי ירון","cl":"יזרעאל","days":[{"t":2406,"p":4,"st":""},{"t":4320,"p":2,"st":""}],"total":6726,"place":2,"move":2,"behind":226},{"n":"מלץ אבי","cl":"השרון","days":[{"t":2582,"p":5,"st":""},{"t":4710,"p":3,"st":""}],"total":7292,"place":3,"move":2,"behind":792},{"n":"לוי שגיא","cl":"טכניון כרמל","days":[{"t":2617,"p":6,"st":""},{"t":6179,"p":5,"st":""}],"total":8796,"place":4,"move":2,"behind":2296},{"n":"ליפוביץ אלכס","cl":"עמק חפר","days":[{"t":3093,"p":8,"st":""},{"t":5737,"p":4,"st":""}],"total":8830,"place":5,"move":3,"behind":2330},{"n":"דנציג אלמוג","cl":"יזרעאל","days":[{"t":2982,"p":7,"st":""},{"t":7278,"p":6,"st":""}],"total":10260,"place":6,"move":1,"behind":3760},{"n":"קורוטייב מיכאיל","cl":"תל אביב","days":[{"t":3410,"p":9,"st":""},{"t":7589,"p":7,"st":""}],"total":10999,"place":7,"move":2,"behind":4499},{"n":"גריף דניאל","cl":"השרון","days":[{"t":2170,"p":1,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"סגל זף","cl":"תל אביב","days":[{"t":2248,"p":2,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גברילוב פבל","cl":"טכניון כרמל","days":[{"t":4253,"p":10,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"כהנא איתן","cl":"השרון","days":[{"t":4995,"p":11,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"רק גיא","cl":"תל אביב","days":[{"t":6596,"p":12,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"D21A":[{"n":"קלקשטיין בר","cl":"השרון","days":[{"t":2415,"p":1,"st":""},{"t":4836,"p":1,"st":""}],"total":7251,"place":1,"move":0,"behind":0},{"n":"חריש רוני","cl":"גליל","days":[{"t":2661,"p":2,"st":""},{"t":5448,"p":3,"st":""}],"total":8109,"place":2,"move":0,"behind":858},{"n":"מצפון גאיה","cl":"מנשה","days":[{"t":2809,"p":3,"st":""},{"t":5314,"p":2,"st":""}],"total":8123,"place":3,"move":0,"behind":872},{"n":"סט עומר","cl":"יזרעאל","days":[{"t":3018,"p":4,"st":""},{"t":5449,"p":4,"st":""}],"total":8467,"place":4,"move":0,"behind":1216},{"n":"חלבה תמר","cl":"תל אביב","days":[{"t":4390,"p":5,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"יעקבי עופרי","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"MP"},{"t":5657,"p":5,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H14A":[{"n":"סולאג׳ תומא","cl":"גליל","days":[{"t":1745,"p":2,"st":""},{"t":1764,"p":1,"st":""}],"total":3509,"place":1,"move":1,"behind":0},{"n":"סולנה מעין","cl":"מנשה","days":[{"t":1657,"p":1,"st":""},{"t":2587,"p":4,"st":""}],"total":4244,"place":2,"move":-1,"behind":735},{"n":"סולנה אימרי","cl":"מנשה","days":[{"t":2075,"p":3,"st":""},{"t":2527,"p":3,"st":""}],"total":4602,"place":3,"move":0,"behind":1093},{"n":"פלדמן שגיב","cl":"יזרעאל","days":[{"t":3714,"p":5,"st":""},{"t":2331,"p":2,"st":""}],"total":6045,"place":4,"move":1,"behind":2536},{"n":"לוי שגיא","cl":"חבל מודיעין","days":[{"t":5134,"p":7,"st":""},{"t":4562,"p":6,"st":""}],"total":9696,"place":5,"move":2,"behind":6187},{"n":"מן אופיר","cl":"מנשה","days":[{"t":2508,"p":4,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"שדמה ברק","cl":"עמק חפר","days":[{"t":4737,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"לוי אריאל","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":3239,"p":5,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"H16A":[{"n":"ורבין עמית","cl":"תל אביב","days":[{"t":2882,"p":12,"st":""},{"t":2903,"p":1,"st":""}],"total":5785,"place":1,"move":11,"behind":0},{"n":"ורבין עידן","cl":"תל אביב","days":[{"t":2396,"p":4,"st":""},{"t":3399,"p":2,"st":""}],"total":5795,"place":2,"move":2,"behind":10},{"n":"שגיא עמית","cl":"תל אביב","days":[{"t":2189,"p":1,"st":""},{"t":3640,"p":4,"st":""}],"total":5829,"place":3,"move":-2,"behind":44},{"n":"שורץ בן","cl":"מנשה","days":[{"t":2229,"p":2,"st":""},{"t":3893,"p":5,"st":""}],"total":6122,"place":4,"move":-2,"behind":337},{"n":"יוגב עדי","cl":"מנשה","days":[{"t":2779,"p":10,"st":""},{"t":3636,"p":3,"st":""}],"total":6415,"place":5,"move":5,"behind":630},{"n":"זכות דרור","cl":"מנשה","days":[{"t":2480,"p":6,"st":""},{"t":4895,"p":7,"st":""}],"total":7375,"place":6,"move":0,"behind":1590},{"n":"גרדי דן","cl":"עמק חפר","days":[{"t":2530,"p":7,"st":""},{"t":5156,"p":9,"st":""}],"total":7686,"place":7,"move":0,"behind":1901},{"n":"ברונשטיין אלון","cl":"מנשה","days":[{"t":3254,"p":13,"st":""},{"t":5125,"p":8,"st":""}],"total":8379,"place":8,"move":5,"behind":2594},{"n":"קוגן מתן","cl":"גליל","days":[{"t":2670,"p":9,"st":""},{"t":5955,"p":10,"st":""}],"total":8625,"place":9,"move":0,"behind":2840},{"n":"זכות ויטו","cl":"מנשה","days":[{"t":2652,"p":8,"st":""},{"t":5978,"p":11,"st":""}],"total":8630,"place":10,"move":-2,"behind":2845},{"n":"קינן אורי","cl":"גליל","days":[{"t":2433,"p":5,"st":""},{"t":6481,"p":13,"st":""}],"total":8914,"place":11,"move":-6,"behind":3129},{"n":"אשד כרמל","cl":"טכניון כרמל","days":[{"t":2331,"p":3,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גזברי איתמר","cl":"מנשה","days":[{"t":2780,"p":11,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נבו שרון","cl":"טכניון כרמל","days":[{"t":3527,"p":14,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"פינצ׳וק אלון","cl":"יזרעאל","days":[{"t":3865,"p":15,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"קרמר איתן","cl":"גליל","days":[{"t":5556,"p":16,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"פולויאן זכר","cl":"עמק חפר","days":[{"t":null,"p":null,"st":"-"},{"t":4725,"p":6,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"שרון נבו חיים","cl":"טכניון כרמל","days":[{"t":null,"p":null,"st":"-"},{"t":6110,"p":12,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"D16A":[{"n":"שקדי נור","cl":"תל אביב","days":[{"t":3222,"p":1,"st":""},{"t":5201,"p":2,"st":""}],"total":8423,"place":1,"move":0,"behind":0},{"n":"פדוסין מריקה","cl":"תל אביב","days":[{"t":3265,"p":2,"st":""},{"t":7203,"p":3,"st":""}],"total":10468,"place":2,"move":0,"behind":2045},{"n":"שטיינברג עדי","cl":"חבל מודיעין","days":[{"t":4193,"p":3,"st":""},{"t":8508,"p":4,"st":""}],"total":12701,"place":3,"move":0,"behind":4278},{"n":"חלבה הדר","cl":"תל אביב","days":[{"t":4918,"p":4,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"טויג ענבל","cl":"חבל מודיעין","days":[{"t":5217,"p":5,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"עופר איילה","cl":"מנשה","days":[{"t":null,"p":null,"st":"MP"},{"t":4177,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"סגל יערה","cl":"תל אביב","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"בינוני":[{"n":"ענבר ליאור","cl":"גליל","days":[{"t":5205,"p":2,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"דובדבני אדר","cl":"יזרעאל","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"חורב לוטן","cl":"","days":[{"t":null,"p":null,"st":"DNF"},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"זיו קרן","cl":"","days":[{"t":4605,"p":1,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"בלבן ברוך","cl":"גליל","days":[{"t":null,"p":null,"st":"-"},{"t":4494,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"יבסייב אדר","cl":"יזרעאל","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"סופר אסף","cl":"","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null}],"H18B":[{"n":"רביד איל","cl":"תל אביב","days":[{"t":7517,"p":1,"st":""},{"t":7368,"p":1,"st":""}],"total":14885,"place":1,"move":0,"behind":0}],"H16B":[{"n":"מרשנסקי יהב","cl":"גליל","days":[{"t":3036,"p":1,"st":""},{"t":2824,"p":1,"st":""}],"total":5860,"place":1,"move":0,"behind":0}],"D14A":[{"n":"אבידן הילה","cl":"מנשה","days":[{"t":3040,"p":1,"st":""},{"t":3358,"p":1,"st":""}],"total":6398,"place":1,"move":0,"behind":0},{"n":"גרדי עינת","cl":"עמק חפר","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"גפן אביגיל","cl":"טכניון כרמל","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"קצר":[{"n":"בר קוסטיה","cl":"","days":[{"t":3916,"p":1,"st":""},{"t":4232,"p":2,"st":""}],"total":8148,"place":1,"move":0,"behind":0},{"n":"שוב פליקס","cl":"טכניון כרמל","days":[{"t":4309,"p":2,"st":""},{"t":4215,"p":1,"st":""}],"total":8524,"place":2,"move":0,"behind":376},{"n":"יוגב דפנה","cl":"מנשה","days":[{"t":4864,"p":3,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"בלוה יוחאי","cl":"","days":[{"t":6150,"p":4,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"שקדי טל","cl":"תל אביב","days":[{"t":10753,"p":5,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"מן דן","cl":"מנשה","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"אלוני יובל","cl":"","days":[{"t":null,"p":null,"st":"-"},{"t":6638,"p":3,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"D16B":[{"n":"סגל נגה","cl":"תל אביב","days":[{"t":7560,"p":1,"st":""},{"t":5380,"p":1,"st":""}],"total":12940,"place":1,"move":0,"behind":0}],"D55":[{"n":"זביילובה יוליה","cl":"טכניון כרמל","days":[{"t":2354,"p":1,"st":""},{"t":2996,"p":1,"st":""}],"total":5350,"place":1,"move":0,"behind":0},{"n":"נוסבוים שרון","cl":"השרון","days":[{"t":4352,"p":2,"st":""},{"t":4074,"p":2,"st":""}],"total":8426,"place":2,"move":0,"behind":3076},{"n":"שחר-נוימן ענת","cl":"מנשה","days":[{"t":4638,"p":3,"st":""},{"t":4113,"p":3,"st":""}],"total":8751,"place":3,"move":0,"behind":3401},{"n":"איגנטוב אנה","cl":"חבל מודיעין","days":[{"t":5226,"p":5,"st":""},{"t":5222,"p":4,"st":""}],"total":10448,"place":4,"move":1,"behind":5098},{"n":"מסינג ענת סיפורים","cl":"תל אביב","days":[{"t":5399,"p":7,"st":""},{"t":5356,"p":5,"st":""}],"total":10755,"place":5,"move":2,"behind":5405},{"n":"בר לריסה","cl":"השרון","days":[{"t":4826,"p":4,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"רוטשטיין חגית","cl":"תל אביב","days":[{"t":5349,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"D45":[{"n":"טרופימצ׳יק מרינה","cl":"תל אביב","days":[{"t":2706,"p":2,"st":""},{"t":2893,"p":1,"st":""}],"total":5599,"place":1,"move":1,"behind":0},{"n":"ורבין אסיה","cl":"תל אביב","days":[{"t":2485,"p":1,"st":""},{"t":3163,"p":2,"st":""}],"total":5648,"place":2,"move":-1,"behind":49},{"n":"רביד נעמי","cl":"תל אביב","days":[{"t":3055,"p":4,"st":""},{"t":3337,"p":3,"st":""}],"total":6392,"place":3,"move":1,"behind":793},{"n":"סגל יעל","cl":"תל אביב","days":[{"t":2955,"p":3,"st":""},{"t":3940,"p":4,"st":""}],"total":6895,"place":4,"move":-1,"behind":1296},{"n":"פרגר בן נון אלה","cl":"יזרעאל","days":[{"t":3885,"p":5,"st":""},{"t":4722,"p":5,"st":""}],"total":8607,"place":5,"move":0,"behind":3008},{"n":"חורושילוב לריסה","cl":"תל אביב","days":[{"t":3946,"p":6,"st":""},{"t":5619,"p":6,"st":""}],"total":9565,"place":6,"move":0,"behind":3966},{"n":"לב-אל ניבה","cl":"תל אביב","days":[{"t":5337,"p":7,"st":""},{"t":6603,"p":7,"st":""}],"total":11940,"place":7,"move":0,"behind":6341},{"n":"רימרמן-שדמה נטע","cl":"עמק חפר","days":[{"t":5447,"p":8,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ברונשטיין ציפי","cl":"מנשה","days":[{"t":6782,"p":9,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"D50":[{"n":"מילר לינה","cl":"תל אביב","days":[{"t":3299,"p":3,"st":""},{"t":2975,"p":1,"st":""}],"total":6274,"place":1,"move":2,"behind":0},{"n":"שצרבנין טטיאנה","cl":"גליל","days":[{"t":4024,"p":6,"st":""},{"t":4295,"p":2,"st":""}],"total":8319,"place":2,"move":4,"behind":2045},{"n":"מייר-גור תמר","cl":"מנשה","days":[{"t":2859,"p":1,"st":""},{"t":5575,"p":5,"st":""}],"total":8434,"place":3,"move":-2,"behind":2160},{"n":"ויסמן עדי","cl":"חבל מודיעין","days":[{"t":3573,"p":4,"st":""},{"t":5060,"p":3,"st":""}],"total":8633,"place":4,"move":0,"behind":2359},{"n":"מצפון איילת","cl":"מנשה","days":[{"t":4011,"p":5,"st":""},{"t":5236,"p":4,"st":""}],"total":9247,"place":5,"move":0,"behind":2973},{"n":"מאיר ענת","cl":"מנשה","days":[{"t":4371,"p":7,"st":""},{"t":5845,"p":6,"st":""}],"total":10216,"place":6,"move":1,"behind":3942},{"n":"שביב מיכל","cl":"חבל מודיעין","days":[{"t":3081,"p":2,"st":""},{"t":8691,"p":7,"st":""}],"total":11772,"place":7,"move":-5,"behind":5498},{"n":"לוי עדי","cl":"חבל מודיעין","days":[{"t":6874,"p":8,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"רביד איריס","cl":"תל אביב","days":[{"t":8816,"p":9,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"D21C":[{"n":"ריף הגר","cl":"אסא ירושלים","days":[{"t":3302,"p":1,"st":""},{"t":3471,"p":1,"st":""}],"total":6773,"place":1,"move":0,"behind":0},{"n":"אלמוג מעיין","cl":"אסא טכניון חיפה","days":[{"t":3977,"p":3,"st":""},{"t":6037,"p":4,"st":""}],"total":10014,"place":2,"move":1,"behind":3241},{"n":"לרדו שירה","cl":"אסא ירושלים","days":[{"t":4259,"p":4,"st":""},{"t":6500,"p":5,"st":""}],"total":10759,"place":3,"move":1,"behind":3986},{"n":"גרינברג דפי","cl":"גליל","days":[{"t":7307,"p":5,"st":""},{"t":5141,"p":3,"st":""}],"total":12448,"place":4,"move":1,"behind":5675},{"n":"ריינהרץ לירון","cl":"גליל","days":[{"t":3372,"p":2,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"נוימן דפנה","cl":"מנשה","days":[{"t":null,"p":null,"st":"-"},{"t":3981,"p":2,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"D65":[{"n":"מאירקוביץ סופיה","cl":"טכניון כרמל","days":[{"t":3550,"p":1,"st":""},{"t":3467,"p":1,"st":""}],"total":7017,"place":1,"move":0,"behind":0},{"n":"אלוש רות","cl":"חבל מודיעין","days":[{"t":4455,"p":2,"st":""},{"t":4383,"p":2,"st":""}],"total":8838,"place":2,"move":0,"behind":1821},{"n":"לוינקרון זהבה","cl":"גליל","days":[{"t":4699,"p":3,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"הימן יונה","cl":"השרון","days":[{"t":4920,"p":4,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null}],"D40":[{"n":"פרי גל","cl":"גליל","days":[{"t":3783,"p":1,"st":""},{"t":4054,"p":1,"st":""}],"total":7837,"place":1,"move":0,"behind":0},{"n":"זכות שירה","cl":"מנשה","days":[{"t":4099,"p":2,"st":""},{"t":4406,"p":2,"st":""}],"total":8505,"place":2,"move":0,"behind":668},{"n":"לוי יוליה","cl":"חבל מודיעין","days":[{"t":6014,"p":3,"st":""},{"t":5577,"p":3,"st":""}],"total":11591,"place":3,"move":0,"behind":3754}],"D60":[{"n":"ליפמן יעל","cl":"השרון","days":[{"t":4067,"p":2,"st":""},{"t":4710,"p":1,"st":""}],"total":8777,"place":1,"move":1,"behind":0},{"n":"נתיב רות","cl":"חבל מודיעין","days":[{"t":3987,"p":1,"st":""},{"t":4944,"p":2,"st":""}],"total":8931,"place":2,"move":-1,"behind":154},{"n":"ברקוביץ מרב","cl":"טכניון כרמל","days":[{"t":5306,"p":3,"st":""},{"t":5655,"p":3,"st":""}],"total":10961,"place":3,"move":0,"behind":2184},{"n":"רן רות","cl":"גליל","days":[{"t":5528,"p":4,"st":""},{"t":6964,"p":4,"st":""}],"total":12492,"place":4,"move":0,"behind":3715},{"n":"מנור חגית","cl":"חבל מודיעין","days":[{"t":5790,"p":5,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null}],"קצר פלוס פתוח":[{"n":"ימין גלעד","cl":"","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"H50B":[{"n":"יוגב כרמל","cl":"מנשה","days":[{"t":2325,"p":1,"st":""},{"t":3262,"p":1,"st":""}],"total":5587,"place":1,"move":0,"behind":0},{"n":"קלקשטיין ניר","cl":"השרון","days":[{"t":3057,"p":2,"st":""},{"t":4194,"p":2,"st":""}],"total":7251,"place":2,"move":0,"behind":1664},{"n":"גור אלי","cl":"חבל מודיעין","days":[{"t":4676,"p":5,"st":""},{"t":5054,"p":4,"st":""}],"total":9730,"place":3,"move":2,"behind":4143},{"n":"סלומון עודד","cl":"גליל","days":[{"t":4618,"p":4,"st":""},{"t":5838,"p":5,"st":""}],"total":10456,"place":4,"move":0,"behind":4869},{"n":"טויג רון","cl":"חבל מודיעין","days":[{"t":4365,"p":3,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"שקדי חן","cl":"תל אביב","days":[{"t":5165,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"הראל דרור","cl":"חבל מודיעין","days":[{"t":7205,"p":7,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"מנדל רועי","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":4279,"p":3,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"גרינברג מיקי","cl":"גליל","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H60B":[{"n":"כספי שי","cl":"השרון","days":[{"t":2971,"p":2,"st":""},{"t":3406,"p":1,"st":""}],"total":6377,"place":1,"move":1,"behind":0},{"n":"צפורי אבנר","cl":"מנשה","days":[{"t":2938,"p":1,"st":""},{"t":6856,"p":4,"st":""}],"total":9794,"place":2,"move":-1,"behind":3417},{"n":"נירן חן","cl":"ראשון לציון","days":[{"t":3929,"p":3,"st":""},{"t":6662,"p":3,"st":""}],"total":10591,"place":3,"move":0,"behind":4214},{"n":"חדד עמית","cl":"מנשה","days":[{"t":5189,"p":5,"st":""},{"t":5429,"p":2,"st":""}],"total":10618,"place":4,"move":1,"behind":4241},{"n":"סלומון רונן","cl":"ראשון לציון","days":[{"t":5159,"p":4,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"רבד איתי","cl":"תל אביב","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H70":[{"n":"מנור משה","cl":"חבל מודיעין","days":[{"t":3677,"p":2,"st":""},{"t":4500,"p":4,"st":""}],"total":8177,"place":1,"move":1,"behind":0},{"n":"ליפמן רמי","cl":"השרון","days":[{"t":4322,"p":5,"st":""},{"t":3919,"p":2,"st":""}],"total":8241,"place":2,"move":3,"behind":64},{"n":"וידר יואב","cl":"טכניון כרמל","days":[{"t":4428,"p":7,"st":""},{"t":4985,"p":5,"st":""}],"total":9413,"place":3,"move":4,"behind":1236},{"n":"קינר דורון","cl":"תל אביב","days":[{"t":3696,"p":3,"st":""},{"t":5951,"p":6,"st":""}],"total":9647,"place":4,"move":-1,"behind":1470},{"n":"רז שלמה","cl":"ראשון לציון","days":[{"t":3098,"p":1,"st":""},{"t":6826,"p":8,"st":""}],"total":9924,"place":5,"move":-4,"behind":1747},{"n":"פדוסין ולדימיר","cl":"תל אביב","days":[{"t":4150,"p":4,"st":""},{"t":6103,"p":7,"st":""}],"total":10253,"place":6,"move":-2,"behind":2076},{"n":"שמואלי אשר","cl":"יזרעאל","days":[{"t":5519,"p":10,"st":""},{"t":9081,"p":9,"st":""}],"total":14600,"place":7,"move":3,"behind":6423},{"n":"אילן יעקב","cl":"יזרעאל","days":[{"t":4408,"p":6,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"בן שטרית מאיר","cl":"יזרעאל","days":[{"t":4644,"p":8,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"אביטל עפר","cl":"גליל","days":[{"t":5088,"p":9,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"פרישפלס ג'ים","cl":"גליל","days":[{"t":null,"p":null,"st":"-"},{"t":3769,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"Vardi Nitsan","cl":"FIF Hillerod","days":[{"t":null,"p":null,"st":"-"},{"t":4281,"p":3,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"משלי יובל","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"H65":[{"n":"ברקאי עזרא","cl":"מנשה","days":[{"t":3201,"p":1,"st":""},{"t":4045,"p":1,"st":""}],"total":7246,"place":1,"move":0,"behind":0},{"n":"בלגלי רן","cl":"השרון","days":[{"t":3350,"p":2,"st":""},{"t":4113,"p":2,"st":""}],"total":7463,"place":2,"move":0,"behind":217},{"n":"רן שמאי","cl":"גליל","days":[{"t":4423,"p":4,"st":""},{"t":4749,"p":3,"st":""}],"total":9172,"place":3,"move":1,"behind":1926},{"n":"ברקוביץ עמירן","cl":"טכניון כרמל","days":[{"t":3494,"p":3,"st":""},{"t":5742,"p":4,"st":""}],"total":9236,"place":4,"move":-1,"behind":1990},{"n":"אוסטר שמואל","cl":"גליל","days":[{"t":5268,"p":6,"st":""},{"t":5913,"p":5,"st":""}],"total":11181,"place":5,"move":1,"behind":3935},{"n":"גוטמן יהודה","cl":"חבל מודיעין","days":[{"t":6732,"p":8,"st":""},{"t":6750,"p":6,"st":""}],"total":13482,"place":6,"move":2,"behind":6236},{"n":"ארד ארז","cl":"יזרעאל","days":[{"t":4540,"p":5,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ענבר אברהם","cl":"גליל","days":[{"t":6013,"p":7,"st":""},{"t":null,"p":null,"st":"DNF"}],"total":null,"place":null,"move":null,"behind":null},{"n":"פלוטקין רון","cl":"תל אביב","days":[{"t":8259,"p":9,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"אהרוני דניאל","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"H12":[{"n":"שי תומר","cl":"מנשה","days":[{"t":1000,"p":2,"st":""},{"t":1051,"p":2,"st":""}],"total":2051,"place":1,"move":1,"behind":0},{"n":"חלבה אורן","cl":"תל אביב","days":[{"t":1619,"p":4,"st":""},{"t":1328,"p":3,"st":""}],"total":2947,"place":2,"move":2,"behind":896},{"n":"רגבי תום","cl":"השרון","days":[{"t":1435,"p":3,"st":""},{"t":1552,"p":5,"st":""}],"total":2987,"place":3,"move":0,"behind":936},{"n":"ברונשטיין אופיר","cl":"מנשה","days":[{"t":2152,"p":5,"st":""},{"t":991,"p":1,"st":""}],"total":3143,"place":4,"move":1,"behind":1092},{"n":"פרוינד תם","cl":"טכניון כרמל","days":[{"t":2681,"p":8,"st":""},{"t":1487,"p":4,"st":""}],"total":4168,"place":5,"move":3,"behind":2117},{"n":"סגל עופר","cl":"תל אביב","days":[{"t":2707,"p":9,"st":""},{"t":1626,"p":6,"st":""}],"total":4333,"place":6,"move":3,"behind":2282},{"n":"קרול יואב","cl":"תל אביב","days":[{"t":2581,"p":7,"st":""},{"t":2524,"p":9,"st":""}],"total":5105,"place":7,"move":0,"behind":3054},{"n":"שי נדב","cl":"מנשה","days":[{"t":3025,"p":10,"st":""},{"t":2267,"p":7,"st":""}],"total":5292,"place":8,"move":2,"behind":3241},{"n":"דנציג נבו","cl":"יזרעאל","days":[{"t":3134,"p":11,"st":""},{"t":2359,"p":8,"st":""}],"total":5493,"place":9,"move":2,"behind":3442},{"n":"קרול דן","cl":"תל אביב","days":[{"t":933,"p":1,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"שחף גיא","cl":"מנשה","days":[{"t":2560,"p":6,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"חורב רני","cl":"תל אביב","days":[{"t":3254,"p":12,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null}],"D12":[{"n":"Olbinska Shezhana","cl":"מנשה","days":[{"t":2694,"p":3,"st":""},{"t":1407,"p":1,"st":""}],"total":4101,"place":1,"move":2,"behind":0},{"n":"לוי מאיה","cl":"חבל מודיעין","days":[{"t":2609,"p":2,"st":""},{"t":2026,"p":3,"st":""}],"total":4635,"place":2,"move":0,"behind":534},{"n":"פרלמן מידן זהר","cl":"חבל מודיעין","days":[{"t":2190,"p":1,"st":""},{"t":2502,"p":5,"st":""}],"total":4692,"place":3,"move":-2,"behind":591},{"n":"אהל גל","cl":"גליל","days":[{"t":3147,"p":4,"st":""},{"t":2159,"p":4,"st":""}],"total":5306,"place":4,"move":0,"behind":1205},{"n":"פרלמן מידן עדן","cl":"חבל מודיעין","days":[{"t":4297,"p":6,"st":""},{"t":1936,"p":2,"st":""}],"total":6233,"place":5,"move":1,"behind":2132},{"n":"יעקבי יערה","cl":"חבל מודיעין","days":[{"t":3168,"p":5,"st":""},{"t":3576,"p":6,"st":""}],"total":6744,"place":6,"move":-1,"behind":2643}],"H14B":[{"n":"לוי אריאל","cl":"חבל מודיעין","days":[{"t":2365,"p":1,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null}],"קצרצר":[{"n":"ברונשטיין דורון","cl":"מנשה","days":[{"t":2552,"p":1,"st":""},{"t":4640,"p":4,"st":""}],"total":7192,"place":1,"move":0,"behind":0},{"n":"יעקבי ענבר","cl":"חבל מודיעין","days":[{"t":2996,"p":2,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"דה-קוסטה רוני","cl":"יזרעאל","days":[{"t":3862,"p":3,"st":""},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ארצי נעה","cl":"יזרעאל","days":[{"t":null,"p":null,"st":"-"},{"t":2664,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"זוהר אליאס","cl":"אסא תל אביב","days":[{"t":null,"p":null,"st":"-"},{"t":2734,"p":2,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"ריפל ערן","cl":"","days":[{"t":null,"p":null,"st":"-"},{"t":3313,"p":3,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"ילדות זינוק":[{"n":"אילגץ' אלינה","cl":"תל אביב","days":[{"t":3006,"p":1,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"סניז׳קוב אביטל","cl":"גליל","days":[{"t":3270,"p":2,"st":""},{"t":null,"p":null,"st":"MP"}],"total":null,"place":null,"move":null,"behind":null},{"n":"ארם יעקבי","cl":"השרון","days":[{"t":null,"p":null,"st":"MP"},{"t":null,"p":null,"st":"-"}],"total":null,"place":null,"move":null,"behind":null},{"n":"לוי אלינור","cl":"חבל מודיעין","days":[{"t":null,"p":null,"st":"-"},{"t":2710,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null}],"קצר פלוס":[{"n":"עידו קרייניץ","cl":"לב השרון-מנשה","days":[{"t":null,"p":null,"st":"-"},{"t":4550,"p":1,"st":""}],"total":null,"place":null,"move":null,"behind":null},{"n":"גרדי הדס","cl":"עמק חפר","days":[{"t":null,"p":null,"st":"-"},{"t":8005,"p":2,"st":""}],"total":null,"place":null,"move":null,"behind":null}]}}]};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const p2 = n => String(n).padStart(2, "0");
+const ft = t => t == null ? "–" : t >= 3600 ? `${Math.floor(t / 3600)}:${p2(Math.floor(t % 3600 / 60))}:${p2(Math.round(t % 60))}` : `${Math.floor(t / 60)}:${p2(Math.round(t % 60))}`;
+const pts = v => v == null ? "–" : (Math.round(v * 10) / 10).toFixed(1).replace(/\.0$/, "");
+const ST = { MP: "פסילה", DNF: "לא סיים", DNS: "לא זינק", "-": "לא השתתף" };
+const S = { s: "", k: "" };
+function readHash() { const h = new URLSearchParams(location.hash.slice(1)); S.s = h.get("s") || ""; S.k = h.get("k") || ""; }
+const link = (s, k) => "#" + new URLSearchParams(k ? { s, k } : { s }).toString();
+
+// ---- accessibility toolbar, for every page of the site (kept in this browser, like the colours): text size, high contrast
+// and reading aids; the accessibility statement; "skip to the content"; and the privacy notice (no cookies - only these choices)
+const A11Y = { sizes: [["", "רגיל"], ["l", "גדול"], ["xl", "גדול מאוד"]], el: null, btn: null, done: null,
+  flags: [["contrast", "ניגודיות גבוהה", "טקסט כהה על רקע אחיד, קווים וגבולות בולטים"], ["gray", "גווני אפור", "התצוגה בלי צבעים"],
+          ["links", "הדגשת קישורים", "קישורים ברקע צהוב עם קו תחתון"], ["font", "גופן קריא", "גופן Arial פשוט בכל הטקסט"],
+          ["space", "ריווח טקסט", "יותר רווח בין שורות, מילים ואותיות"], ["focus", "הדגשת מיקוד", "מסגרת בולטת סביב מה שנבחר במקלדת"],
+          ["motion", "עצירת תנועה", "בלי אנימציות ומעברים"], ["cursor", "סמן גדול", "סמן עכבר גדול (במחשב)"]] };
+const STORE = ["lc-theme", "lc-text", "lc-contrast", "lc-a11y", "lc-notice"];   // everything the site keeps in the browser
+const lsGet = k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
+const lsSet = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} };
+const a11yFlags = () => new Set(lsGet("lc-a11y").split(",").filter(Boolean).concat(lsGet("lc-contrast") === "high" ? ["contrast"] : []));
+function a11yApply() {
+  const h = document.documentElement, t = lsGet("lc-text"), f = a11yFlags();
+  if (t && A11Y.sizes.some(([k]) => k === t)) h.dataset.text = t; else delete h.dataset.text;
+  if (f.has("contrast")) h.dataset.contrast = "high"; else delete h.dataset.contrast;
+  A11Y.flags.forEach(([k]) => { if (k !== "contrast") h.classList.toggle("a-" + k, f.has(k)); });
+}
+function a11ySetFlag(k, on) {
+  if (k === "contrast") { lsSet("lc-contrast", on ? "high" : ""); return; }
+  const f = new Set(lsGet("lc-a11y").split(",").filter(Boolean));
+  if (on) f.add(k); else f.delete(k);
+  lsSet("lc-a11y", [...f].filter(x => A11Y.flags.some(([k2]) => k2 === x)).join(","));
+}
+a11yApply();
+const textScale = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--ts")) || 1;
+const A11Y_STATEMENT = `<p>האתר מציג ניתוח של תוצאות תחרויות ניווט. הנגשנו אותו לפי ההנחיות של WCAG 2.1 ברמה AA, שעליהן מבוסס תקן ישראלי 5568; לא נערכה בדיקת נגישות רשמית.</p>
+  <ul><li>אפשר לעבור על כל הדף במקלדת, והמיקוד גלוי. הקישור "דלג לתוכן" הוא העצירה הראשונה.</li>
+    <li>בסרגל הזה: הגדלת טקסט עד 130% בלי שהדף ייחתך או ייגלל לרוחב, ניגודיות גבוהה, גווני אפור, הדגשת קישורים, גופן קריא, ריווח טקסט, הדגשת מיקוד, עצירת תנועה וסמן גדול.</li>
+    <li>הטבלאות הן טבלאות רגילות שאפשר למיין ולסנן. לכל גרף יש הסבר, ובמעבר עכבר או בנגיעה מופיעים המספרים.</li>
+    <li>בטלפון: כפתורים גדולים ותצוגה בלי גלילה לרוחב.</li></ul>
+  <p><b>מגבלות ידועות:</b> המפה והגרפים הם תוכן חזותי. את אותם נתונים אפשר לקרוא גם בטבלאות – תוצאות, זמני ביניים וניתוח טעויות.</p>
+  <p>נתקלתם בבעיית נגישות? נשמח לשמוע ולתקן: במייל <a href="mailto:nivut2026@gmail.com" dir="ltr">nivut2026@gmail.com</a>, או <a href="https://github.com/NivutIsrael/nivutisrael.github.io/issues" target="_blank" rel="noopener noreferrer">פנייה דרך GitHub</a>.</p>
+  <p class="upd">ההצהרה עודכנה בנובמבר 2026.</p>`;
+// colours: light, dark, or as the system says - one choice for the whole site, kept in this browser
+const THEME_OPTS = [["", "אוטומטי"], ["light", "בהיר"], ["dark", "כהה"]];
+function themePaint() {
+  const t = document.documentElement.dataset.theme || "", l = (THEME_OPTS.find(([k]) => k === t) || THEME_OPTS[0])[1];
+  document.querySelectorAll("#theme").forEach(b => { b.setAttribute("aria-label", `מצב תצוגה: ${l} – לחיצה מחליפה`); b.title = `מצב תצוגה: ${l}`;
+    const s = b.querySelector("[data-theml]"); if (s) s.textContent = l; });
+}
+function themeSet(t) {
+  t = THEME_OPTS.some(([k]) => k === t) ? t : "";
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  lsSet("lc-theme", t); themePaint();
+}
+themeSet(lsGet("lc-theme"));            // at once, on every page
+// btn: the page's light / dark button; done(t): what the page redraws for it (the report's charts)
+function themeInit(btn, done) {
+  if (!btn) return;
+  themePaint();
+  btn.addEventListener("click", () => {
+    const i = THEME_OPTS.findIndex(([k]) => k === (document.documentElement.dataset.theme || ""));
+    const [t] = THEME_OPTS[(i + 1) % THEME_OPTS.length]; themeSet(t); done?.(t);
+  });
+}
+function a11yClose() { if (!A11Y.el) return; A11Y.el.remove(); A11Y.el = null; A11Y.btn?.setAttribute("aria-expanded", "false"); }
+function a11yPaint(el) {     // the buttons show the current choices
+  const t = lsGet("lc-text"), f = a11yFlags();
+  el.querySelectorAll("[data-ts]").forEach(b => b.setAttribute("aria-checked", b.dataset.ts === t));
+  el.querySelectorAll("[data-flag]").forEach(b => b.setAttribute("aria-pressed", f.has(b.dataset.flag)));
+}
+function a11yOpen() {
+  a11yClose();
+  const el = document.createElement("div");
+  el.className = "a11y"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "סרגל נגישות");
+  el.innerHTML = `<div class="a11yh"><b>סרגל נגישות</b><button type="button" class="a11yx" aria-label="סגירה">✕</button></div>
+    <div class="a11yl" id="a11ytl">גודל הטקסט</div>
+    <div class="a11ys" role="radiogroup" aria-labelledby="a11ytl">${A11Y.sizes.map(([k, n], i) =>
+      `<button type="button" role="radio" data-ts="${k}" style="font-size:${13 + i * 2}px">${n}</button>`).join("")}</div>
+    <div class="a11yg">${A11Y.flags.map(([k, n, d]) => `<button type="button" class="a11yf${k === "cursor" ? " fine" : ""}" data-flag="${k}"><b>${n}</b><small>${d}</small></button>`).join("")}</div>
+    <button type="button" class="a11yreset">↺ איפוס כל הגדרות הנגישות</button>
+    <details class="a11ystmt"><summary>הצהרת נגישות</summary>${A11Y_STATEMENT}</details>`;
+  a11yPaint(el);
+  document.body.appendChild(el);
+  A11Y.el = el; A11Y.btn.setAttribute("aria-expanded", "true");
+  if (innerWidth > 640) {                    // under the button; phones get a sheet at the bottom (CSS)
+    const r = A11Y.btn.getBoundingClientRect();
+    el.style.left = Math.max(8, Math.min(innerWidth - el.offsetWidth - 8, r.left)) + "px"; el.style.top = (r.bottom + 6) + "px";
+    el.style.maxHeight = (innerHeight - r.bottom - 18) + "px";
+  }
+  el.addEventListener("click", e => {
+    e.stopPropagation();
+    const b = e.target.closest("[data-ts], [data-flag], .a11yreset, .a11yx");
+    if (!b) return;
+    if (b.matches(".a11yx")) { a11yClose(); A11Y.btn.focus(); return; }
+    if (b.dataset.ts != null) lsSet("lc-text", b.dataset.ts);
+    else if (b.dataset.flag) a11ySetFlag(b.dataset.flag, b.getAttribute("aria-pressed") !== "true");
+    else { lsSet("lc-text", ""); lsSet("lc-contrast", ""); lsSet("lc-a11y", ""); }
+    a11yApply(); a11yPaint(el); A11Y.done?.();
+  });
+  el.querySelector('[aria-checked="true"]')?.focus({ preventScroll: true });
+}
+// the privacy notice, once: the site keeps no cookies, only the choices above (and the colours) in this browser
+function noticeInit() {
+  if (lsGet("lc-notice")) return;
+  const el = document.createElement("div");
+  el.className = "notice"; el.setAttribute("role", "region"); el.setAttribute("aria-label", "פרטיות ועוגיות");
+  el.innerHTML = `<p><b>פרטיות:</b> האתר לא משתמש בעוגיות (cookies), לא עוקב אחריך ולא מציג פרסומות. רק ההעדפות שבחרת – צבעים, גודל טקסט ונגישות – נשמרות בדפדפן שלך, כדי שיישארו גם בפעם הבאה.</p>
+    <div class="nb"><button type="button" class="ok">הבנתי</button><button type="button" class="del">מחיקת ההעדפות השמורות</button></div>`;
+  document.body.appendChild(el);
+  el.querySelector(".ok").addEventListener("click", e => { e.stopPropagation(); lsSet("lc-notice", "1"); el.remove(); });
+  el.querySelector(".del").addEventListener("click", e => { e.stopPropagation(); STORE.forEach(k => lsSet(k, "")); location.reload(); });
+}
+// btn: the page's accessibility button; done(): redraw what depends on the text (the report's charts)
+function a11yInit(btn, done) {
+  document.querySelectorAll("[data-skip]").forEach(a => a.addEventListener("click", e => {   // "skip to the content"
+    e.preventDefault(); e.stopPropagation(); const t = document.querySelector(a.dataset.skip);
+    if (t) { if (!t.hasAttribute("tabindex")) t.setAttribute("tabindex", "-1"); t.focus(); } }));
+  noticeInit();
+  if (!btn) return;
+  A11Y.btn = btn; A11Y.done = done;
+  btn.setAttribute("aria-haspopup", "dialog"); btn.setAttribute("aria-expanded", "false");
+  btn.addEventListener("click", e => { e.stopPropagation(); A11Y.el ? a11yClose() : a11yOpen(); });
+  document.addEventListener("click", e => { if (A11Y.el && !A11Y.el.contains(e.target) && !btn.contains(e.target)) a11yClose(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && A11Y.el) { a11yClose(); btn.focus(); } });
+}
+// ---- tables: Excel-style sort and filter on every column. The state survives re-renders (by table title);
+// a header click sorts ↑ / ↓ / back to the default; ▾ opens the menu; the bar above the table resets it all.
+const TT = { st: Object.create(null), pop: null, bound: false };
+const ttEsc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+// cell text -> a number (m:ss / h:mm:ss in seconds, "12.5%", "+3") or text; "" and "–" are empty
+function ttVal(s) {
+  const t = String(s ?? "").replace(/\u2212/g, "-").trim();
+  if (!t || t === "–" || t === "-") return null;
+  let m = /^([+-]?)(\d+):(\d{2})(?::(\d{2}))?(?!\d)/.exec(t);
+  if (m) { const v = m[4] != null ? m[2] * 3600 + m[3] * 60 + +m[4] : m[2] * 60 + +m[3]; return m[1] === "-" ? -v : v; }
+  m = /^[+-]?\d+(?:\.\d+)?(?![\d:/.])/.exec(t);
+  return m ? +m[0] : t;
+}
+const ttText = td => {                       // what a cell shows in the filter list
+  if (!td) return "";
+  if (td.dataset.f != null) return td.dataset.f;
+  const a = td.querySelector("a[data-runner]") || td.querySelector(".bar b");
+  return (a || td).textContent.replace(/\s+/g, " ").trim();
+};
+const ttKey = td => {                        // what a cell is sorted by (data-v when the text is not enough)
+  if (!td) return null;
+  const v = td.dataset.v;
+  return v == null ? ttVal(ttText(td)) : v === "" ? null : isFinite(v) ? +v : v;
+};
+// categories as orienteers look for them: D (women) by age, then H (men), then the rest (בינוני, קצרצר …) by the alphabet;
+// a competitor's category that is not given comes last. Any other text is simply by the alphabet.
+const catKey = k => { const m = /^([DH])\s*(\d+)\s*(.*)$/i.exec(k);     // [group, age, the rest]: D14A -> [0, 14, "A"]
+  return m ? [m[1].toUpperCase() === "D" ? 0 : 1, +m[2], m[3]] : [k ? 2 : 3, 0, k]; };
+const catCmp = (a, b) => { const x = catKey(String(a ?? "")), y = catKey(String(b ?? ""));
+  return x[0] - y[0] || x[1] - y[1] || x[2].localeCompare(y[2], "he", { numeric: true }); };
+// empty cells always last; in a column of numbers, text counts as empty
+function ttCmp(a, b, dir, num) {
+  if (num) { if (typeof a !== "number") a = null; if (typeof b !== "number") b = null; }
+  if (a == null || b == null) return a == null ? (b == null ? 0 : 1) : -1;
+  const d = typeof a === "number" && typeof b === "number" ? a - b : typeof a === "number" ? -1 : typeof b === "number" ? 1
+    : catCmp(a, b);
+  return d * dir;
+}
+const ttRows = tb => [...tb.tBodies[0].rows];
+const ttHead = tb => [...tb.tHead.rows[tb.tHead.rows.length - 1].cells];
+const ttLabel = th => [...th.childNodes].filter(n => !n.classList?.contains("ttb")).map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+const ttTable = k => [...document.querySelectorAll("table[data-ttkey]")].find(t => t.dataset.ttkey === k);
+const ttBarOf = tb => { const at = tb.closest(".scroll") || tb; return at.previousElementSibling?.classList.contains("ttbar") ? at.previousElementSibling : null; };
+
+function tableTools(root, scope = "") {
+  if (!root) return;
+  ttBind();
+  root.querySelectorAll("table").forEach(tb => {
+    if (!tb.tHead || !tb.tBodies[0] || tb.dataset.tt === "off" || tb.dataset.ttkey) return;
+    const box = tb.closest(".card, section, aside, #me") || root;
+    const title = (box.querySelector("h2, h3")?.textContent || "").replace(/\s+/g, " ").trim();
+    tb.dataset.ttkey = `${scope}|${title}|${[...box.querySelectorAll("table")].indexOf(tb)}`;
+    // every table starts with the row number (מס״ד): the rows in the order they are shown now, after sorting and filtering
+    [...tb.tHead.rows].forEach((tr, i, all) => tr.insertAdjacentHTML("afterbegin", i === all.length - 1
+      ? `<th class="ttn" scope="col" data-tt="no" data-short="">מס״ד</th>` : `<th class="ttn"></th>`));
+    [...tb.tBodies[0].rows, ...(tb.tFoot ? tb.tFoot.rows : [])].forEach(r => r.insertAdjacentHTML("afterbegin", `<td class="ttn"></td>`));
+    ttRows(tb).forEach((r, i) => r.dataset.tti = i);
+    const head = ttHead(tb);
+    // the card view on phones: each cell learns its column's short name and its role (rank / name / main ...)
+    if (tb.classList.contains("cards")) {
+      const short = th => [...th.childNodes].filter(n => n.nodeName !== "SMALL").map(n => n.textContent).join(" ").replace(/\s+/g, " ").trim();
+      const lab = head.map(th => th.dataset.short ?? short(th)), role = head.map(th => th.dataset.card);
+      ttRows(tb).forEach(r => [...r.cells].forEach((td, j) => { if (td.dataset.l == null && lab[j]) td.dataset.l = lab[j];
+        if (role[j]) td.classList.add("cd-" + role[j]); }));
+    }
+    head.forEach((th, j) => {
+      if (th.dataset.tt === "no") return;
+      th.classList.add("tt");
+      th.insertAdjacentHTML("beforeend", `<button type="button" class="ttb" data-ttc="${j}" aria-label="מיון וסינון" aria-haspopup="dialog">▾</button>`);
+    });
+    const bar = document.createElement("div"); bar.className = "ttbar"; bar.hidden = true;
+    const at = tb.closest(".scroll") || tb; at.parentNode.insertBefore(bar, at);
+    if (tb.classList.contains("cards") && head.some(th => th.dataset.tt !== "no")) {   // phones: the header is hidden, this button lists its columns
+      const tools = document.createElement("div"); tools.className = "cdtools";
+      tools.innerHTML = `<button type="button" data-ttcols="${ttEsc(tb.dataset.ttkey)}" aria-haspopup="dialog">⇅ מיון וסינון</button><small></small>`;
+      at.parentNode.insertBefore(tools, bar);
+    }
+    ttApply(tb);
+  });
+}
+
+function ttApply(tb) {
+  const st = TT.st[tb.dataset.ttkey] || {}, ex = st.ex || {}, rows = ttRows(tb), head = ttHead(tb), body = tb.tBodies[0];
+  const cols = Object.keys(ex);
+  let shown = 0;
+  rows.forEach(r => { const ok = cols.every(j => !ex[j].has(ttText(r.cells[j]))); r.classList.toggle("tt-hide", !ok); shown += ok; });
+  const order = rows.slice().sort((a, b) => a.dataset.tti - b.dataset.tti);
+  if (st.sort) {
+    const [j, dir] = st.sort, v = new Map(rows.map(r => [r, ttKey(r.cells[j])])), vals = [...v.values()].filter(x => x != null);
+    const num = vals.filter(x => typeof x === "number").length * 2 >= vals.length;
+    order.sort((a, b) => ttCmp(v.get(a), v.get(b), dir, num) || a.dataset.tti - b.dataset.tti);
+  }
+  order.forEach(r => body.appendChild(r));
+  let n = 0;
+  order.forEach(r => { const c = r.cells[0]; if (c?.classList.contains("ttn")) c.textContent = r.classList.contains("tt-hide") ? "" : ++n; });
+  head.forEach((th, j) => { const b = th.querySelector(".ttb"); if (!b) return;
+    const s = st.sort?.[0] === j ? st.sort[1] : 0;
+    th.classList.toggle("tt-asc", s > 0); th.classList.toggle("tt-desc", s < 0);
+    th.setAttribute("aria-sort", s > 0 ? "ascending" : s < 0 ? "descending" : "none");
+    b.classList.toggle("on", !!ex[j]?.size); b.textContent = s > 0 ? "▲" : s < 0 ? "▼" : "▾"; });
+  const bar = ttBarOf(tb); if (!bar) return;
+  const hint = bar.previousElementSibling?.classList.contains("cdtools") && bar.previousElementSibling.querySelector("small");
+  if (hint) hint.textContent = `${shown < rows.length ? `${shown} מתוך ${rows.length}` : rows.length} שורות · לפי כל עמודה`;
+  bar.hidden = !(st.sort || cols.length);
+  if (bar.hidden) return;
+  const name = j => `<b>${ttEsc(ttLabel(head[j]) || "☆")}</b>`;
+  bar.innerHTML = `<span>${shown < rows.length ? `מוצגות <b>${shown}</b> מתוך ${rows.length} שורות` : `${rows.length} שורות`}`
+    + (st.sort ? ` · ממוין לפי ${name(st.sort[0])} ${st.sort[1] > 0 ? "↑" : "↓"}` : "")
+    + (cols.length ? ` · מסונן לפי ${cols.map(name).join(", ")}` : "") + `</span>`
+    + `<button type="button" data-ttreset="1" data-tip="המיון והסדר המקוריים, בלי סינון">↺ איפוס לברירת המחדל</button>`;
+}
+
+function ttSet(k, f) {
+  const st = TT.st[k] || (TT.st[k] = {}); st.ex ||= {};
+  f(st);
+  Object.keys(st.ex).forEach(j => st.ex[j].size || delete st.ex[j]);
+  if (!st.sort && !Object.keys(st.ex).length) delete TT.st[k];
+  const tb = ttTable(k); if (tb) ttApply(tb);
+}
+
+function ttOpen(btn) {
+  ttClose();
+  const th = btn.closest("th"), tb = th.closest("table"), k = tb.dataset.ttkey, j = +btn.dataset.ttc;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  // the values of the rows that pass the other columns' filters, as in Excel
+  const pass = r => Object.keys(ex).every(c => +c === j || !ex[c].has(ttText(r.cells[c])));
+  const counts = new Map();
+  ttRows(tb).filter(pass).forEach(r => { const v = ttText(r.cells[j]); counts.set(v, (counts.get(v) || 0) + 1); });
+  (ex[j] || []).forEach(v => counts.has(v) || counts.set(v, 0));
+  const vals = [...counts.keys()], sv = vals.map(ttVal);
+  const num = sv.filter(x => typeof x === "number").length * 2 >= sv.filter(x => x != null).length;
+  const order = vals.map((_, i) => i).sort((a, b) => ttCmp(sv[a], sv[b], 1, false) || vals[a].localeCompare(vals[b], "he"));
+  const s = st.sort?.[0] === j ? st.sort[1] : 0, hint = th.dataset.tth;
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>${ttEsc(ttLabel(th) || "עמודה")}</b>${hint ? `<small>${ttEsc(hint)}</small>` : ""}</div>
+    <button type="button" class="ttsort${s > 0 ? " on" : ""}" data-dir="1">${num ? "↑ מיון מהקטן לגדול" : "↑ מיון מא׳ עד ת׳"}</button>
+    <button type="button" class="ttsort${s < 0 ? " on" : ""}" data-dir="-1">${num ? "↓ מיון מהגדול לקטן" : "↓ מיון מת׳ עד א׳"}</button>
+    <div class="ttsep"></div>
+    <input type="search" class="ttq" placeholder="חיפוש ברשימה…" aria-label="חיפוש ברשימה" autocomplete="off">
+    <div class="ttall"><button type="button" data-ttall="1">✓ בחירת הכול</button><button type="button" data-ttall="0">✕ ביטול הכול</button></div>
+    <div class="ttlist">${order.map(i => `<label><input type="checkbox" data-i="${i}" ${ex[j]?.has(vals[i]) ? "" : "checked"}><span>${vals[i] === "" ? "(ריק)" : ttEsc(vals[i])}</span><small>${counts.get(vals[i])}</small></label>`).join("")}</div>
+    <div class="ttfoot"><button type="button" class="ttclear" ${ex[j]?.size ? "" : "disabled"}>ניקוי הסינון</button><button type="button" class="ttcancel">ביטול</button><button type="button" class="ttok">אישור</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j, vals, btn };
+  if (innerWidth > 640) {                    // under the header; phones get a sheet at the bottom (CSS)
+    const r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px";
+    pop.style.top = (r.bottom + 6 + h > innerHeight - 8 ? Math.max(8, r.top - h - 6) : r.bottom + 6) + "px";
+  }
+  if (!matchMedia("(pointer: coarse)").matches) pop.querySelector(".ttq").focus();
+}
+function ttCols(btn) {          // phones: the columns of a card table in one list; a tap opens that column's menu
+  ttClose();
+  const k = btn.dataset.ttcols, tb = ttTable(k); if (!tb) return;
+  const st = TT.st[k] || {}, ex = st.ex || {};
+  const pop = document.createElement("div");
+  pop.className = "ttpop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "מיון וסינון");
+  pop.innerHTML = `<div class="tthead"><b>מיון וסינון</b><small>בחרו עמודה כדי למיין לפיה או לסנן את הערכים שלה</small></div><div class="ttcols">`
+    + ttHead(tb).map((th, j) => !th.querySelector(".ttb") ? "" : `<button type="button" class="ttcol" data-ttcol="${j}"><span>${ttEsc(ttLabel(th) || "עמודה " + (j + 1))}</span>`
+      + `<small>${st.sort?.[0] === j ? `<b>${st.sort[1] > 0 ? "▲ ממוין" : "▼ ממוין"}</b> ` : ""}${ex[j]?.size ? "<b>מסונן</b> " : ""}‹</small></button>`).join("")
+    + `</div><div class="ttfoot"><button type="button" class="ttcancel">סגירה</button></div>`;
+  document.body.appendChild(pop);
+  TT.pop = { el: pop, k, j: -1, vals: [], btn };
+}
+function ttClose() { if (!TT.pop) return; const b = TT.pop.btn; TT.pop.el.remove(); TT.pop = null; if (b?.isConnected && !matchMedia("(pointer: coarse)").matches) b.focus({ preventScroll: true }); }
+function ttCanOk() { const P = TT.pop; if (!P) return;
+  P.el.querySelector(".ttok").disabled = ![...P.el.querySelectorAll(".ttlist label:not([hidden]) input")].some(cb => cb.checked); }
+function ttOk() {
+  const P = TT.pop; if (!P || P.el.querySelector(".ttok").disabled) return;
+  const searching = !!P.el.querySelector(".ttq").value.trim(), ex = new Set();
+  // as in Excel: with a search, only the matching values that are ticked stay
+  P.el.querySelectorAll(".ttlist input").forEach(cb => { if (!cb.checked || (searching && cb.closest("label").hidden)) ex.add(P.vals[+cb.dataset.i]); });
+  ttSet(P.k, st => { if (ex.size) st.ex[P.j] = ex; else delete st.ex[P.j]; });
+  ttClose();
+}
+function ttBind() {
+  if (TT.bound) return;
+  TT.bound = true;
+  // capture: handled here before the page's own click handlers
+  document.addEventListener("click", e => {
+    const t = e.target, P = TT.pop;
+    if (P && P.el.contains(t)) {
+      e.stopPropagation();
+      const col = t.closest("[data-ttcol]");
+      if (col) { const b = ttHead(ttTable(P.k))[+col.dataset.ttcol]?.querySelector(".ttb"); if (b) ttOpen(b); return; }
+      const sb = t.closest(".ttsort");
+      if (sb) { const d = +sb.dataset.dir; ttSet(P.k, st => st.sort = st.sort?.[0] === P.j && st.sort[1] === d ? null : [P.j, d]); ttClose(); }
+      else if (t.closest("[data-ttall]")) { const on = t.closest("[data-ttall]").dataset.ttall === "1";
+        P.el.querySelectorAll(".ttlist label:not([hidden]) input").forEach(cb => cb.checked = on); ttCanOk(); }
+      else if (t.closest(".ttclear")) { ttSet(P.k, st => delete st.ex[P.j]); ttClose(); }
+      else if (t.closest(".ttcancel")) ttClose();
+      else if (t.closest(".ttok")) ttOk();
+      return;
+    }
+    const b = t.closest(".ttb");
+    if (b) { e.stopPropagation(); e.preventDefault(); P?.btn === b ? ttClose() : ttOpen(b); return; }
+    const cb = t.closest("[data-ttcols]");
+    if (cb) { e.stopPropagation(); e.preventDefault(); P?.btn === cb ? ttClose() : ttCols(cb); return; }
+    if (P) ttClose();                          // a click outside closes the menu and still does what it was for
+    const rs = t.closest("[data-ttreset]");
+    if (rs) { e.stopPropagation(); const nx = rs.closest(".ttbar")?.nextElementSibling, tb = nx?.matches("table") ? nx : nx?.querySelector("table");
+      if (tb) { delete TT.st[tb.dataset.ttkey]; ttApply(tb); } return; }
+    const th = t.closest("th.tt");
+    if (th && th.dataset.legmap == null && !t.closest("a, button, input, select")) {
+      e.stopPropagation();
+      const tb = th.closest("table"), j = ttHead(tb).indexOf(th);
+      ttSet(tb.dataset.ttkey, st => { const s = st.sort?.[0] === j ? st.sort[1] : 0; st.sort = s === 0 ? [j, 1] : s > 0 ? [j, -1] : null; });
+    }
+  }, true);
+  document.addEventListener("change", e => { if (TT.pop?.el.contains(e.target)) ttCanOk(); });
+  document.addEventListener("input", e => {
+    if (!TT.pop || !e.target.classList?.contains("ttq")) return;
+    const q = e.target.value.trim().toLowerCase();
+    TT.pop.el.querySelectorAll(".ttlist label").forEach(l => l.hidden = !!q && !l.textContent.toLowerCase().includes(q));
+    ttCanOk();
+  });
+  document.addEventListener("keydown", e => {
+    if (!TT.pop) return;
+    if (e.key === "Escape") { e.preventDefault(); ttClose(); }
+    else if (e.key === "Enter" && e.target.classList?.contains("ttq")) { e.preventDefault(); ttOk(); }
+  }, true);
+}
+
+function render() {
+  const all = Array.isArray(D.series) ? D.series : [];
+  if (!all.length) { $("ttl").textContent = "עוד אין תוצאות משולבות"; $("sub").textContent = "כאן יופיעו אירועים של כמה ימים וליגות, כשיש להם תוצאות."; return; }
+  const s = all.find(x => x.key === S.s) || all[0];
+  document.title = `${s.name} · תוצאות משולבות · ניווט ישראל`;
+  $("list").innerHTML = all.map(x => `<a href="${link(x.key)}" class="${x === s ? "on" : ""}"${x === s ? ' aria-current="page"' : ""}>${esc(x.name)}`
+    + ` <small>${x.kind === "days" ? `${x.rounds.length} ימים` : `${x.rounds.length} ${x.rounds.length === 1 ? "מחזור" : "מחזורים"}`}</small></a>`).join("");
+  $("ttl").textContent = s.kind === "days" ? `${s.name} · תוצאות משולבות` : `${s.name} · טבלת הליגה`;
+  $("sub").textContent = s.kind === "days"
+    ? `סכום הזמנים של ${s.rounds.length} הימים, בכל קטגוריה. מי שלא סיים את כל הימים מופיע בסוף, בלי מקום. ▲▼ – השינוי במקום לעומת ${s.rounds.length === 2 ? "היום הראשון" : `אחרי ${s.rounds[s.rounds.length - 2].label}`}.`
+    : "בכל מחזור: 100 × הזמן של המנצח בקטגוריה ÷ הזמן של הנווט (המנצח מקבל 100). פסילה או לא סיים: 0. הניקוד הכולל: סכום כל המחזורים.";
+  const cats = Object.keys(s.cats).sort(catCmp), k = cats.includes(S.k) ? S.k : cats[0];
+  $("catsel").innerHTML = cats.map(c => `<option value="${esc(c)}"${c === k ? " selected" : ""}>${esc(c)} (${s.cats[c].length})</option>`).join("");
+  $("catsel").onchange = () => { location.hash = link(s.key, $("catsel").value); };
+  $("cats").innerHTML = cats.map(c => `<a href="${link(s.key, c)}" class="${c === k ? "on" : ""}"${c === k ? ' aria-current="true"' : ""}>${esc(c)} <small>${s.cats[c].length}</small></a>`).join("");
+  const rows = s.cats[k] || [], R = s.rounds;
+  const head = `<tr><th data-card="rank" data-short="">מקום</th><th data-card="name" data-short="">שם</th><th>מועדון</th>`
+    + R.map(r => `<th data-tt="no"><a href="../${esc(r.slug)}/">${esc(r.label)}</a></th>`).join("")
+    + (s.kind === "days" ? `<th data-card="main" data-short="">סה״כ</th><th>פער</th><th data-short="שינוי">▲▼</th>` : `<th data-card="main" data-short="">נקודות</th><th>מחזורים</th>`) + `</tr>`;
+  const cell = (r, i) => {
+    if (s.kind === "days") { const d = r.days[i];
+      return d.t != null ? `<td data-v="${d.t}" data-l="${esc(R[i].label)}">${ft(d.t)} <small>(${d.p})</small></td>` : `<td class="no" data-l="${esc(R[i].label)}">${esc(ST[d.st] || d.st)}</td>`; }
+    const v = r.pts[i]; return `<td data-v="${v ?? ""}" data-l="${esc(R[i].label)}"${v == null ? ' class="no"' : ""}>${pts(v)}</td>`; };
+  const body = rows.map(r => `<tr><td class="num">${r.place ?? "–"}</td><td class="n">${esc(r.n)}</td><td>${esc(r.cl || "")}</td>${R.map((_, i) => cell(r, i)).join("")}`
+    + (s.kind === "days"
+      ? `<td class="tot" data-v="${r.total ?? ""}">${ft(r.total)}</td><td data-v="${r.behind ?? ""}">${r.behind ? `<span dir="ltr">+${ft(r.behind)}</span>` : r.place === 1 ? "" : "–"}</td>`
+        + `<td data-v="${r.move ?? ""}">${r.move > 0 ? `<span class="up">▲${r.move}</span>` : r.move < 0 ? `<span class="down">▼${-r.move}</span>` : r.move === 0 ? "=" : ""}</td>`
+      : `<td class="tot" data-v="${r.total}">${pts(r.total)}</td><td data-v="${r.ran}">${r.ran}</td>`) + `</tr>`).join("");
+  $("standing").innerHTML = rows.length ? `<div class="scroll"><table class="cards"><thead>${head}</thead><tbody>${body}</tbody></table></div>`
+    : `<p class="empty">אין תוצאות בקטגוריה הזו.</p>`;
+  tableTools($("standing"), `series-${s.key}-${k}`);
+  $("note").textContent = `לפי הדוחות של ${R.map(r => r.label).join(", ")}. נווט מזוהה לפי שמו, בכל קטגוריה בנפרד.`;
+}
+readHash(); render();
+addEventListener("hashchange", () => { readHash(); render(); });
+a11yInit($("a11yb")); themeInit($("theme"));
+</script>
+</body>
+</html>
