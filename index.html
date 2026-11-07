@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-J+s8dBHkjjR+BU5GAdVusC3LCjr5YBjrMQbcalPPRMA=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-kJnVDRPTLpneF8T8qOgSS2t1WP9vbTt9X6plEee0iig=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -102,8 +102,8 @@ h1 em { font-style: normal; color: var(--accent); white-space: nowrap; }
 .sec span { font: 500 calc(13px * var(--ts, 1)) var(--sans); color: var(--muted); }
 .sec::after { content: ""; flex: 1; border-top: 1px solid var(--rule); align-self: center; }
 
-/* competitions: the rows of a results sheet */
-.comp { display: grid; grid-template-columns: 70px minmax(0, 1fr) 240px; gap: 10px 28px; padding: 30px 0; border-bottom: 1px solid var(--rule); }
+/* competitions: the rows of a results sheet - what it was on one side, everything to open on the other, as tiles */
+.comp { display: grid; grid-template-columns: 70px minmax(0, 1fr) minmax(0, 1.12fr); gap: 10px 36px; padding: 30px 0; border-bottom: 1px solid var(--rule); }
 .comp:last-child { border-bottom: 1.5px solid var(--ink); }
 .ctl svg { width: 64px; height: 64px; display: block; }
 .ctl circle { fill: none; stroke: var(--accent); stroke-width: 3; }
@@ -119,22 +119,30 @@ h1 em { font-style: normal; color: var(--accent); white-space: nowrap; }
 .facts dt { font: 500 calc(12.5px * var(--ts, 1)) var(--sans); color: var(--muted); margin-top: 6px; }
 .upd { display: flex; align-items: center; gap: 8px; margin-top: 18px; font: 500 calc(13px * var(--ts, 1)) var(--sans); color: var(--muted); font-variant-numeric: tabular-nums; }
 .upd i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex: none; }
-.go { display: flex; flex-direction: column; gap: 8px; align-self: center; }
-.go a { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 16px; border: 1.5px solid var(--ink);
-  text-decoration: none; font: 600 calc(15px * var(--ts, 1)) var(--sans); color: var(--ink); transition: background .15s, color .15s, border-color .15s; }
-.go a b { font-weight: 400; transition: transform .15s; }
-.go a:hover b { transform: translateX(-4px); }
-.go a.primary { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); }
+/* the links: two tiles to a row (the main one, and a last one alone, across); an icon, what it is, a word on it.
+   Pages of the site in ink, other sites (↗) in a lighter frame */
+.go { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-self: center; }
+.go a { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 9px 14px; border: 1.5px solid var(--ink); background: var(--paper);
+  text-decoration: none; color: var(--ink); transition: background .15s, color .15s, border-color .15s; }
+.go a.wide, .go a.primary { grid-column: 1 / -1; }
+.go .ic { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.go .ic .dot { fill: #e0242a; stroke: none; }
+.go a > span:not(.ar) { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.25; }
+.go a b { font: 600 calc(15px * var(--ts, 1)) var(--sans); }
+.go a small { font: 500 calc(12.5px * var(--ts, 1)) var(--sans); color: var(--muted); margin-top: 3px; }
+.go .ar { flex: none; color: var(--muted); font-size: calc(15px * var(--ts, 1)); transition: transform .15s; }
 .go a:hover { border-color: var(--accent); color: var(--accent); }
+.go a:hover .ar { color: var(--accent); transform: translateX(-4px); }
+.go a.ext { border-color: var(--rule-2); }
+.go a.ext:hover { border-color: var(--accent); }
+.go a.ext:hover .ar { transform: translate(-2px, -2px); }
+.go a.primary { min-height: 56px; background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); }
+.go a.primary b { font-size: calc(16px * var(--ts, 1)); }
+.go a.primary .ic { stroke: currentColor; } .go a.primary small, .go a.primary .ar { color: inherit; opacity: .85; }
 .go a.primary:hover { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); }
-.go a.ext { border-color: var(--rule-2); color: var(--ink-2); font-weight: 500; padding: 9px 16px; }
-.go a.ext:hover { border-color: var(--accent); color: var(--accent); }
-.go a.ext:hover b { transform: translate(-2px, -2px); }
-.go a.live span { display: inline-flex; align-items: center; gap: 8px; }
-.go a.live i { width: 9px; height: 9px; border-radius: 50%; background: #e0242a; box-shadow: 0 0 0 3px rgba(224,36,42,.2); }
-.comp.soon .go a.live { border-color: var(--ink); color: var(--ink); font-weight: 600; padding: 12px 16px; }
+.go a.track { border-color: var(--red); } .go a.track .ic { stroke: var(--red); }
+.comp.soon .go a.live { border-color: var(--ink); }
 .soonnote { margin: 6px 0 0; color: var(--ink-2); max-width: 520px; }
-.go a.track { border-color: var(--red); color: var(--red); font-weight: 600; }
 footer .adminl { color: var(--muted); white-space: nowrap; }
 
 /* one runner across the season */
@@ -146,7 +154,9 @@ footer .adminl { color: var(--muted); white-space: nowrap; }
 .season div { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; } .season b { display: block; font: 700 calc(26px * var(--ts, 1))/1.1 var(--serif); }
 .season span { color: var(--ink-2); font-size: calc(13px * var(--ts, 1)); }
 button.share { font: inherit; font-size: calc(13px * var(--ts, 1)); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
-.secl { margin-inline-start: auto; font-weight: 600; color: var(--accent); }
+.secl { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 7px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.secl:hover { text-decoration: underline; text-underline-offset: 3px; }
+.secl svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: calc(14.5px * var(--ts, 1)); }
 th { text-align: right; font: 600 calc(12px * var(--ts, 1)) var(--sans); color: var(--muted); letter-spacing: .03em; padding: 8px 10px;
@@ -172,10 +182,14 @@ footer p { margin: 0; max-width: 72ch; }
 .scale svg { width: 150px; height: 14px; }
 .scale rect { fill: var(--ink); } .scale rect.w { fill: none; stroke: var(--ink); stroke-width: 1; }
 
+@media (max-width: 1040px) {        /* too narrow for the tiles beside the facts: under them, as wide as the text */
+  .comp { grid-template-columns: 70px minmax(0, 1fr); }
+  .go { grid-column: 2 / -1; margin-top: 12px; }
+}
 @media (max-width: 860px) {
   .comp { grid-template-columns: 52px minmax(0, 1fr); gap: 8px 16px; }
   .ctl svg { width: 48px; height: 48px; }
-  .go { grid-column: 1 / -1; margin-top: 8px; }
+  .go { grid-column: 1 / -1; margin-top: 10px; }
   .topo { width: 540px; left: -210px; opacity: .5; }
   .trend { grid-template-columns: 1fr; gap: 26px; }
 }
@@ -185,7 +199,11 @@ footer p { margin: 0; max-width: 72ch; }
   .hero { padding: 40px 0 34px; }
   .lead { font-size: calc(16.5px * var(--ts, 1)); }
   .facts { gap: 24px; } .facts dd { font-size: calc(24px * var(--ts, 1)); }
-  .go a { padding: 14px 16px; }
+  /* phones: still two to a row - each tile's icon above its words (the arrow in the corner), so they fit at 320 px */
+  .go a:not(.primary):not(.wide) { position: relative; flex-direction: column; align-items: flex-start; gap: 7px; padding: 11px 12px 10px; }
+  .go a:not(.primary):not(.wide) .ar { position: absolute; top: 9px; left: 11px; }
+  .go a b { font-size: calc(14.5px * var(--ts, 1)); }
+  .sec span { display: none; }
   .sec h2 { font-size: calc(26px * var(--ts, 1)); }
   td, th { padding: 9px 8px; font-size: calc(13.5px * var(--ts, 1)); }
   footer { flex-direction: column; align-items: flex-start; }
@@ -367,7 +385,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     <div class="hits" id="hits" aria-live="polite"></div>
     <div id="me"></div>
   </section>
-  <div class="sec"><h2>תחרויות</h2><span id="ncomp"></span><a class="secl" href="clubs/">מועדונים ←</a></div>
+  <div class="sec"><h2>תחרויות</h2><span id="ncomp"></span><a class="secl" href="clubs/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><circle cx="16.8" cy="9.5" r="2.4"/><path d="M15.6 14.4a4.4 4.4 0 0 1 5.4 4.3"/></svg>מועדונים ←</a></div>
   <div id="comps"></div>
   <footer>
     <p>הנתונים מדוחות LapCombat ומ-Mulka של כל תחרות. המדדים מוסברים בתוך כל דוח, ומסלולי ה-GPS נמצאים ב-Livelox, עם קישור מכל דוח. <a class="adminl" href="admin/">כניסת מנהלים</a></p>
@@ -396,10 +414,29 @@ const fupd = u => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2})$/.exec(u |
 // "אליפות ישראל-יער אודם-יום 2 · 24.10.2026" -> the event, and the day as a second line (the date is shown on its own).
 // A title saved before dates were written as in Israel ends "· 2026/10/24": taken off the same way.
 const NODATE = t => String(t || "").replace(/\s*·\s*(?:\d{4}[\/.-]\d{1,2}[\/.-]\d{1,2}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})\s*$/, "");
+// the links' icons: one line drawing each (a 24 grid, the colour of the text) - not emoji, which every phone draws its own way
+const ICON = {
+  chart: '<path d="M4 4v16h16"/><path d="M8.5 16v-4M12.5 16V8M16.5 16v-6"/>',
+  trophy: '<path d="M8 4h8v6a4 4 0 0 1-8 0Z"/><path d="M8 6H5.5a2.5 2.5 0 0 0 2.6 4M16 6h2.5a2.5 2.5 0 0 1-2.6 4M12 14v3.5M8.5 20h7M10 17.5h4"/>',
+  live: '<circle class="dot" cx="12" cy="12" r="2.6"/><path d="M8.2 8.2a5.4 5.4 0 0 0 0 7.6M15.8 8.2a5.4 5.4 0 0 1 0 7.6M5.3 5.3a9.5 9.5 0 0 0 0 13.4M18.7 5.3a9.5 9.5 0 0 1 0 13.4"/>',
+  clock: '<circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V10M9.5 3h5M12 3v3.5M18 7.5l1.3-1.3"/>',
+  pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.4"/>',
+  map: '<path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2Z"/><path d="M9 4.5v13M15 6.5v13"/>',
+  route: '<path d="M4.5 20 7 15.6 9.5 20Z"/><path d="M8.8 13.6c1.8-2.4 4.6-1.6 5.8-4.4" stroke-dasharray="1.6 2.4"/><circle cx="17" cy="7" r="3"/><circle cx="17" cy="7" r="1.3"/>',
+};
+const ic = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
+// one link of a competition: its icon, what it is and a word on it; another site's opens in a new tab (↗)
+const tile = (cls, href, icon, label, sub, ext) => `<a class="${cls}" href="${esc(href)}"${ext ? ' target="_blank" rel="noopener noreferrer"' : ""}>${ic(icon)}`
+  + `<span><b>${esc(label)}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span><span class="ar" aria-hidden="true">${ext ? "↗" : "←"}</span></a>`;
+// the links two to a row: the main one across the top, and the last one across too when it would be alone in its row
+const goNav = (name, main, rest) => { rest = rest.filter(Boolean);
+  if (rest.length % 2) rest[rest.length - 1] = rest[rest.length - 1].replace('<a class="', '<a class="wide ');
+  return `<nav class="go" aria-label="${esc(name)}">${main || ""}${rest.join("")}</nav>`; };
 // the events of several days and the leagues a competition is part of: a link to their standings (site/series/)
 const SERIES = Array.isArray(D.series) ? D.series : [];
-const seriesLinks = c => SERIES.filter(x => Array.isArray(x.slugs) && x.slugs.includes(c.slug)).map(x =>
-  `<a class="series" href="series/#s=${encodeURIComponent(x.key)}"><span>🏆 ${x.kind === "days" ? "תוצאות משולבות" : "טבלת הליגה"}</span><b>←</b></a>`).join("");
+const seriesLinks = c => SERIES.filter(x => Array.isArray(x.slugs) && x.slugs.includes(c.slug)).map(x => x.kind === "days"
+  ? tile("series", `series/#s=${encodeURIComponent(x.key)}`, "trophy", "תוצאות משולבות", "כל הימים יחד")
+  : tile("series", `series/#s=${encodeURIComponent(x.key)}`, "trophy", "טבלת הליגה", "כל המחזורים"));
 const splitTitle = t => { t = NODATE(t);
   const m = /^(.*?)[\s\-–־]*(יום\s*\d+)$/.exec(t); return m && m[1] ? [m[1], m[2]] : [t, ""]; };
 
@@ -437,9 +474,9 @@ function numbering(list) {
 function renderComps() {
 const C = compList(), NO = numbering(C);
 $("comps").innerHTML = C.map((c, i) => { const [name, day] = splitTitle(c.title), m = ymd(c.date), no = NO.get(c.slug) || i + 1;
-  const live = mkOk(c.mulka) ? `<a class="ext live" href="${esc(c.mulka)}" target="_blank" rel="noopener noreferrer"><span><i></i>תוצאות חיות ב-Mulka</span><b>↗</b></a>` : "";
-  const start = (num(c.start) ? `<a class="${c.report === false ? "primary" : ""}" href="${c.slug}/start/"><span>⏱ זמני זינוק · ${num(c.start)}</span><b>←</b></a>` : "")
-    + (num(c.start) && near(c.date) ? `<a class="track" href="${c.slug}/track/"><span>📍 מעקב נווטים בשטח</span><b>←</b></a>` : "");
+  const live = mkOk(c.mulka) ? tile("ext live", c.mulka, "live", "תוצאות חיות", "ב-Mulka", true) : "";
+  const start = num(c.start) ? tile(c.report === false ? "primary" : "", `${c.slug}/start/`, "clock", "זמני זינוק", `${num(c.start)} נווטים`) : "";
+  const track = num(c.start) && near(c.date) ? tile("track", `${c.slug}/track/`, "pin", "מעקב נווטים", "מי עוד בשטח") : "";
   if (c.live_only || c.report === false) return `<article class="comp soon">
     <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33" class="${no >= 100 ? "s3" : no >= 10 ? "s2" : ""}">${no}</text></svg></div>
     <div>
@@ -447,7 +484,7 @@ $("comps").innerHTML = C.map((c, i) => { const [name, day] = splitTitle(c.title)
       <h3>${esc(name)}${day ? `<small>${esc(day)}</small>` : ""}</h3>
       <p class="soonnote">${start ? "זמני הזינוק כבר כאן" : ""}${start && live ? ", ו" : ""}${live ? `${start ? "ה" : "ה"}תוצאות החיות של המארגנים: מי זינק, מי עוד בשטח ומי סיים` : ""}. הניתוח המלא יעלה כאן אחרי התחרות.</p>
     </div>
-    <nav class="go" aria-label="${esc(name)}">${start}${live}${seriesLinks(c)}</nav>
+    ${goNav(name, start, [track, live, ...seriesLinks(c)])}
   </article>`;
   return `<article class="comp">
     <div class="ctl" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27"/><text x="32" y="33" class="${no >= 100 ? "s3" : no >= 10 ? "s2" : ""}">${no}</text></svg></div>
@@ -457,9 +494,8 @@ $("comps").innerHTML = C.map((c, i) => { const [name, day] = splitTitle(c.title)
       <dl class="facts"><div><dt>מסלולים</dt><dd>${c.courses.length}</dd></div><div><dt>נווטים</dt><dd>${num(c.runners)}</dd></div><div><dt>סיימו</dt><dd>${num(c.finished)}</dd></div></dl>
       ${c.updated ? `<div class="upd"><i></i>עודכן <span dir="ltr">${esc(fupd(c.updated))}</span></div>` : ""}
     </div>
-    <nav class="go" aria-label="${esc(name)}"><a class="primary" href="${c.slug}/#v=overview"><span>תוצאות וניתוח</span><b>←</b></a>${seriesLinks(c)}${live}${start}
-      ${c.map ? `<a href="${c.slug}/#v=map"><span>חדר מצב · מפה</span><b>←</b></a>` : ""}
-      ${lxOk(c.livelox) ? `<a class="ext" href="${esc(c.livelox)}" target="_blank" rel="noopener noreferrer"><span>מסלולי GPS ב-Livelox</span><b>↗</b></a>` : ""}</nav>
+    ${goNav(name, tile("primary", `${c.slug}/#v=overview`, "chart", "תוצאות וניתוח", ""), [...seriesLinks(c), c.map ? tile("", `${c.slug}/#v=map`, "map", "חדר מצב", "כל המסלולים על המפה") : "",
+      start, track, live, lxOk(c.livelox) ? tile("ext", c.livelox, "route", "מסלולי GPS", "ב-Livelox", true) : ""])}
   </article>`; }).join("") || `<p class="hint">אין עדיין תחרויות</p>`;
 }
 renderComps();

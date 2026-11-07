@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AoUorrbF+RP4TP5gUiRWdzqXj2qGBNXSA2a0T35ipgk=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ORYlmYm/8ZLrHMV6XUoW10UYbiJiwpDlCtv6nkFEcOo=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -47,6 +47,7 @@ button.pri { background: var(--tab-on); border-color: var(--tab-on); color: var(
 button.del { border-color: var(--bad); color: var(--bad); } button:disabled { opacity: .5; cursor: default; }
 .card { background: var(--surface); border: 1px solid var(--rule-2); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
 .card h2 { font-size: calc(18px * var(--ts, 1)); margin: 0 0 8px; }
+.card h3.sub { font-size: calc(15px * var(--ts, 1)); margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); }
 .note { color: var(--ink-2); margin: 0 0 12px; }
 label { display: block; font-weight: 600; font-size: calc(13.5px * var(--ts, 1)); margin: 10px 0 4px; }
 input { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--rule-2); border-radius: 8px; background: var(--paper); color: var(--ink); }
@@ -327,11 +328,29 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
         <p class="msg" id="umsg" role="status"></p>
         <div id="ustat" class="note" aria-live="polite"></div>
       </section>
+      <section class="card" id="clubcard" hidden>
+        <h2>תיקון מועדונים</h2>
+        <p class="note">נווט שרשום במועדון הלא נכון, או מועדון שכתוב בכמה צורות. התיקון חל על כל התחרויות באתר – בדוחות, בדף הבית, ברשימת המועדונים,
+          בתוצאות המשולבות, בזמני הזינוק ובמעקב – ועל תחרויות שיעלו בהמשך. הקבצים עצמם לא משתנים.</p>
+        <h3 class="sub">המועדון של נווט</h3>
+        <div class="row"><div><label for="cfn">שם הנווט</label><input id="cfn" list="cfnames" autocomplete="off" spellcheck="false" maxlength="120" aria-describedby="cfn-h"><p class="dth" id="cfn-h"></p></div>
+          <div><label for="cfc">המועדון הנכון</label><input id="cfc" list="cfclubs" autocomplete="off" spellcheck="false" maxlength="60" placeholder="ריק – בלי מועדון"></div></div>
+        <div class="act"><button type="button" class="pri" id="cfadd">שמירת המועדון של הנווט</button></div>
+        <h3 class="sub">שם של מועדון</h3>
+        <div class="row"><div><label for="ccf">המועדון כפי שהוא באתר</label><input id="ccf" list="cfclubs" autocomplete="off" spellcheck="false" maxlength="60" aria-describedby="ccf-h"><p class="dth" id="ccf-h"></p></div>
+          <div><label for="cct">השם הנכון</label><input id="cct" list="cfclubs" autocomplete="off" spellcheck="false" maxlength="60"></div></div>
+        <p class="dth">שם של מועדון אחר שכבר באתר מאחד את שניהם.</p>
+        <div class="act"><button type="button" class="pri" id="ccadd">שינוי השם</button></div>
+        <p class="msg" id="cfmsg" role="status"></p>
+        <div id="cfstat" class="note" aria-live="polite"></div>
+        <div id="cflist"></div>
+        <datalist id="cfnames"></datalist><datalist id="cfclubs"></datalist>
+      </section>
     </div>
   </main>
 </div>
 <script>
-const D = {"repo":"NivutIsrael/nivutisrael.github.io","data_repo":"NivutIsrael/lapcombat-data","gateway":"https://script.google.com/macros/s/AKfycbyNFxH0etZDR3MAPqQedC1EFQvNP_CwiNAl0qut1hPOgufTvxUFMHSNvHDdbjqqo-skoA/exec","live":{"v":1,"comps":{"odem-2-24-10-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId=202610247pasGNIW-sjvenGdSg9Kcg","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24","updated":"2026-11-05T20:10:42Z","by":"NivutIsrael"},"hacarmel-3-14-11-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId","title":"שער הכרמל- ליגת יער- מחזור 1 · 14.11.2026","date":"2026-11-14","updated":"2026-11-06T07:56:47Z","by":"Owner"}}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 23.10.2026","date":"2026-10-23"}]};
+const D = {"repo":"NivutIsrael/nivutisrael.github.io","data_repo":"NivutIsrael/lapcombat-data","gateway":"https://script.google.com/macros/s/AKfycbyNFxH0etZDR3MAPqQedC1EFQvNP_CwiNAl0qut1hPOgufTvxUFMHSNvHDdbjqqo-skoA/exec","live":{"v":1,"comps":{"odem-2-24-10-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId=202610247pasGNIW-sjvenGdSg9Kcg","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24","updated":"2026-11-05T20:10:42Z","by":"NivutIsrael"},"hacarmel-3-14-11-2026":{"url":"https://jp.mulka2.com/cloud/live/index.jsp?eventId","title":"שער הכרמל- ליגת יער- מחזור 1 · 14.11.2026","date":"2026-11-14","updated":"2026-11-06T07:56:47Z","by":"Owner"}}},"comps":[{"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער אודם-יום 2 · 24.10.2026","date":"2026-10-24"},{"slug":"odem-1-23-10-2026","title":"אליפות ישראל- יער אודם- יום 1 · 23.10.2026","date":"2026-10-23"}],"clubs":{"runners":[["Olbinska Shezhana","מנשה"],["Olbinskiy Vitalik","מנשה"],["Rigbi Liron",""],["Vardi Nitsan","FIF Hillerod"],["hamburger anat",""],["אבוגני שמואל","גליל"],["אבוחצירא יהלי","אסא טכניון חיפה"],["אבידן אליק","מנשה"],["אבידן הילה","מנשה"],["אביטל עפר","גליל"],["אבנר עוזי","גליל"],["אברהם דקל","אסא טכניון חיפה"],["אברהם רגב","אסא טכניון חיפה"],["אגבריה חוסאם","יזרעאל"],["אהל גל","גליל"],["אהרוני דניאל","חבל מודיעין"],["אוחיון עידו",""],["אוסטר שמואל","גליל"],["איגנטוב אידה","חבל מודיעין"],["איגנטוב אנדרי","חבל מודיעין"],["איגנטוב אנה","חבל מודיעין"],["איגנטייב טימופיי","תל אביב"],["איילי גלעד","גליל"],["איל חנן","גליל"],["אילגץ' אלינה","תל אביב"],["אילגץ׳ גאורגי","תל אביב"],["אילן גאיה","יזרעאל"],["אילן יעקב","יזרעאל"],["אלוני יובל",""],["אלוש רות","חבל מודיעין"],["אליאס גיל","תל אביב"],["אליאס מעין","תל אביב"],["אלמוג מעיין","אסא טכניון חיפה"],["אלעד חגי","תל אביב"],["אלפרט רועי",""],["אס אורי","טכניון כרמל"],["ארד ארז","יזרעאל"],["ארד שחר-3446","ראשון לציון"],["ארז נחשון","ראשון לציון"],["ארם יעקבי","השרון"],["ארצי ירון","יזרעאל"],["ארצי נעה","יזרעאל"],["אש נחמן","השרון"],["אשד כרמל","טכניון כרמל"],["אשל סהר","מנשה"],["בהט עידו","יזרעאל"],["בוכבינדר מודי","השרון"],["בולוטני מיכאל","גליל"],["בורלינוב סרגיי","הפועל תל אביב"],["בושקוב מיכאיל","גליל"],["בושקוב מיכאל","גליל"],["ביאר אביחי","יזרעאל"],["בלבן ברוך","גליל"],["בלגלי רן","השרון"],["בלוה יוחאי",""],["בן דור - יסעור מאיה","חבל מודיעין"],["בן דור-יסעור אורי","חבל מודיעין"],["בן שטרית מאיר","יזרעאל"],["בן-דור יואב","חבל מודיעין"],["בר יהודה יונתן","מנשה"],["בר לריסה","השרון"],["בר קוסטיה",""],["בר-גד יואב","תל אביב"],["בר-גד יזהר","תל אביב"],["ברג דוד","טכניון כרמל"],["ברון איתי","מנשה"],["ברונשטיין אופיר","מנשה"],["ברונשטיין אלון","מנשה"],["ברונשטיין דורון","מנשה"],["ברונשטיין ציפי","מנשה"],["ברטרנד ארז","גליל"],["ברניב אירנה","מנשה"],["ברנס עינב","חבל מודיעין"],["ברקאי סתיו","מנשה"],["ברקאי עזרא","מנשה"],["ברקוביץ מיכל","מנשה"],["ברקוביץ מרב","טכניון כרמל"],["ברקוביץ עמירן","טכניון כרמל"],["ברקן אורי","יזרעאל"],["גבע בתשבע","חבל מודיעין"],["גברילוב פבל","טכניון כרמל"],["גוטמן אילנה","חבל מודיעין"],["גוטמן יהודה","חבל מודיעין"],["גול אפק","תל אביב"],["גוסב איליה","תל אביב"],["גור אלי","חבל מודיעין"],["גור אלעזר","מנשה"],["גורליק נאדזדה","גליל"],["גזברי איתמר","מנשה"],["גילה אייל","יזרעאל"],["גילה זיו","יזרעאל"],["גלוזשטיין ולרי","ראשון לציון"],["גלוזשטיין לודמילה","ראשון לציון"],["גנדלמן אייל","השרון"],["גנוסר יובל","חבל מודיעין"],["גנוסר נדב","חבל מודיעין"],["גנוסר תומר","חבל מודיעין"],["גפן אביגיל","טכניון כרמל"],["גפן גוש","טכניון כרמל"],["גרדי דן","עמק חפר"],["גרדי הדס","עמק חפר"],["גרדי עומר","עמק חפר"],["גרדי עינת","עמק חפר"],["גריידי מלאכי","אסא טכניון חיפה"],["גרין וורן","השרון"],["גרינברג אניה","תל אביב"],["גרינברג גיל","תל אביב"],["גרינברג דפי","גליל"],["גרינברג מיקי","גליל"],["גריף דניאל","השרון"],["גרנט עופר","מנשה"],["דביר יונתן","ראשון לציון"],["דה-קוסטה אריאל","יזרעאל"],["דה-קוסטה רוני","יזרעאל"],["דובדבני אדר","יזרעאל"],["דודלזק צביקה","מנשה"],["דנציג אלמוג","יזרעאל"],["דנציג נבו","יזרעאל"],["הולנדר גדעון","תל אביב"],["הימן יונה","השרון"],["הימן רפי","השרון"],["הלחמי אבנר","חבל מודיעין"],["הלחמי יואב","חבל מודיעין"],["הלחמי ליאור","חבל מודיעין"],["הלחמי קרן","חבל מודיעין"],["הראל דרור","חבל מודיעין"],["וולשטיין דן","מנשה"],["וידר יואב","טכניון כרמל"],["ויינר יגאל","יזרעאל"],["ויינר עופר","יזרעאל"],["ויינר עמית","חבל מודיעין"],["ויינר שחר","יזרעאל"],["ויינר תומר","יזרעאל"],["ויסמן עדי","חבל מודיעין"],["ויסמן שאול","חבל מודיעין"],["ורבין אסיה","תל אביב"],["ורבין עודד","תל אביב"],["ורבין עידן","תל אביב"],["ורבין עמית","תל אביב"],["ורולקר הראל","אסא טכניון חיפה"],["זאבי מיכלי","חבל מודיעין"],["זאבי נורית","חבל מודיעין"],["זביילובה יוליה","טכניון כרמל"],["זוהר אליאס","אסא תל אביב"],["זורע אלון","אסא טכניון חיפה"],["זורע טל","תל אביב"],["זזינסקי אנריקו","מנשה"],["זידנוב דניס","השרון"],["זיו צפיר","מנשה"],["זיו קרן",""],["זילברשטיין דרור","יזרעאל"],["זילברשטיין נעמה","יזרעאל"],["זכות דרור","מנשה"],["זכות ויטו","מנשה"],["זכות שירה","מנשה"],["זליגמן הלל","טכניון כרמל"],["זלצמן אלכסנדר","ראשון לציון"],["זריהן בר","גליל"],["חדד עמית","מנשה"],["חדד-דגן דר","מנשה"],["חורב לוטן",""],["חורב רני","תל אביב"],["חורושילוב לריסה","תל אביב"],["חלבה אורן","תל אביב"],["חלבה אמיר","תל אביב"],["חלבה הדר","תל אביב"],["חלבה תמר","תל אביב"],["חצב אלה","תל אביב"],["חריש רוני","גליל"],["טויג ענבל","חבל מודיעין"],["טויג רון","חבל מודיעין"],["טולקו אלכסנדרה","תל אביב"],["טולקוב אלכסנדרה","תל אביב"],["טייטר ארתור","תל אביב"],["טל אביב","תל אביב"],["טל אדר","אסא ירושלים"],["טל-מסינג טיאן","תל אביב"],["טרופימצ׳יק מרינה","תל אביב"],["יבסייב אדר","יזרעאל"],["יבסייב אריה","יזרעאל"],["יוגב דפנה","מנשה"],["יוגב כרמל","מנשה"],["יוגב עדי","מנשה"],["יוגב רביב","מנשה"],["יוגב רותם","מנשה"],["יודפת עופר","חבל מודיעין"],["יוסף עידן",""],["יזרעאלי טלאל","יזרעאל"],["יזרעאלי יהודה","יזרעאל"],["ימין גלעד",""],["יסעור גל","יזרעאל"],["יסעור ניצן","יזרעאל"],["יסעור ניר","יזרעאל"],["יסעור ענבר","יזרעאל"],["יסעור רתם","יזרעאל"],["יעקבי אלישע","השרון"],["יעקבי ארם","השרון"],["יעקבי יוני","חבל מודיעין"],["יעקבי יערה","חבל מודיעין"],["יעקבי עופרי","חבל מודיעין"],["יעקבי ענבר","חבל מודיעין"],["יפה מור","השרון"],["כהן נמרוד","תל אביב"],["כהן שלומי","גליל"],["כהן תומר","טכניון כרמל"],["כהנא איתן","השרון"],["כהנא אלון","השרון"],["כחל עמר","אסא טכניון חיפה"],["כספי יעל","השרון"],["כספי שי","השרון"],["כצמן אדי","מנשה"],["לב-אל ניבה","תל אביב"],["לדרר חגי","מנשה"],["לדרר שלו","מנשה"],["לוי אלינור","חבל מודיעין"],["לוי אריאל","חבל מודיעין"],["לוי דניאל","חבל מודיעין"],["לוי יוליה","חבל מודיעין"],["לוי יוסי","חבל מודיעין"],["לוי מאיה","חבל מודיעין"],["לוי עדי","חבל מודיעין"],["לוי שגיא","חבל מודיעין"],["לוינקרון זהבה","גליל"],["לויצקי פבל","תל אביב"],["לזרי עובדיה","עמק חפר"],["ליאור איל","חבל מודיעין"],["לידור אורי","מנשה"],["ליזוגוב ויאצ'סלב","עמק חפר"],["ליפוביץ אלכס","עמק חפר"],["ליפמן אשל","השרון"],["ליפמן יעל","השרון"],["ליפמן רמי","השרון"],["לנס עידן","יזרעאל"],["לנס רותם","יזרעאל"],["לפושנר לובוב","גליל"],["לרדו שירה","אסא ירושלים"],["מאיר ענת","מנשה"],["מאירקוביץ יבגני","טכניון כרמל"],["מאירקוביץ סופיה","טכניון כרמל"],["מה-טוב יואב","אסא ירושלים"],["מייר-גור תמר","מנשה"],["מיליצר אורלי","יזרעאל"],["מילר לינה","תל אביב"],["מינסקי אבי","השרון"],["מינסקי מנחם","השרון"],["מינצר צפריר","יזרעאל"],["מלאכי יאיר-ים","גליל"],["מלמד דרור","יזרעאל"],["מלץ אבי","השרון"],["מן אופיר","מנשה"],["מן דן","מנשה"],["מנדל רועי","חבל מודיעין"],["מנור איתי","חבל מודיעין"],["מנור חגית","חבל מודיעין"],["מנור משה","חבל מודיעין"],["מסינג ענת סיפורים","תל אביב"],["מצפון איילת","מנשה"],["מצפון גאיה","מנשה"],["מצפון פלג","מנשה"],["מרשנסקי יהב","גליל"],["משולם אופיר","תל אביב"],["משלי יובל","חבל מודיעין"],["משלי ליסה","חבל מודיעין"],["נבו שרון","טכניון כרמל"],["נגב אשל","חבל מודיעין"],["נגב נועה","חבל מודיעין"],["נגב רותם","חבל מודיעין"],["נוימן דפנה","מנשה"],["נוימן זיו","אסא טכניון חיפה"],["נוסבוים איתם","אסא ירושלים"],["נוסבוים יצחק","השרון"],["נוסבוים נדב","השרון"],["נוסבוים עמרי","השרון"],["נוסבוים שרון","השרון"],["נחושתן ירון","חבל מודיעין"],["ניב נדב","תל אביב"],["ניב עמליה","תל אביב"],["נירן חן","ראשון לציון"],["נתיב רות","חבל מודיעין"],["סבוראי עופר","מנשה"],["סגל דוידי","מנשה"],["סגל זף","תל אביב"],["סגל יעל","תל אביב"],["סגל יערה","תל אביב"],["סגל נגה","תל אביב"],["סגל עופר","תל אביב"],["סגל ערן","מנשה"],["סולאג' כליל","גליל"],["סולאג׳ תומא","גליל"],["סולנה אימרי","מנשה"],["סולנה מעין","מנשה"],["סופר אסף",""],["סט עומר","יזרעאל"],["סט שי","יזרעאל"],["סירוטוב יבגני","עמק חפר"],["סלומון עודד","גליל"],["סלומון רונן","ראשון לציון"],["סלומון שלומי","גליל"],["סמירנוב אלכסנדר","גליל"],["סניז׳קוב אביטל","גליל"],["סעד דניאל","חבל מודיעין"],["סער יצחק","חבל מודיעין"],["סקריפקו אלכסיי","גליל"],["סרגה אלי","חבל מודיעין"],["עבודי נועה","גליל"],["עופר איילה","מנשה"],["עידו קרייניץ","לב השרון-מנשה"],["עין דר מתן",""],["עמיעז איתן","חבל מודיעין"],["עמר איציק","יזרעאל"],["ענבר אברהם","גליל"],["ענבר ליאור","גליל"],["ענבר עמית","גליל"],["עפרון איתן","מנשה"],["עפרון אלדד","מנשה"],["פדוסין אנטון","תל אביב"],["פדוסין ולדימיר","תל אביב"],["פדוסין מריקה","תל אביב"],["פולויאן זכר","עמק חפר"],["פינצ'וק אירינה","יזרעאל"],["פינצ׳וק אלון","יזרעאל"],["פלג-רייבי איילת","יזרעאל"],["פלדמן שגיב","יזרעאל"],["פלוט אשר","גליל"],["פלוטקין רון","תל אביב"],["פנייקוב בני","יזרעאל"],["פרגר בן נון אלה","יזרעאל"],["פרוינד אופק","טכניון כרמל"],["פרוינד אור","טכניון כרמל"],["פרוינד תם","טכניון כרמל"],["פרי גל","גליל"],["פרידמן אלכס","תל אביב"],["פרישפלס ג'ים","גליל"],["פרלמן מידן זהר","חבל מודיעין"],["פרלמן מידן עדן","חבל מודיעין"],["פרנקו אהרון","חבל מודיעין"],["פרצ'ונוק דמיטרי","תל אביב"],["צ'רני הלל","השרון"],["צוק אילן","יזרעאל"],["צירפאנוב דריה",""],["צפורי אבנר","מנשה"],["צפורי דרור","מנשה"],["קוגן מתן","גליל"],["קוזלוב אלכסנדר","גליל"],["קוזלוב אלכסנדרה","תל אביב"],["קוזלוב ניקיטה","הפועל תל אביב"],["קוזנצוב דמיטרי","תל אביב"],["קופרברג אילנה","גליל"],["קורוטייב מיכאיל","תל אביב"],["קורנברג ישראל","ראשון לציון"],["קינן אורי","גליל"],["קינן איל","גליל"],["קינר דורון","תל אביב"],["קלניצקי אלכס","תל אביב"],["קלקשטיין בר","השרון"],["קלקשטיין יובל","השרון"],["קלקשטיין נדב","השרון"],["קלקשטיין ניר","השרון"],["קרול דן","תל אביב"],["קרול יואב","תל אביב"],["קרול ליאור","תל אביב"],["קרמר איתן","גליל"],["קרן שקד","יזרעאל"],["רבד איתי","תל אביב"],["רביד איל","תל אביב"],["רביד איריס","תל אביב"],["רביד דליה","תל אביב"],["רביד יואב","תל אביב"],["רביד יעל","תל אביב"],["רביד נועם","תל אביב"],["רביד נעמי","תל אביב"],["רגב יעל","חבל מודיעין"],["רגב יערה","חבל מודיעין"],["רגב שמואל","חבל מודיעין"],["רגבי תום","השרון"],["רובין רז","טכניון כרמל"],["רוטשטיין חגית","תל אביב"],["רוטשילד אביגיל","מנשה"],["רום פז","מנשה"],["רז שלמה","ראשון לציון"],["רז-רוטשילד דניאל","אסא ירושלים"],["ריינהרץ יניב","גליל"],["ריינהרץ לירון","גליל"],["ריינליב דינסטי","מנשה"],["רימרמן-שדמה נטע","עמק חפר"],["רינת גיל","גליל"],["ריף הגר","אסא ירושלים"],["ריפל ערן",""],["רן רות","גליל"],["רן שמאי","גליל"],["רק גיא","תל אביב"],["רשף עילי-יהודה","אסא טכניון חיפה"],["שביב מיכל","חבל מודיעין"],["שביב רן","חבל מודיעין"],["שגב תומר","יזרעאל"],["שגיא עמית","תל אביב"],["שדמה ברק","עמק חפר"],["שדמה ירדן","עמק חפר"],["שוב פליקס","טכניון כרמל"],["שוב רונן","טכניון כרמל"],["שורץ בן","מנשה"],["שורר רונן","גליל"],["שחורי איתי","חבל מודיעין"],["שחורי יורם","עמק חפר"],["שחף אסף","מנשה"],["שחף גיא","מנשה"],["שחר ליעד","מנשה"],["שחר-נוימן ענת","מנשה"],["שטיין יואב","ראשון לציון"],["שטיינברג עדי","חבל מודיעין"],["שטיינברג שרון","חבל מודיעין"],["שי נדב","מנשה"],["שי תומר","מנשה"],["שכטר גיל","חבל מודיעין"],["שכטר דביר","חבל מודיעין"],["שכטר רותם","חבל מודיעין"],["שלו פלדמן","יזרעאל"],["שמואלי אשר","יזרעאל"],["שמואלי חן","יזרעאל"],["שמואלי מופז","יזרעאל"],["שמואלי נורית","יזרעאל"],["שמע נתי","חבל מודיעין"],["שפי שאול","השרון"],["שפירא אורן","חבל מודיעין"],["שפירא נעם","חבל מודיעין"],["שצרבנין טטיאנה","גליל"],["שקדי חן","תל אביב"],["שקדי טל","תל אביב"],["שקדי נור","תל אביב"],["שרון דניאל","ראשון לציון"],["שרון יותם","מנשה"],["שרון נבו חיים","טכניון כרמל"],["תלם איתיאל","חבל מודיעין"]],"names":["FIF Hillerod","אסא טכניון חיפה","אסא ירושלים","אסא תל אביב","גליל","הפועל תל אביב","השרון","חבל מודיעין","טכניון כרמל","יזרעאל","לב השרון-מנשה","מנשה","עמק חפר","ראשון לציון","תל אביב"]}};
 if (window.top !== window.self) { document.body.textContent = ""; throw new Error("framed"); }   // never inside another site's frame
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -522,6 +541,22 @@ const B = {
     const body = { message, content, branch: "main" }; if (sha) body.sha = sha;
     return gh(`/repos/${REPO}/contents/${path}`, { method: "PUT", body: JSON.stringify(body) });
   },
+  async getData(path) {        // a file of the data repository's own, in its root (clubs.json)
+    let f;
+    if (MODE === "gw") f = await gw("get", { repo: "data", path });
+    else {
+      try { f = await gh(`/repos/${DATA}/contents/${path}?ref=main`); }
+      catch (e) { if (e.status === 404) return { sha: null, content: null }; throw e; }
+      if (!f.content && f.size > 0) f.content = (await gh(`/repos/${DATA}/git/blobs/${f.sha}`)).content;
+    }
+    if (f.sha && !f.content && f.size > 0) throw new Error(`לא הצלחנו לקרוא את ${path}`);
+    return { sha: f.sha || null, content: f.content || null };
+  },
+  async putData(path, content, sha, message) {      // saved only over the version read (sha): -> the commit, whose build is followed
+    if (MODE === "gw") return (await gw("put", { repo: "data", path, content, sha, message })).sha || null;
+    const body = { message: `${message} (${ME}, from the site)`, content, branch: "main" }; if (sha) body.sha = sha;
+    return (await gh(`/repos/${DATA}/contents/${path}`, { method: "PUT", body: JSON.stringify(body) })).commit?.sha || null;
+  },
   async blob(b64) {
     if (MODE === "gw") return (await gw("blob", { content: b64 })).sha;    // gw() waits and tries again when the gateway is busy
     return (await gh(`/repos/${DATA}/git/blobs`, { method: "POST", body: JSON.stringify({ content: b64, encoding: "base64" }) })).sha;
@@ -593,6 +628,7 @@ async function enter() {        // signed in (either way): the links, then the u
   $("out").onclick = logout;
   list();
   await dataInit();          // the upload - awaited, so the sign-in is done when it is
+  await clubsInit();
 }
 // ---- the email code: the gateway sends it to an approved address. The code goes with the request this tab made (its rid):
 // nobody else can try it. The session lasts 12 hours, in this tab only; a sign-in on a tracking page is not one for here.
@@ -659,8 +695,9 @@ $("code").addEventListener("keydown", e => { if (e.key === "Enter") verifyCode()
 $("em").addEventListener("keydown", e => { if (e.key === "Enter") sendCode(); });
 $("toKey").onclick = e => { e.preventDefault(); how(false); };
 $("toEmail").onclick = e => { e.preventDefault(); how(true); };
-function reset(text, ok) { TOKEN = ""; ME = ""; GWT = ""; MODE = ""; WATCH++; try { sessionStorage.removeItem("lc-admin"); sessionStorage.removeItem("lc-admin-gw"); } catch (e) {}
-  $("who").textContent = ""; $("panel").hidden = true; $("upcard").hidden = true; $("login").hidden = false;
+function reset(text, ok) { TOKEN = ""; ME = ""; GWT = ""; MODE = ""; WATCH++; WATCHING.clear(); CAN_DATA = false; CFIX = null; try { sessionStorage.removeItem("lc-admin"); sessionStorage.removeItem("lc-admin-gw"); } catch (e) {}
+  $("who").textContent = ""; $("panel").hidden = true; $("upcard").hidden = true; $("clubcard").hidden = true; $("login").hidden = false;
+  ["cfmsg", "cfstat", "cflist"].forEach(i => { $(i).textContent = ""; });
   $("ugo").disabled = false; $("umsg").textContent = ""; $("ustat").textContent = ""; $("ufolder").innerHTML = ""; CHOSEN.length = 0; HAVE_FILES = []; drawRows(); say($("lmsg"), text, ok); }
 async function logout() {
   clearTimeout(RETRY); removeEventListener("online", ONLINE);
@@ -724,11 +761,12 @@ const MAY = n => NAME_OK(n) && (/\.(htm|html|lxm|xml|ocd)$/i.test(n) || ["livelo
 const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/, RESERVED = new Set(["admin", "fonts", "lapcombat", "series", "clubs"]);
 const slugOf = n => n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "competition";
 const MB = 1024 * 1024, LIMIT = () => MODE === "gw" ? 30 : 50;      // MB per file (the gateway takes one file per request)
-let DIRS = [];
+let DIRS = [], CAN_DATA = false;      // CAN_DATA: this sign-in may write to the data repository (uploads, club corrections)
 async function dataInit() {
   if (!DATA) return;
   if (MODE === "gw") {       // an email sign-in: the gateway may upload (its rules: only files inside a competition folder)
     let dirs = [];
+    CAN_DATA = true;
     $("upcard").hidden = false;
     try { dirs = (await B.folders()).sort().reverse(); }
     catch (e) { $("ugo").disabled = true; say($("umsg"), "אי אפשר להעלות כרגע: " + why(e)); return; }
@@ -741,6 +779,7 @@ async function dataInit() {
     $("upcard").hidden = false; $("ugo").disabled = true;
     $("umsg").className = "msg err"; $("umsg").innerHTML = `כדי להעלות קבצים המפתח צריך גם את המאגר הפרטי. ${KEYFIX([DATA])}`;
     return; }
+  CAN_DATA = true;
   let dirs = [];
   try { dirs = (await B.folders()).sort().reverse(); }
   catch (e) { $("upcard").hidden = false; $("ugo").disabled = true; say($("umsg"), "אי אפשר להעלות כרגע: " + why(e)); return; }   // never without the list
@@ -960,26 +999,123 @@ async function upload() {
 }
 $("ugo").onclick = upload;
 // the build on GitHub: waiting, building, published - or failed, with what the build said. Only the newest upload is followed.
+// ---- club corrections: clubs.json in the root of the data repository; every build applies it on every page
+// (publish_site.fixed_club). The runners and clubs below are as the site shows them now.
+const norm = s => String(s ?? "").replace(/['\"\u05f3\u05f4\u2018\u2019\u201c\u201d`\u00b4]/g, "").normalize("NFKC").replace(/[\p{Cf}\u0591-\u05bd\u05bf-\u05c7]/gu, "")
+  .replace(/[\-\u05be\u2010-\u2015\u2212]/g, " ").replace(/['\"\u05f3\u05f4\u2018\u2019\u201c\u201d`\u00b4]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+const CF = "clubs.json", CFMAX = 5000;
+const CLUBS = { runners: (Array.isArray(D.clubs?.runners) ? D.clubs.runners : []).filter(x => Array.isArray(x) && typeof x[0] === "string").map(x => [x[0], String(x[1] ?? "")]),
+                names: (Array.isArray(D.clubs?.names) ? D.clubs.names : []).filter(x => typeof x === "string") };
+const BYN = new Map(CLUBS.runners.map(x => [norm(x[0]), x]));
+const oneLine = s => String(s ?? "").replace(/\s+/g, " ").trim();
+let CFIX = null, CFBUSY = false;
+const cfClean = j => { const o = { runners: {}, clubs: {} };
+  for (const p of ["runners", "clubs"]) { const m = j && typeof j === "object" && j[p] && typeof j[p] === "object" && !Array.isArray(j[p]) ? j[p] : {};
+    for (const [k, v] of Object.entries(m)) if (typeof v === "string" && norm(k)) o[p][k] = v; }
+  return o; };
+async function cfRead() {
+  const f = await B.getData(CF);
+  let j = {};
+  if (f.content) { try { j = JSON.parse(b64dec(f.content)); } catch (e) { throw new Error(`${CF} במאגר לא תקין – צריך לתקן אותו במחשב`); } }
+  return { sha: f.sha, ...cfClean(j) };
+}
+const cfLists = () => {
+  $("cfnames").innerHTML = CLUBS.runners.map(([n, c]) => `<option value="${esc(n)}">${esc(c || "בלי מועדון")}</option>`).join("");
+  $("cfclubs").innerHTML = CLUBS.names.map(c => `<option value="${esc(c)}"></option>`).join(""); };
+function cfDraw() {
+  const by = o => Object.entries(o).sort(([a], [b]) => a.localeCompare(b, "he"));
+  const row = (part, k, v) => `<li><span>${part === "clubs" ? "המועדון " : ""}<b>${esc(k)}</b> ← ${v ? esc(v) : "בלי מועדון"}</span>`
+    + `<small><button type="button" data-cfdel="${part}" data-k="${esc(k)}" aria-label="הסרת התיקון של ${esc(k)}">הסרה</button></small></li>`;
+  const c = by(CFIX.clubs), r = by(CFIX.runners);
+  $("cflist").innerHTML = c.length || r.length ? `<h3 class="sub">התיקונים עכשיו (${c.length + r.length})</h3><ul class="files">`
+    + c.map(([k, v]) => row("clubs", k, v)).join("") + r.map(([k, v]) => row("runners", k, v)).join("") + "</ul>"
+    : `<p class="note" style="margin-top:14px">אין עדיין תיקונים.</p>`;
+}
+const cfLock = on => ["cfadd", "ccadd"].forEach(i => { $(i).disabled = on; });
+async function clubsInit() {
+  $("clubcard").hidden = !CAN_DATA;
+  if (!CAN_DATA) return;
+  cfLists(); cfLock(true); $("cflist").textContent = "";
+  try { CFIX = await cfRead(); cfDraw(); cfLock(false); say($("cfmsg"), "", true); }
+  catch (e) {
+    say($("cfmsg"), e.code === "path" ? "בכניסה במייל אפשר לתקן מועדונים אחרי שבעל האתר יעדכן את שער הכניסה (gas/Code.gs). עד אז – כניסה עם מפתח GitHub."
+                                       : "אי אפשר לקרוא את התיקונים כרגע: " + (e.code || e.status ? why(e) : e.message)); }
+}
+// one change, on top of the newest version: if another admin saved meanwhile, it is read again and the change made there
+async function cfSave(apply, message, done) {
+  if (CFBUSY) return false;
+  const m = $("cfmsg");
+  CFBUSY = true; cfLock(true); say(m, "שומר…", true); $("cfstat").textContent = "";
+  try {
+    let sha = null;
+    for (let i = 0; i < 3; i++) {
+      const f = await cfRead();
+      apply(f);
+      if (Object.keys(f.runners).length > CFMAX || Object.keys(f.clubs).length > CFMAX) throw new Error("יותר מדי תיקונים");
+      const sorted = o => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b, "he")));
+      const text = JSON.stringify({ v: 1, runners: sorted(f.runners), clubs: sorted(f.clubs) }, null, 1) + "\n";
+      try { sha = await B.putData(CF, b64enc(text), f.sha, message); CFIX = f; break; }
+      catch (e) { if (!(e.status === 409 || e.status === 422) || i === 2) throw e; }
+    }
+    cfDraw(); done();
+    say(m, "נשמר. GitHub בונה עכשיו את האתר עם התיקון.", true);
+    if (sha) watch(sha, $("cfstat"), "התיקון פורסם");
+    return true;
+  } catch (e) { say(m, e.code || e.status ? why(e) : "שגיאה: " + e.message); return false; }
+  finally { CFBUSY = false; cfLock(false); }
+}
+const cfSame = (o, k) => Object.keys(o).filter(x => norm(x) === norm(k));   // the same name however it was typed
+$("cfn").oninput = () => { const v = oneLine($("cfn").value), hit = BYN.get(norm(v));
+  $("cfn-h").textContent = !norm(v) ? "" : hit ? `כרגע באתר: ${hit[1] || "בלי מועדון"}` : "לא נמצא באתר – התיקון יחול כשהשם יופיע"; };
+$("ccf").oninput = () => { const v = oneLine($("ccf").value), n = CLUBS.runners.filter(x => x[1] && norm(x[1]) === norm(v)).length;
+  $("ccf-h").textContent = !norm(v) ? "" : n ? `${n} נווטים במועדון הזה באתר` : "אין באתר מועדון בשם הזה"; };
+$("cfadd").onclick = async () => {
+  const typed = oneLine($("cfn").value), club = oneLine($("cfc").value), m = $("cfmsg"), hit = BYN.get(norm(typed));
+  if (!norm(typed)) return say(m, "כתבו את שם הנווט");
+  if (typed.length > 120 || club.length > 60) return say(m, "השם ארוך מדי");
+  const name = hit ? hit[0] : typed;
+  if (hit && hit[1] === club) return say(m, club ? `${name} כבר רשום/ה ב${club} באתר` : `${name} כבר בלי מועדון באתר`);
+  await cfSave(f => { cfSame(f.runners, name).forEach(k => delete f.runners[k]); f.runners[name] = club; }, `Club of ${name}: ${club || "none"}`, () => {
+    BYN.set(norm(name), [name, club]); const x = CLUBS.runners.find(r => norm(r[0]) === norm(name)); if (x) x[1] = club; else CLUBS.runners.push([name, club]);
+    if (club && !CLUBS.names.includes(club)) CLUBS.names.push(club);
+    cfLists(); $("cfn").value = ""; $("cfc").value = ""; $("cfn").oninput(); });
+};
+$("ccadd").onclick = async () => {
+  const from = oneLine($("ccf").value), to = oneLine($("cct").value), m = $("cfmsg");
+  if (!norm(from) || !norm(to)) return say(m, "כתבו את שם המועדון ואת השם הנכון");
+  if (from.length > 60 || to.length > 60) return say(m, "השם ארוך מדי");
+  if (from === to) return say(m, "זה אותו שם");
+  await cfSave(f => { cfSame(f.clubs, from).forEach(k => delete f.clubs[k]); f.clubs[from] = to; }, `Club renamed: ${from} -> ${to}`, () => {
+    CLUBS.runners.forEach(r => { if (r[1] && norm(r[1]) === norm(from)) r[1] = to; });
+    CLUBS.names = [...new Set(CLUBS.names.filter(c => norm(c) !== norm(from)).concat(to))].sort((a, b) => a.localeCompare(b, "he"));
+    cfLists(); $("ccf").value = ""; $("cct").value = ""; $("ccf").oninput(); });
+};
+$("cflist").onclick = e => {
+  const b = e.target.closest("[data-cfdel]"); if (!b) return;
+  const part = b.dataset.cfdel === "clubs" ? "clubs" : "runners", k = b.dataset.k;
+  cfSave(f => { cfSame(f[part], k).forEach(x => delete f[part][x]); }, `Club correction removed: ${k}`, () => {});
+};
+// Each status line follows its own newest save (an upload and a club correction can be built one after the other).
 let WATCH = 0;
-function watch(sha) { follow(sha, 0, ++WATCH); }
-async function follow(sha, n, g) {
-  if (g !== WATCH) return;
-  const st = $("ustat");
+const WATCHING = new Map();
+function watch(sha, st = $("ustat"), done = "הניתוח נבנה ופורסם") { const g = ++WATCH; WATCHING.set(st, g); follow(sha, 0, g, st, done); }
+async function follow(sha, n, g, st = $("ustat"), done = "הניתוח נבנה ופורסם") {
+  if (WATCHING.get(st) !== g) return;
   let r = null;
   try { r = await B.run(sha); }
-  catch (e) { if (g === WATCH) st.textContent = "האתר יתעדכן בעוד כמה דקות (אין הרשאה לראות את מצב הבנייה)."; return; }
-  if (g !== WATCH) return;
+  catch (e) { if (WATCHING.get(st) === g) st.textContent = "האתר יתעדכן בעוד כמה דקות (אין הרשאה לראות את מצב הבנייה)."; return; }
+  if (WATCHING.get(st) !== g) return;
   const run = r.run, note = r.replaced ? "בנייה חדשה יותר, שכוללת גם את הקבצים האלה, החליפה את הקודמת. " : "";
   const link = run && MODE !== "gw" && /^https:\/\/github\.com\//.test(run.html_url) ? ` <a href="${esc(run.html_url)}" target="_blank" rel="noopener noreferrer">פרטים ב-GitHub</a>` : "";
   if (run && run.status === "completed" && run.conclusion !== "cancelled") {
     const probs = (run.problems || []).map(p => `<li>${esc(p)}</li>`).join(""), notes = (run.notes || []).map(p => `<li>${esc(p)}</li>`).join("");
     const unread = run.unread ? ` <small>(מה שהבנייה אמרה לא נקרא כאן – הוא בפרטים ב-GitHub)</small>` : "";
-    st.innerHTML = run.conclusion === "success" ? `${note}✓ ${notes ? `נבנה ופורסם, עם הערות:<ul class="files">${notes}</ul>האתר מתעדכן תוך דקה.` : "הניתוח נבנה ופורסם. האתר מתעדכן תוך דקה."}${unread}${link}`
+    st.innerHTML = run.conclusion === "success" ? `${note}✓ ${notes ? `נבנה ופורסם, עם הערות:<ul class="files">${notes}</ul>האתר מתעדכן תוך דקה.` : `${done}. האתר מתעדכן תוך דקה.`}${unread}${link}`
       : `${note}✗ הבנייה נכשלה${probs ? `:<ul class="files">${probs}</ul>` : "."}${unread}${link}`;
     return;
   }
   st.innerHTML = note + (run && run.status === "in_progress" ? "בונה את הניתוח ומפרסם…" : "ממתין לתחילת הבנייה…") + link;
-  if (n < 90) setTimeout(() => follow(sha, n + 1, g), 10000);
+  if (n < 90) setTimeout(() => follow(sha, n + 1, g, st, done), 10000);
 }
 $("go").onclick = () => { TOKEN = $("tok").value.trim(); if (TOKEN) login(); else say($("lmsg"), "הדביקו את מפתח הגישה"); };
 $("tok").addEventListener("keydown", e => { if (e.key === "Enter") $("go").click(); });
