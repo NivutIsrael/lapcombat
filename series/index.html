@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fwU03RUJyysccX5P4E+kUY7ZtLAOoGt+/U5OU8ttq4E=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+DV4x/V4m3vkdZf21VEmdNcwQ3ZC0fKyXvghT65lV9w=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>תוצאות משולבות וליגות · ניווט ישראל</title>
@@ -654,7 +654,7 @@ function render() {
   $("standing").innerHTML = rows.length ? `<div class="scroll"><table class="cards"><thead>${head}</thead><tbody>${body}</tbody></table></div>`
     : `<p class="empty">אין תוצאות בקטגוריה הזו.</p>`;
   tableTools($("standing"), `series-${s.key}-${k}`);
-  $("note").textContent = `לפי הדוחות של ${R.map(r => r.label).join(", ")}. נווט מזוהה לפי שמו, בכל קטגוריה בנפרד.`;
+  $("note").textContent = `לפי הדוחות של ${R.map(r => r.label).join(", ")}. נווט מזוהה לפי שמו, בכל קטגוריה בנפרד: מי שעבר קטגוריה באמצע העונה מופיע בכל אחת מהן, עם מה שצבר בה.`;
 }
 readHash(); render();
 addEventListener("hashchange", () => { readHash(); render(); });

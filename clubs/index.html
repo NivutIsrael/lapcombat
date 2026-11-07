@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-I5kOUBjH9FgnS6WnPeUQ57bfoG8b++P3TL3JPtRkHys=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tzUx4HF35cdK4MNl9F/+wcKwLk7dwXSj9/OwyZRRR3E=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מועדונים · ניווט ישראל</title>
@@ -220,7 +220,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
     <div class="tiles" id="tiles"></div>
     <section id="better"></section>
     <div id="list"></div>
-    <p class="note">התוצאות מהדוחות של כל תחרות; המועדון כפי שהוא רשום באותה תחרות. "השתפרו": פער קטן יותר מהמנצח בקטגוריה, לעומת התחרות הקודמת של אותו נווט.</p>
+    <p class="note">התוצאות מהדוחות של כל תחרות; המועדון כפי שהוא רשום באותה תחרות. "השתפרו": פער קטן יותר מהמנצח בקטגוריה, לעומת התחרות הקודמת של אותו נווט באותה קטגוריה – מי שעבר קטגוריה (למשל בעונה חדשה) נמדד מהתחרות השנייה בקטגוריה החדשה.</p>
   </main>
 </div>
 <script>
@@ -640,8 +640,12 @@ function render() {
   // who improved: the gap to the winner, this competition against the one before (each runner's last two)
   const byId = {};
   all.forEach(x => (byId[x.id] ||= []).push(x));
+  // (in the same category only: the gap to another category's winner is not the same measure - after a change, from the
+  // second competition in the new one)
+  const sameCat = (a, b) => String(a ?? "").replace(/\s+/g, "").toUpperCase() === String(b ?? "").replace(/\s+/g, "").toUpperCase();
   const better = Object.values(byId).map(rs => { rs = rs.filter(x => behind(x) != null).sort((a, b) => (COMPS[a.s].date || "").localeCompare(COMPS[b.s].date || ""));
-    if (rs.length < 2) return null; const a = rs[rs.length - 2], b = rs[rs.length - 1], d = behind(a) - behind(b);
+    const b = rs[rs.length - 1], same = b ? rs.filter(x => sameCat(x.k, b.k)) : [];
+    if (same.length < 2) return null; const a = same[same.length - 2], d = behind(a) - behind(b);
     return d > 0.5 ? { a, b, d } : null; }).filter(Boolean).sort((p, q) => q.d - p.d);
   $("better").innerHTML = better.length ? `<h2>השתפרו <small>${better.length}</small></h2><ul class="better">${better.slice(0, 12).map(({ a, b, d }) =>
     `<li><b>${esc(b.n)}</b> ${esc(b.k)} · <span dir="ltr">${behind(a).toFixed(0)}% → ${behind(b).toFixed(0)}%</span> מאחורי המנצח <span class="up">▲ ${d.toFixed(0)} נק׳ אחוז</span></li>`).join("")}</ul>` : "";
