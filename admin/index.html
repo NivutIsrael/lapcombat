@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-rZ0IVITPwIfp3Bgztc8rxusgEH+OVyDujqHMJKvP8tM=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AoUorrbF+RP4TP5gUiRWdzqXj2qGBNXSA2a0T35ipgk=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -36,13 +36,14 @@
   --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; }
 body::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--s2), var(--s7) 50%, var(--s1)); }   /* as on the reports */
 
+a { color: var(--accent); } a:visited { color: var(--accent); }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.55 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
 .wrap { max-width: 900px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
 header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 1.5px solid var(--ink); padding-bottom: 12px; margin-bottom: 18px; }
 .atitle { font-size: calc(22px * var(--ts, 1)); margin: 0 0 16px; } header a { color: var(--ink-2); }
 button, .btn { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); }
-button.pri { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } button.pri:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.pri { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } button.pri:hover { background: color-mix(in srgb, var(--accent) 76%, #000); border-color: color-mix(in srgb, var(--accent) 76%, #000); color: var(--on-accent); }
 button.del { border-color: var(--bad); color: var(--bad); } button:disabled { opacity: .5; cursor: default; }
 .card { background: var(--surface); border: 1px solid var(--rule-2); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
 .card h2 { font-size: calc(18px * var(--ts, 1)); margin: 0 0 8px; }
@@ -113,7 +114,7 @@ details ol { padding-inline-start: 20px; } code { background: var(--paper-2); pa
 .a11yl { font-size: calc(12.5px * var(--ts, 1)); color: var(--muted); margin-bottom: 6px; }
 .a11ys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
 .a11ys button { font-family: inherit; font-weight: 600; padding: 9px 4px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.2; }
-.a11ys button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.a11ys button[aria-checked="true"] { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff); }
 .a11yg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .a11yf { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; font: inherit; padding: 9px 10px; border: 1px solid var(--ring);
          border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
@@ -143,9 +144,9 @@ details ol { padding-inline-start: 20px; } code { background: var(--paper-2); pa
 .notice p { margin: 0; flex: 1 1 300px; line-height: 1.5; }
 .notice .nb { display: flex; gap: 8px; flex-wrap: wrap; }
 .notice button { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--accent); }
-.notice .ok { background: var(--accent); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
+.notice .ok { background: var(--tab-on); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
 /* "skip to the content": the first stop of the keyboard */
-.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--accent); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
+.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--tab-on); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
         font-weight: 700; text-decoration: none; }
 .skip:focus { top: 10px; }
 /* tables: sort by a header click, ▾ opens sort + filter (as in Excel), a bar above the table resets it */
@@ -155,7 +156,7 @@ th.tt-asc, th.tt-desc { color: var(--accent); }
 .ttb { font: calc(10px * var(--ts, 1))/1 system-ui, sans-serif; margin-inline-start: 4px; padding: 3px 4px; border: 1px solid var(--ring); border-radius: 4px;
        background: var(--surface); color: var(--muted); cursor: pointer; vertical-align: middle; }
 .ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
-.ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
+.ttb.on { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff) !important; }
 tr.tt-hide { display: none; }
 /* the two buttons in the top corner of every page: accessibility, and light / dark (its name next to it where there is room) */
 .hicons { display: flex; gap: 6px; align-items: center; flex: none; }
@@ -177,7 +178,7 @@ tr.tt-hide { display: none; }
   white-space: nowrap; cursor: pointer; }
 .sitebar .navlinks a:hover, .sitebar .navlinks button:hover { border-color: var(--accent); }
 .sitebar .navlinks a.home { color: var(--on-accent, #fff); background: var(--tab-on, color-mix(in srgb, var(--accent) 88%, #000)); border-color: transparent; }
-.sitebar .navlinks a.home:hover { background: var(--accent); }
+.sitebar .navlinks a.home:hover { background: color-mix(in srgb, var(--accent) 76%, #000); }
 @media (max-width: 640px) {   /* phones: the site's pages and the corner buttons, then the outside links in a row of their own */
   .sitebar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nav icons" "more more"; margin-bottom: 10px; padding-bottom: 10px; }
   .navlinks { gap: 6px; } .sitebar .navlinks a, .sitebar .navlinks button { height: 36px; padding: 0 11px; font-size: calc(13px * var(--ts, 1)); } }
@@ -189,7 +190,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 .ttbar[hidden] { display: none; }
 .ttbar button { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
                 border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-inline-start: auto; }
-.ttbar button:hover { background: var(--accent); color: var(--on-accent, #fff); }
+.ttbar button:hover { background: var(--tab-on); color: var(--on-accent, #fff); }
 .ttpop { position: fixed; z-index: 40; width: 270px; max-width: calc(100vw - 16px); background: var(--surface); color: var(--ink);
          border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 10px; font-size: calc(13px * var(--ts, 1));
          display: flex; flex-direction: column; gap: 6px; direction: rtl; text-align: right; }
@@ -202,7 +203,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 .ttpop .ttall, .ttpop .ttfoot { display: flex; gap: 6px; }
 .ttpop .ttall button, .ttpop .ttfoot button { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px;
                                              background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
-.ttpop .ttfoot .ttok { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ttpop .ttfoot .ttok { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff); font-weight: 600; }
 .ttpop .ttfoot button:disabled { opacity: .45; cursor: default; }
 .ttpop .ttlist { max-height: 250px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 6px; padding: 2px 8px; overscroll-behavior: contain; }
 .ttpop .ttlist label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
@@ -548,11 +549,21 @@ const B = {
   },
   async run(sha) {             // {run, replaced}: a build that a newer upload's build replaced is followed to that one
     if (MODE === "gw") { const j = await gw("runs", { sha }); const r = j.run;
-      return { replaced: !!j.replaced, run: r ? { status: r.status, conclusion: r.conclusion, html_url: r.url, problems: Array.isArray(r.problems) ? r.problems : [] } : null }; }
+      return { replaced: !!j.replaced, run: r ? { status: r.status, conclusion: r.conclusion, html_url: r.url, problems: Array.isArray(r.problems) ? r.problems : [],
+                                                  notes: Array.isArray(r.notes) ? r.notes : [] } : null }; }
     let run = (await gh(`/repos/${DATA}/actions/runs?head_sha=${sha}&per_page=1`)).workflow_runs?.[0] || null, replaced = false;
     if (run && run.status === "completed" && run.conclusion === "cancelled") {
       const n = (await gh(`/repos/${DATA}/actions/runs?branch=main&event=push&per_page=1`)).workflow_runs?.[0];
       if (n && n.id !== run.id) { run = n; replaced = true; }
+    }
+    if (run && run.status === "completed" && run.conclusion !== "cancelled") {     // what the build said: GitHub's annotations of its job
+      run = { ...run, problems: [], notes: [] };
+      try {
+        for (const job of ((await gh(`/repos/${DATA}/actions/runs/${run.id}/jobs?per_page=5`)).jobs || []).slice(0, 3))
+          for (const a of await gh(`/repos/${DATA}/check-runs/${job.id}/annotations?per_page=30`))
+            if (a.annotation_level === "failure" && !/Process completed with exit code/.test(a.message || "")) run.problems.push(String(a.message).slice(0, 300));
+            else if (a.annotation_level === "warning" && /[\u0590-\u05ff]/.test(a.message || "")) run.notes.push(String(a.message).slice(0, 300));
+      } catch (e) { run.unread = true; }          // a key without "Checks: read": what the build said is on GitHub
     }
     return { replaced, run };
   },
@@ -961,9 +972,10 @@ async function follow(sha, n, g) {
   const run = r.run, note = r.replaced ? "בנייה חדשה יותר, שכוללת גם את הקבצים האלה, החליפה את הקודמת. " : "";
   const link = run && MODE !== "gw" && /^https:\/\/github\.com\//.test(run.html_url) ? ` <a href="${esc(run.html_url)}" target="_blank" rel="noopener noreferrer">פרטים ב-GitHub</a>` : "";
   if (run && run.status === "completed" && run.conclusion !== "cancelled") {
-    const probs = (run.problems || []).map(p => `<li>${esc(p)}</li>`).join("");
-    st.innerHTML = run.conclusion === "success" ? `${note}✓ הניתוח נבנה ופורסם. האתר מתעדכן תוך דקה.${link}`
-      : `${note}✗ הבנייה נכשלה${probs ? `:<ul class="files">${probs}</ul>` : "."}${link}`;
+    const probs = (run.problems || []).map(p => `<li>${esc(p)}</li>`).join(""), notes = (run.notes || []).map(p => `<li>${esc(p)}</li>`).join("");
+    const unread = run.unread ? ` <small>(מה שהבנייה אמרה לא נקרא כאן – הוא בפרטים ב-GitHub)</small>` : "";
+    st.innerHTML = run.conclusion === "success" ? `${note}✓ ${notes ? `נבנה ופורסם, עם הערות:<ul class="files">${notes}</ul>האתר מתעדכן תוך דקה.` : "הניתוח נבנה ופורסם. האתר מתעדכן תוך דקה."}${unread}${link}`
+      : `${note}✗ הבנייה נכשלה${probs ? `:<ul class="files">${probs}</ul>` : "."}${unread}${link}`;
     return;
   }
   st.innerHTML = note + (run && run.status === "in_progress" ? "בונה את הניתוח ומפרסם…" : "ממתין לתחילת הבנייה…") + link;

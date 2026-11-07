@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-RpC0JvBIBrEsb8VwVJiMsZfSdY+QrahzsLbHkOUrKGc=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-xvjTEYuOTp0oL2JyZFuky+t+6aCqG0895sNbnKhokpE=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.github.com https://script.google.com https://script.googleusercontent.com; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מעקב נווטים בשטח</title>
@@ -35,6 +35,7 @@
   --accent: #7cb8ff; --on-accent: #000; --green: #4ee04e; --bad: #ffab80; --red: #ff7a7a; --s1: #7cb8ff; --s2: #ff9a5c; --s7: #b3a8ff; }
 body::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, var(--s2), var(--s7) 50%, var(--s1)); }   /* as on the reports */
 
+a { color: var(--accent); } a:visited { color: var(--accent); }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: calc(15px * var(--ts, 1))/1.55 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
 .wrap { max-width: 980px; margin: 0 auto; padding: 18px max(16px, env(safe-area-inset-right)) 60px max(16px, env(safe-area-inset-left)); }
@@ -88,7 +89,8 @@ section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin:
 @media (max-width: 640px) {   /* phones: each runner one line that wraps - nothing wider than the screen */
   .eodt thead { display: none; } .eodt, .eodt tbody { display: block; }
   .eodt tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
-  .eodt td { border: 0; padding: 0; } .eodt td:nth-child(2) { font-weight: 700; } .eodt td:empty { display: none; } }
+  .eodt td { border: 0; padding: 0; } .eodt td:nth-child(2) { font-weight: 700; } .eodt td:empty { display: none; }
+  .eodt td[data-l]::before { content: attr(data-l) ": "; color: var(--muted); font-weight: 400; } }
 @media print { html.print-eod .wrap > *:not(main), html.print-eod main > *:not(#eod), html.print-eod .eod-b, html.print-eod body::before,
   html.print-eod .notice, html.print-eod .a11y { display: none !important; } html.print-eod .eod { border: 0; padding: 0; } }
 /* the finish forecast, under the counts */
@@ -123,7 +125,7 @@ details { margin: 14px 0 0; } summary { cursor: pointer; font-weight: 700; font-
 .a11yl { font-size: calc(12.5px * var(--ts, 1)); color: var(--muted); margin-bottom: 6px; }
 .a11ys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
 .a11ys button { font-family: inherit; font-weight: 600; padding: 9px 4px; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; line-height: 1.2; }
-.a11ys button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
+.a11ys button[aria-checked="true"] { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff); }
 .a11yg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .a11yf { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: right; font: inherit; padding: 9px 10px; border: 1px solid var(--ring);
          border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
@@ -153,9 +155,9 @@ details { margin: 14px 0 0; } summary { cursor: pointer; font-weight: 700; font-
 .notice p { margin: 0; flex: 1 1 300px; line-height: 1.5; }
 .notice .nb { display: flex; gap: 8px; flex-wrap: wrap; }
 .notice button { font: inherit; font-weight: 600; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--accent); }
-.notice .ok { background: var(--accent); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
+.notice .ok { background: var(--tab-on); color: var(--on-accent, #fff); } .notice .del { background: var(--surface); color: var(--accent); }
 /* "skip to the content": the first stop of the keyboard */
-.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--accent); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
+.skip { position: fixed; right: 10px; top: -80px; z-index: 60; background: var(--tab-on); color: var(--on-accent, #fff) !important; padding: 10px 16px; border-radius: 8px;
         font-weight: 700; text-decoration: none; }
 .skip:focus { top: 10px; }
 /* tables: sort by a header click, ▾ opens sort + filter (as in Excel), a bar above the table resets it */
@@ -165,7 +167,7 @@ th.tt-asc, th.tt-desc { color: var(--accent); }
 .ttb { font: calc(10px * var(--ts, 1))/1 system-ui, sans-serif; margin-inline-start: 4px; padding: 3px 4px; border: 1px solid var(--ring); border-radius: 4px;
        background: var(--surface); color: var(--muted); cursor: pointer; vertical-align: middle; }
 .ttb:hover, th.tt-asc .ttb, th.tt-desc .ttb { color: var(--accent); border-color: var(--accent); }
-.ttb.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff) !important; }
+.ttb.on { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff) !important; }
 tr.tt-hide { display: none; }
 /* the two buttons in the top corner of every page: accessibility, and light / dark (its name next to it where there is room) */
 .hicons { display: flex; gap: 6px; align-items: center; flex: none; }
@@ -187,7 +189,7 @@ tr.tt-hide { display: none; }
   white-space: nowrap; cursor: pointer; }
 .sitebar .navlinks a:hover, .sitebar .navlinks button:hover { border-color: var(--accent); }
 .sitebar .navlinks a.home { color: var(--on-accent, #fff); background: var(--tab-on, color-mix(in srgb, var(--accent) 88%, #000)); border-color: transparent; }
-.sitebar .navlinks a.home:hover { background: var(--accent); }
+.sitebar .navlinks a.home:hover { background: color-mix(in srgb, var(--accent) 76%, #000); }
 @media (max-width: 640px) {   /* phones: the site's pages and the corner buttons, then the outside links in a row of their own */
   .sitebar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nav icons" "more more"; margin-bottom: 10px; padding-bottom: 10px; }
   .navlinks { gap: 6px; } .sitebar .navlinks a, .sitebar .navlinks button { height: 36px; padding: 0 11px; font-size: calc(13px * var(--ts, 1)); } }
@@ -199,7 +201,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 .ttbar[hidden] { display: none; }
 .ttbar button { font: inherit; font-weight: 600; color: var(--accent); background: var(--surface); border: 1px solid var(--accent);
                 border-radius: 6px; padding: 4px 10px; cursor: pointer; margin-inline-start: auto; }
-.ttbar button:hover { background: var(--accent); color: var(--on-accent, #fff); }
+.ttbar button:hover { background: var(--tab-on); color: var(--on-accent, #fff); }
 .ttpop { position: fixed; z-index: 40; width: 270px; max-width: calc(100vw - 16px); background: var(--surface); color: var(--ink);
          border: 1px solid var(--ring); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 10px; font-size: calc(13px * var(--ts, 1));
          display: flex; flex-direction: column; gap: 6px; direction: rtl; text-align: right; }
@@ -212,7 +214,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
 .ttpop .ttall, .ttpop .ttfoot { display: flex; gap: 6px; }
 .ttpop .ttall button, .ttpop .ttfoot button { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid var(--ring); border-radius: 6px;
                                              background: var(--chip); color: var(--ink); cursor: pointer; white-space: nowrap; }
-.ttpop .ttfoot .ttok { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); font-weight: 600; }
+.ttpop .ttfoot .ttok { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent, #fff); font-weight: 600; }
 .ttpop .ttfoot button:disabled { opacity: .45; cursor: default; }
 .ttpop .ttlist { max-height: 250px; overflow-y: auto; border: 1px solid var(--grid); border-radius: 6px; padding: 2px 8px; overscroll-behavior: contain; }
 .ttpop .ttlist label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
@@ -312,7 +314,8 @@ const D = {"slug":"odem-2-24-10-2026","title":"אליפות ישראל-יער א
 const FRAMED = window.top !== window.self;     // shown inside another site: the list only, no admin part
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const norm = s => String(s || "").toLowerCase().replace(/['׳"״\-]/g, "").replace(/\s+/g, " ").trim();
+const norm = s => String(s ?? "").replace(/['\"\u05f3\u05f4\u2018\u2019\u201c\u201d`\u00b4]/g, "").normalize("NFKC").replace(/[\p{Cf}\u0591-\u05bd\u05bf-\u05c7]/gu, "")
+  .replace(/[\-\u05be\u2010-\u2015\u2212]/g, " ").replace(/['\"\u05f3\u05f4\u2018\u2019\u201c\u201d`\u00b4]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 const squash = s => String(s || "").replace(/\s+/g, " ").trim();
 const SLUG = /^[a-z0-9][a-z0-9-]{0,79}$/.test(D.slug || "") ? D.slug : "", REPO = /^[\w.-]+\/[\w.-]+$/.test(D.repo || "") ? D.repo : "";
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
@@ -371,14 +374,31 @@ function load() {
   if (ME) {                 // signed in: the file itself (not the public copy, minutes behind), once a minute
     if (mono() - SIGNED_READ < 55000) return;
     SIGNED_READ = mono();
-    return getTrack().then(f => take(f.content ? JSON.parse(b64dec(f.content)) : { v: 1, comps: {} }, new Date(), false))
-      .catch(() => { FAILED = true; tick(); });
+    return getTrack().then(f => { const j = f.content ? JSON.parse(b64dec(f.content)) : { v: 1, comps: {} }; take(j, new Date(), false); keepCopy(j); })
+      .catch(e => {
+        if (e.status === 401) {          // the sign-in ended (12 hours, or signed out elsewhere): said so, and the public copy from now on
+          signedOut((MODE === "gw" ? "פג תוקף הכניסה – היכנסו שוב. " : "המפתח לא תקין או שפג תוקפו – היכנסו שוב. ")
+            + (PENDING.size || PENDING_MULKA ? (KEPT ? "מה שלא נשמר שמור בדפדפן הזה ויישמר אחרי הכניסה." : here()) : ""));
+        } else console.warn("[track] the tracking file not read through the sign-in:", e);
+        publicRead();
+      });
   }
+  publicRead();
+}
+function publicRead() {
   fetch(`../../track.json?t=${Math.floor(Date.now() / 15000)}`, { cache: "no-store" }).then(r => {
     if (!r.ok) throw new Error(String(r.status));
     const kept = r.headers.get("x-lc-at");           // the phone's copy (no connection): when it was kept
     return r.json().then(j => take(j, kept && !isNaN(new Date(kept)) ? new Date(kept) : new Date(), !!kept));
-  }).catch(() => { FAILED = true; tick(); });
+  }).catch(e => { FAILED = true; console.warn("[track] track.json not read:", e); tick(); });
+}
+// the phone's own copy of the tracking file (for a reload without a connection): also what a signed-in read or a save
+// brought - the worker keeps only what the page fetched from the site itself
+function keepCopy(j) {
+  if (!("caches" in window) || !window.isSecureContext || !/^https?:$/.test(location.protocol)) return;
+  const u = new URL("../../track.json", location.href).href;
+  caches.open("track-v2").then(c => c.put(u, new Response(JSON.stringify(j), { headers: { "content-type": "application/json", "x-lc-at": new Date().toISOString() } })))
+    .catch(e => console.warn("[sw] the tracking file not kept:", e));
 }
 // ---- who is where
 function people() {
@@ -541,7 +561,11 @@ function render() {
   offline();
   if (rel > 0 && !T.mulka && !Object.keys(T.manual || {}).length) {     // after the day, nothing was tracked: no one is claimed to be out
     set("sum", ""); set("clubs", ""); $("clubs").hidden = true; $("fc").hidden = true; $("day").hidden = true; $("eodbtn").hidden = true; $("eod").hidden = true;
-    set("list", `<p class="note">התחרות הסתיימה · לא נאספו בה נתוני מעקב: לא הועלה ייצוא ממולקה ולא סומנו חוזרים.</p>`);
+    const p = il(new Date()), days = ymd ? Math.round((Date.UTC(p.year, p.month - 1, p.day) - Date.UTC(+ymd[1], ymd[2] - 1, +ymd[3])) / 86400000) : 0;
+    set("list", `<p class="note">${!DATA_AT && !FAILED && /^https?:$/.test(location.protocol) ? "התחרות הסתיימה · טוען את נתוני המעקב…"
+      : FAILED && !DATA_AT ? "התחרות הסתיימה · נתוני המעקב לא נקראו (אין חיבור לאתר)."
+      : days > 60 ? "התחרות הסתיימה לפני יותר מ-60 יום. נתוני המעקב נשמרים באתר 60 יום אחרי התחרות."
+      : "התחרות הסתיימה · לא נאספו בה נתוני מעקב: לא הועלה ייצוא ממולקה ולא סומנו חוזרים."}</p>`);
     $("src").textContent = age();
     return;
   }
@@ -606,8 +630,9 @@ function eodShow(scroll = true) {
   $("eod-s").textContent = rows.length ? `${rows.length} ${rows.length === 1 ? "נווט לא דווח" : "נווטים לא דווחו"} כחוזרים${late ? `, ${late} מהם באיחור` : ""} – נכון ל-${eodWhen()}.`
     : `כל מי שזינק דווח כחוזר – נכון ל-${eodWhen()}.`;
   $("eod-t").innerHTML = rows.length ? `<table class="eodt"><thead><tr><th>#</th><th>שם</th><th>קטגוריה</th><th>מועדון</th><th>מסלול</th><th>זינק</th><th></th></tr></thead><tbody>`
-    + rows.map((x, i) => `<tr${x.r.late ? ' class="late"' : ""}><td>${i + 1}</td><td>${esc(x.p.n)}</td><td>${esc(x.p.k)}</td><td>${esc(x.p.club)}</td><td>${esc(x.p.c)}</td>`
-      + `<td>${x.start != null ? hms(x.start) : "–"}</td><td>${x.r.late ? "באיחור" : ""}</td></tr>`).join("") + `</tbody></table>` : "";
+    + rows.map((x, i) => `<tr${x.r.late ? ' class="late"' : ""}><td>${i + 1}</td><td>${esc(x.p.n)}</td>${x.p.k ? `<td data-l="קטגוריה">${esc(x.p.k)}</td>` : "<td></td>"}`
+      + `${x.p.club ? `<td data-l="מועדון">${esc(x.p.club)}</td>` : "<td></td>"}${x.p.c ? `<td data-l="מסלול">${esc(x.p.c)}</td>` : "<td></td>"}`
+      + `<td data-l="זינק">${x.start != null ? hms(x.start) : "–"}</td><td>${x.r.late ? "באיחור" : ""}</td></tr>`).join("") + `</tbody></table>` : "";
   if (scroll) $("eod").scrollIntoView({ block: "start" });
 }
 // ---- admins: taps at the finish and the Mulka export, saved to the site (track.json) in small batches.
@@ -643,8 +668,9 @@ function stored() {             // the waiting changes this browser keeps for th
   const mk = s && s.mk && clean({ mulka: s.mk }).mulka;
   return { m, mk: mk && ISO.test(mk.at) ? mk : null };
 }
-function keep(done = new Map(), doneMulka = null) {
+function keep(done = new Map(), doneMulka = null, n = 0) {
   try {
+    if (n) localStorage.setItem(KEEP + ":n", String(n));          // the save's counter: another tab of this browser shows its taps until a copy has it
     const { m, mk: was } = stored();
     for (const [k, v] of done) { const o = m.get(k); if (o && o.at === v.at && o.s === v.s) m.delete(k); }     // saved: not waiting any more
     for (const [k, v] of PENDING) if (newer(v, m.get(k))) m.set(k, v);
@@ -666,11 +692,14 @@ addEventListener("storage", e => {
   let old = null;
   try { old = JSON.parse(e.oldValue || "null"); } catch (x) {}
   const now = stored(), t = Date.now();
+  let n = 0;
+  try { n = Number(localStorage.getItem(KEEP + ":n")) || 0; } catch (x) {}
+  if (!(n > SITE_T.n)) n = SITE_T.n + 1;
   for (const x of old && Array.isArray(old.m) ? old.m : []) {
     const [k, v] = Array.isArray(x) ? x : [], mine = PENDING.get(k);
-    if (v && !now.m.has(k) && mine && mine.at === v.at && mine.s === v.s) { PENDING.delete(k); SAVED.set(k, { ...mine, t, n: SITE_T.n + 1 }); }
+    if (v && !now.m.has(k) && mine && mine.at === v.at && mine.s === v.s) { PENDING.delete(k); SAVED.set(k, { ...mine, t, n }); }
   }
-  if (old && old.mk && !now.mk && PENDING_MULKA && PENDING_MULKA.at === old.mk.at) { SAVED_MULKA = { m: PENDING_MULKA, t, n: SITE_T.n + 1 }; PENDING_MULKA = null; }
+  if (old && old.mk && !now.mk && PENDING_MULKA && PENDING_MULKA.at === old.mk.at) { SAVED_MULKA = { m: PENDING_MULKA, t, n }; PENDING_MULKA = null; }
   OTHERS.clear();
   for (const [k, v] of now.m) if (!PENDING.has(k)) OTHERS.set(k, v);
   T = overlay(copyT(SITE_T)); tick();
@@ -732,7 +761,7 @@ async function flush() {
   if (mono() < NOT_BEFORE) return later(0);
   SAVING = true; say("שומר…", true);
   const changes = new Map(PENDING), mulka = PENDING_MULKA;
-  let wait = 0, saved = null;
+  let wait = 0, saved = null, savedAll = null;
   try {
     for (let i = 0; i < 4; i++) {
       let all = null;
@@ -743,7 +772,7 @@ async function flush() {
       for (const [k, v] of changes) put1(mine.manual, k, v);
       if (mulka && (!mine.mulka || atOf(mine.mulka.at) <= mulka.at)) mine.mulka = mulka;
       mine.n = (mine.n || 0) + 1;
-      all.comps[SLUG] = saved = mine;
+      all.comps[SLUG] = saved = mine; savedAll = all;
       const what = [mulka ? "Mulka export" : "", changes.size ? `${changes.size} at the finish` : ""].filter(Boolean).join(" + ");
       try { await putTrack(b64enc(JSON.stringify(all) + "\n"), sha, MODE === "gw" ? `Track ${SLUG}: ${what}` : `Track ${SLUG}: ${what} - ${ME}`); break; }
       catch (e) { if (!(e.status === 409 || e.status === 422) || i === 3) throw e; }   // another admin saved: read again, apply on top
@@ -752,7 +781,7 @@ async function flush() {
     for (const [k, v] of changes) { if (PENDING.get(k) === v) PENDING.delete(k); SAVED.set(k, { ...v, t: now, n: saved.n }); }
     if (mulka) { if (PENDING_MULKA === mulka) PENDING_MULKA = null; SAVED_MULKA = { m: mulka, t: now, n: saved.n }; }
     if (saved.n > SITE_T.n) { SITE_T = copyT(saved); DATA_AT = new Date(); FAILED = false; CACHED = false; }   // the site has it now: older copies are not taken
-    keep(changes, mulka); FAILS = 0; LAST_SAVE = mono(); NOT_BEFORE = 0;
+    keep(changes, mulka, saved.n); keepCopy(savedAll); FAILS = 0; LAST_SAVE = mono(); NOT_BEFORE = 0;
     clearTimeout(FLUSH); FLUSH = 0;              // a timer set during this save (from before it) would not wait the GAP
     say(`נשמר ${clock(new Date())}`, true);
   } catch (e) {
@@ -810,7 +839,9 @@ function parseMulka(text) {
       cr.querySelectorAll("PersonResult").forEach(pr => {
         const fam = pr.querySelector("Person > Name > Family")?.textContent || "", giv = pr.querySelector("Person > Name > Given")?.textContent || "";
         const res = pr.querySelector("Result"), s = S[squash(res?.querySelector("Status")?.textContent)] || "none";
-        const tm = parseFloat(res?.querySelector("Time")?.textContent), sd = new Date(res?.querySelector("StartTime")?.textContent || ""), sp = isNaN(sd) ? null : il(sd);
+        const tm = parseFloat(res?.querySelector("Time")?.textContent), stx = (res?.querySelector("StartTime")?.textContent || "").trim(),
+          own = /T(\d{1,2}):(\d{2}):(\d{2})(?:\.\d+)?$/.exec(stx), sd = new Date(stx),      // no time zone: the time as written
+          sp = own ? { hour: +own[1], minute: +own[2], second: +own[3] } : isNaN(sd) ? null : il(sd);
         put(`${fam} ${giv}`, cls, s, s === "ok" && isFinite(tm) ? Math.round(tm) : null, sp ? sp.hour * 3600 + sp.minute * 60 + sp.second : null);
       }); });
   } else {
@@ -952,7 +983,7 @@ async function keepForOffline() {
   }
 }
 if ("serviceWorker" in navigator && window.isSecureContext && /^https?:$/.test(location.protocol) && !FRAMED)
-  navigator.serviceWorker.register(new URL("../../sw.js", location.href), { scope: new URL("../../", location.href).pathname }).then(keepForOffline).catch(() => {});
+  navigator.serviceWorker.register(new URL("../../sw.js", location.href), { scope: new URL("../../", location.href).pathname }).then(keepForOffline).catch(e => console.warn("[sw] not kept for offline use:", e));
 $("clubs").addEventListener("click", e => { const b = e.target.closest("[data-club]"); if (!b) return;
   CLUB = CLUB === b.dataset.club ? "" : b.dataset.club; render(); document.querySelector(`#clubs [data-club="${CSS.escape(b.dataset.club)}"]`)?.focus(); });
 // the day chart: the crosshair follows the mouse or a finger (a vertical swipe still scrolls), and the arrow keys
