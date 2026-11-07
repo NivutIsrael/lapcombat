@@ -50,9 +50,9 @@ h1 { margin: 0; font-size: calc(26px * var(--ts, 1)); line-height: 1.25; } .sub 
   border-radius: 8px; background: var(--surface); color: var(--ink); min-width: 160px; }
 @media (max-width: 640px) { #cats { display: none; } .catsel { display: block; } }   /* phones: the categories in one list, not a screen of buttons */
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; background: var(--surface); }
-th { text-align: right; font-size: calc(12.5px * var(--ts, 1)); color: var(--ink-2); padding: 7px 8px; border-bottom: 1.5px solid var(--rule-2); white-space: nowrap; }
+th { text-align: center; font-size: calc(12.5px * var(--ts, 1)); color: var(--ink-2); padding: 7px 8px; border-bottom: 1.5px solid var(--rule-2); white-space: nowrap; }
 th a { color: inherit; }
-td { padding: 7px 8px; border-bottom: 1px solid var(--rule); } td.n { font-weight: 600; } td.tot { font-weight: 700; white-space: nowrap; }
+td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: center; } td.n { font-weight: 600; } td.tot { font-weight: 700; white-space: nowrap; }
 td small { color: var(--muted); } td.no { color: var(--muted); }
 .up { color: var(--green); font-weight: 700; } .down { color: var(--bad); font-weight: 700; }
 .note { color: var(--muted); font-size: calc(13px * var(--ts, 1)); margin-top: 14px; } .empty { color: var(--muted); }
@@ -189,7 +189,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
   table.cards .cd-only { display: inline; }
   table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
   table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
-  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; text-align: start; }
   table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
   table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
   table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }

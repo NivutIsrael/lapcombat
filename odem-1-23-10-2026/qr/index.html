@@ -183,7 +183,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
   table.cards .cd-only { display: inline; }
   table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
   table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
-  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; text-align: start; }
   table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
   table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
   table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }

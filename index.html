@@ -159,9 +159,9 @@ button.share { font: inherit; font-size: calc(13px * var(--ts, 1)); color: var(-
 .secl svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: calc(14.5px * var(--ts, 1)); }
-th { text-align: right; font: 600 calc(12px * var(--ts, 1)) var(--sans); color: var(--muted); letter-spacing: .03em; padding: 8px 10px;
+th { text-align: center; font: 600 calc(12px * var(--ts, 1)) var(--sans); color: var(--muted); letter-spacing: .03em; padding: 8px 10px;
      border-bottom: 1.5px solid var(--ink); white-space: nowrap; vertical-align: bottom; }
-td { padding: 11px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { padding: 11px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; text-align: center; }
 td.cn { white-space: normal; min-width: 170px; }
 td a { color: var(--accent); text-decoration: none; font-weight: 600; }
 td a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -341,7 +341,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
   table.cards .cd-only { display: inline; }
   table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
   table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
-  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; text-align: start; }
   table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
   table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
   table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }

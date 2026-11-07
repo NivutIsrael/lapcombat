@@ -51,8 +51,8 @@ h1 { margin: 0; font-size: calc(26px * var(--ts, 1)); line-height: 1.25; } .sub 
 #now:not(:empty) { background: var(--soon); border-radius: 10px; padding: 10px 14px; margin: 0 0 12px; font-weight: 600; }
 .grp { margin: 18px 0 0; } .grp h2 { font-size: calc(17px * var(--ts, 1)); margin: 0 0 6px; } .grp h2 small { color: var(--muted); font-weight: 400; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; background: var(--surface); }
-th { text-align: right; font-size: calc(12.5px * var(--ts, 1)); color: var(--ink-2); padding: 7px 8px; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
-td { padding: 7px 8px; border-bottom: 1px solid var(--rule); } td.t { font-weight: 700; white-space: nowrap; } td.n { font-weight: 600; }
+th { text-align: center; font-size: calc(12.5px * var(--ts, 1)); color: var(--ink-2); padding: 7px 8px; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: center; } td.t { font-weight: 700; white-space: nowrap; } td.n { font-weight: 600; }
 tr.soon td { background: var(--soon); } .note { color: var(--muted); font-size: calc(13px * var(--ts, 1)); margin-top: 16px; } .empty { color: var(--muted); }
 .check { margin-top: 18px; border: 1px solid var(--rule-2); border-radius: 10px; padding: 10px 14px; background: var(--surface); }
 .check summary { cursor: pointer; font-weight: 700; } .check ul { margin: 8px 0 0; padding-inline-start: 18px; } .check li { margin: 6px 0; }
@@ -190,7 +190,7 @@ td.ttn { font-size: calc(12px * var(--ts, 1)); }
   table.cards .cd-only { display: inline; }
   table.cards tbody tr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 14px; padding: 12px 2px; border-bottom: 1px solid var(--grid); }
   table.cards tbody tr::before { content: ""; order: 5; flex-basis: 100%; height: 0; }   /* the line between the top and the details */
-  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; }
+  table.cards td { display: block; border: 0; padding: 0; order: 10; font-size: calc(13px * var(--ts, 1)); white-space: nowrap; position: static !important; background: none; text-align: start; }
   table.cards td[data-l]:not(.cd-rank):not(.cd-name):not(.cd-main):not(.cd-star):not(.cd-full):not(.cd-leg)::before { content: attr(data-l) " "; color: var(--muted); font-size: calc(11px * var(--ts, 1)); }
   table.cards td.cd-rank { order: 1; min-width: 22px; font-size: calc(17px * var(--ts, 1)); font-weight: 700; color: var(--ink); }
   table.cards td.cd-name { order: 2; flex: 1 1 0; min-width: 0; font-size: calc(16px * var(--ts, 1)); font-weight: 600; white-space: normal; }
