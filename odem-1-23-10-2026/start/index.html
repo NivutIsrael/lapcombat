@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-dgeIZXSY7QQHU/EW5QguwPonJkpRiTl2NKT/0RRObh0=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-nwNvaOtJuEJos0C/EmD4OFAVO/o83+J9yehXDRtYIIk=' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>זמני זינוק</title>
@@ -48,6 +48,10 @@ h1 { margin: 0; font-size: calc(26px * var(--ts, 1)); line-height: 1.25; } .sub 
 .seg { display: inline-flex; border: 1px solid var(--ink); border-radius: 8px; overflow: hidden; }
 .seg button { font: inherit; font-weight: 600; border: 0; background: var(--surface); color: var(--ink); padding: 9px 14px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--tab-on); color: var(--on-accent); }
+#now .cd { color: var(--accent); font-variant-numeric: tabular-nums; margin-inline-start: 4px; }
+#now .ldot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #e0242a; margin-inline-end: 8px; vertical-align: 1px; animation: ldot 1.6s ease-in-out infinite; }
+@keyframes ldot { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { #now .ldot { animation: none; } }
 #now:not(:empty) { background: var(--soon); border-radius: 10px; padding: 10px 14px; margin: 0 0 12px; font-weight: 600; }
 .grp { margin: 18px 0 0; } .grp h2 { font-size: calc(17px * var(--ts, 1)); margin: 0 0 6px; } .grp h2 small { color: var(--muted); font-weight: 400; }
 table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; background: var(--surface); }
@@ -246,6 +250,8 @@ const il = d => { if (!ILF) return { year: d.getFullYear(), month: d.getMonth() 
 const daysOff = () => { if (!ymd) return null; const p = il(new Date()); return Math.round((Date.UTC(p.year, p.month - 1, p.day) - Date.UTC(+ymd[1], ymd[2] - 1, +ymd[3])) / 86400000); };
 const today = () => daysOff() === 0;
 const nowS = () => { const p = il(new Date()); return p.hour * 3600 + p.minute * 60 + p.second; };
+let NEXT = null;                    // the time of the next start (seconds in the day), for the countdown
+const inS = s => s <= 0 ? "עכשיו" : s < 60 ? `בעוד ${s} שניות` : `בעוד ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const soon = r => today() && r.t != null && r.t >= nowS() - 60 && r.t <= nowS() + 600;
 function table(rows, withCat) {
   return `<div class="scroll"><table class="cards keyfirst"><thead><tr><th data-card="main" data-short="">שעה</th><th data-card="name" data-short="">שם</th>`
@@ -267,7 +273,9 @@ function render() {
   tableTools($("list"), "start");
   checks();
   const next = today() ? timed(R).filter(r => r.t >= nowS() && r.t <= nowS() + 600) : [];
-  $("now").textContent = next.length ? `ב־10 הדקות הקרובות מזנקים ${next.length} נווטים · הזינוק הבא ${hms(next[0].t)}` : "";
+  NEXT = next.length ? next[0].t : null;
+  $("now").innerHTML = next.length ? `<span class="ldot" aria-hidden="true"></span>ב־10 הדקות הקרובות מזנקים ${next.length} נווטים · הזינוק הבא ${hms(next[0].t)}`
+    + ` <b class="cd" id="cd">${inS(next[0].t - nowS())}</b>` : "";
 }
 // for the organisers: what in the start list may need a look before the day (built when publishing)
 function checks() {
@@ -678,6 +686,9 @@ function ttBind() {
 a11yInit($("a11yb"), render); themeInit($("theme"));
 render();
 if (today()) setInterval(render, 30000);
+// the next start, counted down every second (the list itself is drawn again every 30 seconds)
+if (today()) setInterval(() => { const el = $("cd"); if (!el || NEXT == null) return;
+  const s = NEXT - nowS(); if (s < 0) render(); else el.textContent = inS(s); }, 1000);
 </script>
 </body>
 </html>

@@ -103,7 +103,9 @@ section { margin: 14px 0 0; } h2 { font-size: calc(17px * var(--ts, 1)); margin:
 .clubs button i { font-style: normal; font-weight: 700; color: var(--red); }
 .clubs button[aria-pressed="true"] { background: var(--tab-on); border-color: var(--tab-on); color: var(--on-accent); } .clubs button[aria-pressed="true"] i { color: inherit; }
 .rows li.late .x b { color: var(--red); } .badge { display: inline-block; font-size: calc(11.5px * var(--ts, 1)); font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-inline-start: 6px; }
-.badge.man { background: var(--chip); color: var(--ink-2); } .badge.late { background: var(--red); color: var(--paper); }
+.badge.man { background: var(--chip); color: var(--ink-2); } .badge.late { background: var(--red); color: var(--paper); animation: latep 1.8s ease-out infinite; }
+@keyframes latep { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 55%, transparent); } to { box-shadow: 0 0 0 7px transparent; } }
+@media (prefers-reduced-motion: reduce) { .badge.late { animation: none; } }
 .rows li.late .x small, .rows li.out .x small, .rows li.late .m, .rows li.out .m { color: var(--ink-2); }
 .acts { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; } .acts button { padding: 6px 12px; font-size: calc(13.5px * var(--ts, 1)); }
 .acts .back { border-color: var(--green); color: var(--green); } .acts .dns { color: var(--ink-2); }
